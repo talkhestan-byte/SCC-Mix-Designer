@@ -3,24 +3,26 @@
 // ==========================================
 const state = {
   currentStep: 0,
-  totalSteps: 10,
+  totalSteps: 9, // تعداد گام‌ها به ۹ کاهش یافت
   data: {
-    // گام ۱
+    // گام ۱ (شامل اطلاعات گام ۲ قبلی)
     projectName: '',
     elementType: 'ستون',
+    elementThickness: 'medium', // جدید
+    horizontalDistance: 'medium', // جدید
     maxAggSize: 19,
     rebarDensity: 'medium',
     fc: 30,
-    stdDevMethod: 'auto', // 'auto' یا 'manual'
+    stdDevMethod: 'auto',
     workshopRank: 'medium',
     manualRank: 'medium',
     fcm: 0,
     stdDev: 0,
     stdDevAuto1: 0,
     stdDevAuto2: 0,
+    slumpClass: 'SF2', // خروجی خودکار
     
-    // سایر گام‌ها (مقادیر پیش‌فرض)
-    slumpClass: 'SF2',
+    // گام‌های بعدی
     n_power: 0.25,
     rs_a: 3,
     sccType: 'powder',
@@ -40,19 +42,18 @@ const state = {
 };
 
 // ==========================================
-// ۲. تعریف ساختار ۱۰ گام
+// ۲. تعریف ساختار ۹ گام (گام ۲ حذف شد)
 // ==========================================
 const steps = [
   { id: 'step1', title: '۱. شناسنامه' },
-  { id: 'step2', title: '۲. اسلامپ' },
-  { id: 'step3', title: '۳. دانه‌بندی' },
-  { id: 'step4', title: '۴. نسبت شن/ماسه' },
-  { id: 'step5', title: '۵. فضای خالی' },
-  { id: 'step6', title: '۶. شکل دانه' },
-  { id: 'step7', title: '۷. حجم خمیر' },
-  { id: 'step8', title: '۸. آب/سیمان' },
-  { id: 'step9', title: '۹. پودر و هوا' },
-  { id: 'step10', title: '۱۰. خروجی' }
+  { id: 'step2', title: '۲. دانه‌بندی' },
+  { id: 'step3', title: '۳. نسبت شن/ماسه' },
+  { id: 'step4', title: '۴. فضای خالی' },
+  { id: 'step5', title: '۵. شکل دانه' },
+  { id: 'step6', title: '۶. حجم خمیر' },
+  { id: 'step7', title: '۷. آب/سیمان' },
+  { id: 'step8', title: '۸. پودر و هوا' },
+  { id: 'step9', title: '۹. خروجی' }
 ];
 
 // ==========================================
@@ -60,28 +61,11 @@ const steps = [
 // ==========================================
 let currentChart = null;
 
-function drawChart(canvasId, datasets, xLabels) {
-  const ctx = document.getElementById(canvasId).getContext('2d');
-  if (currentChart) currentChart.destroy();
-  currentChart = new Chart(ctx, {
-    type: 'line',
-    data: { labels: xLabels, datasets: datasets },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { title: { display: true, text: 'اندازه الک (mm)' }, ticks: { font: { size: 10 } } },
-        y: { min: 0, max: 100, title: { display: true, text: 'عبوری (%)' } }
-      },
-      plugins: { legend: { labels: { font: { size: 10 } } } }
-    }
-  });
-}
-
 // ==========================================
-// ۴. توابع رندر برای هر گام
+// ۴. توابع رندر
 // ==========================================
 
-// --- گام ۱: شناسنامه ---
+// --- گام ۱: شناسنامه (شامل اطلاعات گام ۲) ---
 function renderStep1() {
   return `
     <h2>گام ۱: شناسنامه طرح و مقاومت</h2>
@@ -100,6 +84,22 @@ function renderStep1() {
         <option value="تیر" ${state.data.elementType==='تیر'?'selected':''}>تیر</option>
         <option value="دال" ${state.data.elementType==='دال'?'selected':''}>دال</option>
         <option value="شالوده" ${state.data.elementType==='شالوده'?'selected':''}>شالوده</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>ضخامت قطعه:</label>
+      <select id="in_elementThickness">
+        <option value="thin" ${state.data.elementThickness==='thin'?'selected':''}>نازک (کمتر از ۱۵۰ میلی‌متر)</option>
+        <option value="medium" ${state.data.elementThickness==='medium'?'selected':''}>متوسط (۱۵۰ تا ۶۰۰ میلی‌متر)</option>
+        <option value="thick" ${state.data.elementThickness==='thick'?'selected':''}>ضخیم (بیشتر از ۶۰۰ میلی‌متر)</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>طول حرکت افقی بتن:</label>
+      <select id="in_horizontalDistance">
+        <option value="low" ${state.data.horizontalDistance==='low'?'selected':''}>کم (کمتر از ۵ متر)</option>
+        <option value="medium" ${state.data.horizontalDistance==='medium'?'selected':''}>متوسط (۵ تا ۱۰ متر)</option>
+        <option value="high" ${state.data.horizontalDistance==='high'?'selected':''}>زیاد (بیشتر از ۱۰ متر)</option>
       </select>
     </div>
     <div class="input-group">
@@ -137,7 +137,6 @@ function renderStep1() {
       </label>
     </div>
 
-    <!-- جعبه حالت خودکار -->
     <div id="autoBox" style="display: ${state.data.stdDevMethod === 'auto' ? 'block' : 'none'}; background:#f8fafc; padding:10px; border-radius:8px; margin-bottom:10px;">
       <label style="font-size:0.85rem; font-weight:bold;">رتبه کارگاه:</label>
       <select id="in_workshopRank" style="margin-bottom:10px;">
@@ -146,12 +145,11 @@ function renderStep1() {
         <option value="weak" ${state.data.workshopRank==='weak'?'selected':''}>ضعیف (S = 6)</option>
       </select>
       <div style="font-size:0.85rem; line-height:1.6; background:#fff; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">
-        <div>رابطه ۱ (f'cm = f'c + 1.34S + 1.5): <strong id="out_formula1">0</strong></div>
-        <div>رابطه ۲ (f'cm = f'c + 2.33S - 4): <strong id="out_formula2">0</strong></div>
+        <div>رابطه ۱: <strong id="out_formula1">0</strong></div>
+        <div>رابطه ۲: <strong id="out_formula2">0</strong></div>
       </div>
     </div>
 
-    <!-- جعبه حالت دستی -->
     <div id="manualBox" style="display: ${state.data.stdDevMethod === 'manual' ? 'block' : 'none'}; background:#f8fafc; padding:10px; border-radius:8px; margin-bottom:10px;">
       <label style="font-size:0.85rem; font-weight:bold;">رتبه کارگاه:</label>
       <select id="in_manualRank" style="margin-bottom:10px;">
@@ -159,44 +157,45 @@ function renderStep1() {
         <option value="medium" ${state.data.manualRank==='medium'?'selected':''}>متوسط</option>
         <option value="weak" ${state.data.manualRank==='weak'?'selected':''}>ضعیف</option>
       </select>
-      
       <div style="font-size:0.85rem; margin-bottom:10px;">
-        مقدار S متناظر با رتبه انتخاب شده: <strong id="out_manual_s_display" style="color:#e74c3c; font-size:1rem;">0</strong>
+        مقدار S متناظر: <strong id="out_manual_s_display" style="color:#e74c3c; font-size:1rem;">0</strong>
       </div>
-
-      <p class="note" style="margin-bottom:10px;">اگر مایلید مقادیر دستی را وارد کنید:</p>
       <div class="input-group">
         <label>مقاومت مشخصه (f'c) - اختیاری:</label>
         <input type="number" id="in_manualFc" placeholder="در صورت خالی بودن، از f'c بالایی استفاده می‌شود" step="0.1">
       </div>
       <div class="input-group">
         <label>انحراف معیار (S) - اختیاری:</label>
-        <input type="number" id="in_manualS" placeholder="در صورت خالی بودن، از S رتبه کارگاه استفاده می‌شود" step="0.1">
+        <input type="number" id="in_manualS" placeholder="در صورت خالی بودن، از S رتبه استفاده می‌شود" step="0.1">
       </div>
     </div>
 
     <div class="highlight-box">
       مقاومت هدف نهایی (f'cm) = <span id="out_fcm_final">0.0</span> MPa
     </div>
+    
+    <div class="highlight-box" style="background:#e0f2fe; border-color:#0284c7; color:#075985; margin-top:10px;">
+      رده اسلامپ پیشنهادی: <span id="out_slumpClass">SF2</span>
+    </div>
   `;
 }
 
-// --- گام‌های ۲ تا ۱۰ (فعلاً خالی) ---
-function renderStep2() { return `<h2>گام ۲</h2><p>در حال ساخت...</p>`; }
-function renderStep3() { return `<h2>گام ۳</h2><p>در حال ساخت...</p>`; }
-function renderStep4() { return `<h2>گام ۴</h2><p>در حال ساخت...</p>`; }
-function renderStep5() { return `<h2>گام ۵</h2><p>در حال ساخت...</p>`; }
-function renderStep6() { return `<h2>گام ۶</h2><p>در حال ساخت...</p>`; }
-function renderStep7() { return `<h2>گام ۷</h2><p>در حال ساخت...</p>`; }
-function renderStep8() { return `<h2>گام ۸</h2><p>در حال ساخت...</p>`; }
-function renderStep9() { return `<h2>گام ۹</h2><p>در حال ساخت...</p>`; }
-function renderStep10() { return `<h2>گام ۱۰</h2><p>در حال ساخت...</p>`; }
+// --- گام ۲ (قبلاً ۳): دانه‌بندی ---
+function renderStep2() { return `<h2>گام ۲: دانه‌بندی (فولر-تامسون)</h2><p>در حال ساخت...</p>`; }
 
-// آرایه توابع رندر
-const renderFunctions = [renderStep1, renderStep2, renderStep3, renderStep4, renderStep5, renderStep6, renderStep7, renderStep8, renderStep9, renderStep10];
+// --- گام‌های ۳ تا ۹ (فعلاً خالی) ---
+function renderStep3() { return `<h2>گام ۳: نسبت شن/ماسه</h2><p>در حال ساخت...</p>`; }
+function renderStep4() { return `<h2>گام ۴: فضای خالی</h2><p>در حال ساخت...</p>`; }
+function renderStep5() { return `<h2>گام ۵: شکل دانه</h2><p>در حال ساخت...</p>`; }
+function renderStep6() { return `<h2>گام ۶: حجم خمیر</h2><p>در حال ساخت...</p>`; }
+function renderStep7() { return `<h2>گام ۷: آب/سیمان</h2><p>در حال ساخت...</p>`; }
+function renderStep8() { return `<h2>گام ۸: پودر و هوا</h2><p>در حال ساخت...</p>`; }
+function renderStep9() { return `<h2>گام ۹: خروجی</h2><p>در حال ساخت...</p>`; }
+
+const renderFunctions = [renderStep1, renderStep2, renderStep3, renderStep4, renderStep5, renderStep6, renderStep7, renderStep8, renderStep9];
 
 // ==========================================
-// ۵. منطق ناوبری (تب‌ها و دکمه‌ها)
+// ۵. منطق ناوبری
 // ==========================================
 function updateUI() {
   const tabsContainer = document.getElementById('tabs');
@@ -228,13 +227,14 @@ document.getElementById('next').addEventListener('click', () => {
 });
 
 // ==========================================
-// ۶. منطق زنده هر گام
+// ۶. منطق زنده
 // ==========================================
 function attachStepLogic(stepIndex) {
   if (stepIndex === 0) {
-    // ===== منطق گام ۱ =====
     const projectNameInput = document.getElementById('in_projectName');
     const elementTypeSelect = document.getElementById('in_elementType');
+    const thicknessSelect = document.getElementById('in_elementThickness');
+    const distanceSelect = document.getElementById('in_horizontalDistance');
     const maxAggSizeSelect = document.getElementById('in_maxAggSize');
     const rebarSelect = document.getElementById('in_rebarDensity');
     const fcInput = document.getElementById('in_fc');
@@ -249,12 +249,16 @@ function attachStepLogic(stepIndex) {
     };
 
     const calculate = () => {
+      // ذخیره مقادیر
       state.data.projectName = projectNameInput.value;
       state.data.elementType = elementTypeSelect.value;
+      state.data.elementThickness = thicknessSelect.value;
+      state.data.horizontalDistance = distanceSelect.value;
       state.data.maxAggSize = parseFloat(maxAggSizeSelect.value);
       state.data.rebarDensity = rebarSelect.value;
       state.data.fc = parseFloat(fcInput.value) || 0;
 
+      // محاسبه مقاومت هدف
       if (state.data.stdDevMethod === 'auto') {
         const rankSelect = document.getElementById('in_workshopRank');
         state.data.workshopRank = rankSelect.value;
@@ -294,6 +298,25 @@ function attachStepLogic(stepIndex) {
       }
 
       document.getElementById('out_fcm_final').innerText = state.data.fcm.toFixed(1);
+
+      // محاسبه رده اسلامپ
+      const rebar = state.data.rebarDensity;
+      const thickness = state.data.elementThickness;
+      const distance = state.data.horizontalDistance;
+      
+      let slump = 'SF1';
+      if (rebar === 'veryHigh' || (thickness === 'thin' && rebar === 'high')) {
+        slump = 'SF3';
+      } else if (rebar === 'high' || (thickness === 'thin' && rebar === 'medium')) {
+        slump = 'SF2';
+      } else if (rebar === 'medium' || distance === 'high') {
+        slump = 'SF2';
+      } else {
+        slump = 'SF1';
+      }
+      
+      state.data.slumpClass = slump;
+      document.getElementById('out_slumpClass').innerText = slump;
     };
 
     stdMethodRadios.forEach(radio => {
@@ -312,6 +335,8 @@ function attachStepLogic(stepIndex) {
 
     projectNameInput.addEventListener('input', calculate);
     elementTypeSelect.addEventListener('change', calculate);
+    thicknessSelect.addEventListener('change', calculate);
+    distanceSelect.addEventListener('change', calculate);
     maxAggSizeSelect.addEventListener('change', calculate);
     rebarSelect.addEventListener('change', calculate);
     fcInput.addEventListener('input', calculate);
@@ -323,7 +348,7 @@ function attachStepLogic(stepIndex) {
     calculate();
   }
   
-  // گام‌های ۲ تا ۱۰ بعداً اینجا اضافه می‌شوند
+  // گام‌های ۲ تا ۹ بعداً اینجا اضافه می‌شوند
 }
 
 // ==========================================
