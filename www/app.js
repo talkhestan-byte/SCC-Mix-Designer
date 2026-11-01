@@ -20,15 +20,16 @@ const state = {
     stdDev: 0,
     slumpClass: 'SF2',
     
-    // گام ۲ (جدول دانه‌بندی)
+    // گام ۲
     aggCount: 2,
-    aggregates: [], // [{name, ssd, absorption, passes: {sieve: percent}}]
+    aggregates: [], // {name, ssd, absorption, passes: {}}
     
-    // گام ۳ (نسبت‌ها و نمودار)
-    aggRatios: [50, 50, 0, 0], // درصد اختلاط هر سنگدانه
+    // گام ۳
+    aggRatios: [50, 50, 0, 0],
     n_lower: 0.25,
     n_upper: 0.35,
     n_power: 0.30,
+    fullerRow: '2', // ردیف جدول ۶-۵
     
     // گام‌های بعدی
     rs_a: 3,
@@ -191,7 +192,7 @@ function renderStep1() {
   `;
 }
 
-// --- گام ۲: جدول دانه‌بندی (فقط ورود داده) ---
+// --- گام ۲: جدول دانه‌بندی ---
 function renderStep2() {
   let headerSieves = sieves.map(s => `<th>${s}</th>`).join('');
   let aggRows = '';
@@ -254,7 +255,7 @@ function renderStep2() {
   `;
 }
 
-// --- گام ۳: نمودار فولر-تامسون و تنظیم نسبت‌ها ---
+// --- گام ۳: نمودار و تنظیم نسبت‌ها ---
 function renderStep3() {
   let ratioInputs = '';
   for (let i = 0; i < state.data.aggCount; i++) {
@@ -271,8 +272,18 @@ function renderStep3() {
 
   return `
     <h2>گام ۳: تطبیق منحنی دانه‌بندی با فولر-تامسون</h2>
-    <p class="note">با تغییر درصد اختلاط هر سنگدانه، منحنی ترکیبی خود را با محدوده ایده‌آل تطبیق دهید.</p>
     
+    <div class="input-group">
+      <label>انتخاب کاربری (ردیف جدول ۶-۵):</label>
+      <select id="in_fullerRow">
+        <option value="1" ${state.data.fullerRow==='1'?'selected':''}>ردیف ۱: جریان ۵۰۰-۵۵۰ (ستون و شالوده با میلگرد کم)</option>
+        <option value="2" ${state.data.fullerRow==='2'?'selected':''}>ردیف ۲: جریان ۵۶۰-۶۵۰ (ستون و شالوده با میلگرد متوسط)</option>
+        <option value="3" ${state.data.fullerRow==='3'?'selected':''}>ردیف ۳: جریان بیشتر از ۶۶۰ (تیر و دال با طول متوسط)</option>
+        <option value="4" ${state.data.fullerRow==='4'?'selected':''}>ردیف ۴: جریان بیشتر از ۶۶۰ (تیر و دال با طول زیاد و میلگرد بالا)</option>
+        <option value="5" ${state.data.fullerRow==='5'?'selected':''}>ردیف ۵: بتن خودتراکم ریز بافت (تعمیرات)</option>
+      </select>
+    </div>
+
     <div class="highlight-box" style="background:#f8fafc; border-color:#cbd5e1; color:#334155; font-size:0.9rem;">
       محدوده توان n مجاز: <strong id="out_n_range">0.25 تا 0.35</strong>
     </div>
@@ -335,7 +346,7 @@ document.getElementById('next').addEventListener('click', () => {
 // ==========================================
 function attachStepLogic(stepIndex) {
   if (stepIndex === 0) {
-    // ===== منطق گام ۱ =====
+    // ===== گام ۱ =====
     const projectNameInput = document.getElementById('in_projectName');
     const elementTypeSelect = document.getElementById('in_elementType');
     const thicknessSelect = document.getElementById('in_elementThickness');
@@ -373,9 +384,6 @@ function attachStepLogic(stepIndex) {
         const constant = (fc <= 20) ? 3 : 4;
         const fcm2 = fc + (2.33 * s) - constant;
         
-        state.data.stdDevAuto1 = fcm1;
-        state.data.stdDevAuto2 = fcm2;
-        
         document.getElementById('out_formula1').innerText = fcm1.toFixed(1);
         document.getElementById('out_formula2').innerText = fcm2.toFixed(1);
         
@@ -402,7 +410,6 @@ function attachStepLogic(stepIndex) {
 
       document.getElementById('out_fcm_final').innerText = state.data.fcm.toFixed(1);
 
-      // اسلامپ
       const rebar = state.data.rebarDensity;
       const thickness = state.data.elementThickness;
       const distance = state.data.horizontalDistance;
@@ -452,7 +459,7 @@ function attachStepLogic(stepIndex) {
   }
   
   if (stepIndex === 1) {
-    // ===== منطق گام ۲ (جدول دانه‌بندی) =====
+    // ===== گام ۲ =====
     if (state.data.aggregates.length === 0) {
       for (let i = 0; i < 4; i++) {
         state.data.aggregates.push({
@@ -498,20 +505,33 @@ function attachStepLogic(stepIndex) {
   }
 
   if (stepIndex === 2) {
-    // ===== منطق گام ۳ (نمودار فولر-تامسون) =====
-    let nLower = 0.2, nUpper = 0.3;
-    if (state.data.slumpClass === 'SF1') { nLower = 0.3; nUpper = 0.4; }
-    else if (state.data.slumpClass === 'SF2') { nLower = 0.25; nUpper = 0.35; }
-    else if (state.data.slumpClass === 'SF3') { nLower = 0.15; nUpper = 0.25; }
+    // ===== گام ۳ =====
+    const rowSelect = document.getElementById('in_fullerRow');
     
-    state.data.n_lower = nLower;
-    state.data.n_upper = nUpper;
-    state.data.n_power = (nLower + nUpper) / 2;
-
-    document.getElementById('out_n_range').innerText = `${nLower} تا ${nUpper}`;
+    const getNRange = (row) => {
+      switch(row) {
+        case '1': return { lower: 0.3, upper: 0.4 };
+        case '2': return { lower: 0.25, upper: 0.35 };
+        case '3': return { lower: 0.2, upper: 0.3 };
+        case '4': return { lower: 0.15, upper: 0.25 };
+        case '5': return { lower: 0.1, upper: 0.2 };
+        default: return { lower: 0.25, upper: 0.35 };
+      }
+    };
 
     const drawChartStep3 = () => {
-      // ذخیره نسبت‌ها
+      const selectedRow = rowSelect.value;
+      state.data.fullerRow = selectedRow;
+      const range = getNRange(selectedRow);
+      const nLower = range.lower;
+      const nUpper = range.upper;
+      
+      state.data.n_lower = nLower;
+      state.data.n_upper = nUpper;
+      state.data.n_power = (nLower + nUpper) / 2;
+
+      document.getElementById('out_n_range').innerText = `${nLower} تا ${nUpper}`;
+
       document.querySelectorAll('.agg-ratio-slider').forEach(inp => {
         const idx = parseInt(inp.dataset.agg);
         state.data.aggRatios[idx] = parseFloat(inp.value) || 0;
@@ -584,6 +604,7 @@ function attachStepLogic(stepIndex) {
       }
     };
 
+    rowSelect.addEventListener('change', drawChartStep3);
     document.querySelectorAll('.agg-ratio-slider').forEach(inp => {
       inp.addEventListener('input', drawChartStep3);
     });
