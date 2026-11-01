@@ -4,7 +4,7 @@
   "description": "Self-Compacting Concrete Mix Designer",
   "main": "index.js",
   "scripts": {
-    "build": "npx cap add android"
+    "build": "echo 'No build step needed'"
   },
   "dependencies": {
     "@capacitor/android": "^5.0.0",
