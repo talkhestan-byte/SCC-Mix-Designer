@@ -6,7 +6,6 @@
     <title>طراحی مخلوط بتن خودتراکم (SCC)</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <!-- کتابخانه Chart.js برای رسم نمودار -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -23,19 +22,19 @@
                 <h2>۱. مشخصات قطعه و مقاومت</h2>
                 <div class="input-group">
                     <label for="fc">مقاومت مشخصه فشاری (MPa):</label>
-                    <input type="number" id="fc" placeholder="مثلاً 30" required min="15" max="50" value="30">
+                    <input type="number" id="fc" value="30" required min="15" max="50">
                 </div>
                 <div class="input-group">
                     <label for="stdDev">انحراف معیار (MPa):</label>
-                    <input type="number" id="stdDev" placeholder="مثلاً 5" required value="5">
+                    <input type="number" id="stdDev" value="5" required>
                 </div>
                 <div class="input-group">
                     <label for="rebarDensity">تراکم میلگرد:</label>
                     <select id="rebarDensity">
-                        <option value="low">کم (کمتر از ۵۰ کیلوگرم بر متر مکعب)</option>
-                        <option value="medium" selected>متوسط (۵۰ تا ۱۰۰)</option>
-                        <option value="high">زیاد (۱۰۰ تا ۱۵۰)</option>
-                        <option value="veryHigh">فوق‌العاده زیاد (بیشتر از ۱۵۰)</option>
+                        <option value="low">کم</option>
+                        <option value="medium" selected>متوسط</option>
+                        <option value="high">زیاد</option>
+                        <option value="veryHigh">فوق‌العاده زیاد</option>
                     </select>
                 </div>
                 <div class="input-group">
@@ -52,61 +51,77 @@
             <!-- بخش ۲: دانه‌بندی سنگدانه‌ها -->
             <section class="card">
                 <h2>۲. دانه‌بندی سنگدانه‌ها</h2>
-                <p style="font-size:0.85rem; color:#666; margin-bottom:10px;">درصد عبوری تجمعی از هر الک را وارد کنید.</p>
-                
                 <div class="input-group">
                     <label for="sandRatio">درصد شن به کل سنگدانه (S/A): <span id="sandRatioVal">50</span>%</label>
                     <input type="range" id="sandRatio" min="30" max="70" value="50" step="1">
-                    <small style="color:#777; font-size:0.8rem;">با تغییر این اسلایدر و زدن دکمه، منحنی ترکیبی بالا و پایین می‌رود.</small>
                 </div>
-
                 <table class="grading-table">
                     <thead>
-                        <tr>
-                            <th>الک (mm)</th>
-                            <th>عبوری ماسه (%)</th>
-                            <th>عبوری شن (%)</th>
-                        </tr>
+                        <tr><th>الک (mm)</th><th>عبوری ماسه (%)</th><th>عبوری شن (%)</th></tr>
                     </thead>
-                    <tbody id="sieveTableBody">
-                        <!-- ردیف‌ها با جاوااسکریپت ساخته می‌شوند -->
-                    </tbody>
+                    <tbody id="sieveTableBody"></tbody>
                 </table>
             </section>
 
-            <!-- بخش ۳: چگالی و فضای خالی -->
+            <!-- بخش ۳: مشخصات مکانیکی و سیمان -->
             <section class="card">
-                <h2>۳. مشخصات مکانیکی سنگدانه‌ها</h2>
+                <h2>۳. مشخصات تکمیلی</h2>
                 <div class="input-group">
-                    <label for="voidsPercent">درصد فضای خالی سنگدانه (حالت متراکم):</label>
+                    <label for="voidsPercent">درصد فضای خالی سنگدانه:</label>
                     <input type="number" id="voidsPercent" value="35" required min="20" max="50">
                 </div>
                 <div class="input-group">
-                    <label for="aggregateShape">شکل و گوشه‌داری سنگدانه (Rs-a):</label>
+                    <label for="aggregateShape">شکل سنگدانه (Rs-a):</label>
                     <select id="aggregateShape">
                         <option value="1">۱ (گرد)</option>
-                        <option value="2">۲ (نیمه گرد)</option>
-                        <option value="3" selected>۳ (نیمه گوشه‌دار)</option>
-                        <option value="4">۴ (گوشه‌دار)</option>
+                        <option value="2">۲</option>
+                        <option value="3" selected>۳</option>
+                        <option value="4">۴</option>
                         <option value="5">۵ (خیلی گوشه‌دار)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="sccType">نوع بتن خودتراکم:</label>
+                    <select id="sccType">
+                        <option value="powder" selected>پودری</option>
+                        <option value="vma">دارای VMA</option>
+                        <option value="combined">ترکیبی</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="cementType">رده مقاومتی سیمان:</label>
+                    <select id="cementType">
+                        <option value="325">325</option>
+                        <option value="425" selected>425</option>
+                        <option value="525">525</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="fracturePercent">درصد شکستگی شن:</label>
+                    <select id="fracturePercent">
+                        <option value="0">۰ درصد (گرد)</option>
+                        <option value="100" selected>۱۰۰ درصد (شکسته)</option>
                     </select>
                 </div>
             </section>
 
-            <button type="submit" class="btn-calculate">رسم نمودار و محاسبه</button>
+            <button type="submit" class="btn-calculate">محاسبه نهایی طرح مخلوط</button>
         </form>
 
-        <!-- بخش نمایش نمودار -->
+        <!-- نمودار -->
         <section id="chartSection" class="card hidden">
-            <h2>نمودار تطبیق دانه‌بندی با منحنی فولر-تامسون</h2>
-            <div class="chart-container">
-                <canvas id="gradingChart"></canvas>
-            </div>
+            <h2>نمودار دانه‌بندی</h2>
+            <div class="chart-container"><canvas id="gradingChart"></canvas></div>
             <p id="chartStatus" style="text-align:center; font-weight:bold; margin-top:10px;"></p>
         </section>
 
-    </main>
+        <!-- خروجی نهایی -->
+        <section id="results" class="card hidden">
+            <h2>جدول نهایی طرح اختلاط</h2>
+            <div id="outputData"></div>
+        </section>
 
+    </main>
     <script src="script.js"></script>
 </body>
 </html>
