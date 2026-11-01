@@ -113,23 +113,43 @@ main {
     display: none;
 }
 
-#outputData table {
+/* استایل جدول دانه‌بندی */
+.grading-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
+    font-size: 0.85rem;
 }
 
-#outputData th, #outputData td {
+.grading-table th, .grading-table td {
     border: 1px solid #ddd;
+    padding: 6px;
+    text-align: center;
+}
+
+.grading-table th {
+    background-color: #ecf0f1;
+}
+
+.grading-table input {
+    width: 70px;
     padding: 8px;
-    text-align: right;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
 }
 
-#outputData th {
-    background-color: #f2f2f2;
-    font-size: 0.9rem;
+/* استایل اسلایدر */
+input[type="range"] {
+    width: 100%;
+    margin: 10px 0;
+    accent-color: #e74c3c;
 }
 
-#outputData td {
-    font-size: 0.9rem;
+/* استایل نمودار */
+.chart-container {
+    position: relative;
+    height: 350px;
+    width: 100%;
 }
