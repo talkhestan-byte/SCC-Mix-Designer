@@ -38,12 +38,6 @@ function fullerThompson(D, d, n) {
   if (d >= D) return 100;
   return ((Math.pow(d, n) - Math.pow(0.075, n)) / (Math.pow(D, n) - Math.pow(0.075, n))) * 100;
 }
-
-// ==========================================
-// ۴. توابع رندر
-// ==========================================
-
-// --- گام ۱ ---
 function renderStep1() {
   return `
     <h2>اطلاعات و خواسته‌های اولیه</h2>
@@ -124,9 +118,7 @@ function renderStep1() {
     </div>
     <div class="highlight-box" style="background:#e0f2fe; border-color:#0284c7; color:#075985; margin-top:10px;">رده اسلامپ: <span id="out_slumpClass">SF2</span></div>
   `;
-}
-
-// --- گام ۲ ---
+                               }
 function renderStep2() {
   let headerAggs = '';
   for (let i = 0; i < state.data.aggCount; i++) {
@@ -167,8 +159,6 @@ function renderStep2() {
     </div>
   `;
 }
-
-// --- گام ۳ ---
 function renderStep3() {
   let ratioInputs = '';
   for (let i = 0; i < state.data.aggCount; i++) {
@@ -181,11 +171,9 @@ function renderStep3() {
         <span style="font-weight:bold; color:#1a2a6c; margin-right:5px;">%</span>
       </div>`;
   }
-
   return `
     <h2>سهم‌بندی و انتخاب منحنی</h2>
-    <div class="input-row">
-      <label>انتخاب کاربری (ردیف جدول ۶-۵):</label>
+    <div class="input-row"><label>انتخاب کاربری (ردیف جدول ۶-۵):</label>
       <select id="in_fullerRow">
         <option value="1" ${state.data.fullerRow==='1'?'selected':''}>ردیف ۱</option>
         <option value="2" ${state.data.fullerRow==='2'?'selected':''}>ردیف ۲</option>
@@ -203,53 +191,6 @@ function renderStep3() {
     <p id="chartStatus" style="text-align:center; font-weight:bold; margin-top:10px;"></p>
   `;
 }
-
-// ==========================================
-// منطق زنده گام ۳ (جایگزین بخش stepIndex === 2)
-// ==========================================
-if (stepIndex === 2) {
-  const rowSelect = document.getElementById('in_fullerRow');
-  const errorDiv = document.getElementById('ratio-error');
-
-  const getNRange = (row) => {
-    switch(row) {
-      case '1': return { lower: 0.3, upper: 0.4 };
-      case '2': return { lower: 0.25, upper: 0.35 };
-      case '3': return { lower: 0.2, upper: 0.3 };
-      case '4': return { lower: 0.15, upper: 0.25 };
-      case '5': return { lower: 0.1, upper: 0.2 };
-      default: return { lower: 0.25, upper: 0.35 };
-    }
-  };
-
-  const drawChartStep3 = () => {
-    // ۱. خواندن و ذخیره درصدهای دستی
-    let totalRatio = 0;
-    document.querySelectorAll('.agg-ratio-input').forEach(inp => {
-      const idx = parseInt(inp.dataset.agg);
-      const val = parseFloat(inp.value) || 0;
-      state.data.aggRatios[idx] = val;
-      totalRatio += val;
-    });
-
-    // ۲. بررسی جمع ۱۰۰
-    if (Math.abs(totalRatio - 100) > 0.1) {
-      errorDiv.style.display = 'block';
-      // پاک کردن نمودار قبلی
-      const ctx = document.getElementById('chartStep3').getContext('2d');
-      if (currentChart) currentChart.destroy();
-      document.getElementById('chartStatus').innerText = '';
-      return; // رسم نکن
-    } else {
-      errorDiv.style.display = 'none';
-    }
-
-    const range = getNRange(rowSelect.value);
-    state.data.n_lower = range.lower;
-    state.data.n_upper = range.upper;
-    state.data.n_power = (range.lower + range.upper) / 2;
-    document.getElementById('out_n_range').innerText = `${range.lower} تا ${range.upper}`;
-// --- گام ۴ ---
 function renderStep4() {
   let bulkInputs = '';
   for (let i = 0; i < state.data.aggCount; i++) {
@@ -265,7 +206,7 @@ function renderStep4() {
     <div class="highlight-box">درصد فضای خالی = <span id="out_voidsPercent">0.0</span> %</div>
   `;
 }
-// --- گام ۵ ---
+
 function renderStep5() {
   return `
     <h2>شکل دانه</h2>
@@ -282,7 +223,6 @@ function renderStep5() {
   `;
 }
 
-// --- گام ۶ ---
 function renderStep6() {
   return `
     <h2>حجم خمیر</h2>
@@ -298,16 +238,12 @@ function renderStep6() {
     <div class="highlight-box">حجم خمیر نهایی = <span id="out_vpaste_final">0.0</span> %</div>
   `;
 }
-
 function renderStep7() { return `<h2>گام ۷: آب/سیمان</h2><p>در حال ساخت...</p>`; }
 function renderStep8() { return `<h2>گام ۸: پودر و هوا</h2><p>در حال ساخت...</p>`; }
 function renderStep9() { return `<h2>گام ۹: خروجی</h2><p>در حال ساخت...</p>`; }
 
 const renderFunctions = [renderStep1, renderStep2, renderStep3, renderStep4, renderStep5, renderStep6, renderStep7, renderStep8, renderStep9];
 
-// ==========================================
-// ۵. منطق ناوبری
-// ==========================================
 function updateUI() {
   const tabsContainer = document.getElementById('tabs');
   tabsContainer.innerHTML = steps.map((s, i) => 
@@ -330,17 +266,17 @@ document.getElementById('next').addEventListener('click', () => {
   if (state.currentStep < state.totalSteps - 1) goToStep(state.currentStep + 1);
 });
 // ==========================================
-// ۶. منطق زنده
+// ۴. منطق زنده
 // ==========================================
 function attachStepLogic(stepIndex) {
   if (stepIndex === 0) {
-    // گام ۱
     const fcInput = document.getElementById('in_fc');
     const stdMethodSelect = document.getElementById('in_stdMethod');
     const autoBox = document.getElementById('autoBox');
     const manualBox = document.getElementById('manualBox');
     const fcmFinalInput = document.getElementById('in_fcm_final');
     const getSFromRank = (rank) => rank === 'الف' ? 4 : (rank === 'ج' ? 6 : 5);
+    
     const updateFcm = () => {
       if (state.data.stdDevMethod === 'auto') {
         const s = getSFromRank(document.getElementById('in_workshopRank').value);
@@ -357,6 +293,7 @@ function attachStepLogic(stepIndex) {
         state.data.fcm = parseFloat(fcmFinalInput.value) || 0;
       }
     };
+    
     stdMethodSelect.addEventListener('change', (e) => {
       state.data.stdDevMethod = e.target.value;
       autoBox.style.display = state.data.stdDevMethod === 'auto' ? 'block' : 'none';
@@ -367,12 +304,11 @@ function attachStepLogic(stepIndex) {
     document.getElementById('in_workshopRank').addEventListener('change', updateFcm);
     document.getElementById('in_manualRank').addEventListener('change', updateFcm);
     fcmFinalInput.addEventListener('input', () => { state.data.fcm = parseFloat(fcmFinalInput.value) || 0; });
+    
     document.getElementById('in_projectName').addEventListener('input', e => state.data.projectName = e.target.value);
     document.getElementById('in_elementType').addEventListener('change', e => state.data.elementType = e.target.value);
-    document.getElementById('in_elementThickness').addEventListener('change', e => { state.data.elementThickness = e.target.value; updateSlump(); });
-    document.getElementById('in_horizontalDistance').addEventListener('change', e => { state.data.horizontalDistance = e.target.value; updateSlump(); });
     document.getElementById('in_maxAggSize').addEventListener('change', e => state.data.maxAggSize = parseFloat(e.target.value));
-    document.getElementById('in_rebarDensity').addEventListener('change', e => { state.data.rebarDensity = e.target.value; updateSlump(); });
+    
     const updateSlump = () => {
       const rebar = state.data.rebarDensity, thickness = state.data.elementThickness, distance = state.data.horizontalDistance;
       let slump = 'SF1';
@@ -382,12 +318,16 @@ function attachStepLogic(stepIndex) {
       state.data.slumpClass = slump;
       document.getElementById('out_slumpClass').innerText = slump;
     };
+    
+    document.getElementById('in_elementThickness').addEventListener('change', e => { state.data.elementThickness = e.target.value; updateSlump(); });
+    document.getElementById('in_horizontalDistance').addEventListener('change', e => { state.data.horizontalDistance = e.target.value; updateSlump(); });
+    document.getElementById('in_rebarDensity').addEventListener('change', e => { state.data.rebarDensity = e.target.value; updateSlump(); });
+    
     updateFcm();
     updateSlump();
   }
 
   if (stepIndex === 1) {
-    // گام ۲
     if (state.data.aggregates.length === 0) {
       for (let i = 0; i < 4; i++) state.data.aggregates.push({ name: `سنگدانه ${i+1}`, ssd: 2650, absorption: 1.5, passes: {} });
     }
@@ -410,8 +350,8 @@ function attachStepLogic(stepIndex) {
   }
 
   if (stepIndex === 2) {
-    // گام ۳
     const rowSelect = document.getElementById('in_fullerRow');
+    const errorDiv = document.getElementById('ratio-error');
     const getNRange = (row) => {
       switch(row) {
         case '1': return { lower: 0.3, upper: 0.4 };
@@ -423,41 +363,91 @@ function attachStepLogic(stepIndex) {
       }
     };
     const drawChartStep3 = () => {
+      let totalRatio = 0;
+      document.querySelectorAll('.agg-ratio-input').forEach(inp => {
+        const idx = parseInt(inp.dataset.agg);
+        const val = parseFloat(inp.value) || 0;
+        state.data.aggRatios[idx] = val;
+        totalRatio += val;
+      });
+      
+      if (Math.abs(totalRatio - 100) > 0.1) {
+        errorDiv.style.display = 'block';
+        const ctx = document.getElementById('chartStep3').getContext('2d');
+        if (currentChart) currentChart.destroy();
+        document.getElementById('chartStatus').innerText = '';
+        return;
+      } else {
+        errorDiv.style.display = 'none';
+      }
+      
       const range = getNRange(rowSelect.value);
-      state.data.n_lower = range.lower; state.data.n_upper = range.upper;
+      state.data.n_lower = range.lower;
+      state.data.n_upper = range.upper;
       state.data.n_power = (range.lower + range.upper) / 2;
       document.getElementById('out_n_range').innerText = `${range.lower} تا ${range.upper}`;
-      document.querySelectorAll('.agg-ratio-slider').forEach(inp => {
-        const idx = parseInt(inp.dataset.agg);
-        state.data.aggRatios[idx] = parseFloat(inp.value) || 0;
-        document.getElementById(`ratio-val-${idx}`).innerText = state.data.aggRatios[idx] + '%';
-      });
-      const xLabels = sieveLabels;
-      const userCurve = sieves.map(s => {
-        let combined = 0, totalRatio = 0;
+      
+      const reversedSieves = [...sieves].reverse();
+      const reversedLabels = [...sieveLabels].reverse();
+      
+      const userCurve = [];
+      let reached100 = false;
+      reversedSieves.forEach(s => {
+        if (reached100) { userCurve.push(null); return; }
+        let combined = 0;
         for (let i = 0; i < state.data.aggCount; i++) {
-          const ratio = state.data.aggRatios[i] || 0;
-          combined += (ratio / 100) * (state.data.aggregates[i].passes[s] || 0);
-          totalRatio += ratio;
+          combined += (state.data.aggRatios[i] / 100) * (state.data.aggregates[i].passes[s] || 0);
         }
-        return totalRatio > 0 ? (combined / totalRatio) * 100 : 0;
+        const val = Math.min(100, combined);
+        userCurve.push(val);
+        if (val >= 99.9) reached100 = true;
       });
-      const idealLower = sieves.map(s => fullerThompson(state.data.maxAggSize, s, range.lower));
-      const idealUpper = sieves.map(s => fullerThompson(state.data.maxAggSize, s, range.upper));
+      
+      const idealLower = [], idealUpper = [];
+      let lowerReached100 = false, upperReached100 = false;
+      reversedSieves.forEach(s => {
+        if (lowerReached100) idealLower.push(null);
+        else {
+          const val = fullerThompson(state.data.maxAggSize, s, range.lower);
+          idealLower.push(val);
+          if (val >= 99.9) lowerReached100 = true;
+        }
+        if (upperReached100) idealUpper.push(null);
+        else {
+          const val = fullerThompson(state.data.maxAggSize, s, range.upper);
+          idealUpper.push(val);
+          if (val >= 99.9) upperReached100 = true;
+        }
+      });
+      
       const ctx = document.getElementById('chartStep3').getContext('2d');
       if (currentChart) currentChart.destroy();
       currentChart = new Chart(ctx, {
         type: 'line',
-        data: { labels: xLabels, datasets: [
-          { label: `کران پایین (n=${range.lower})`, data: idealLower, borderColor: '#e74c3c', borderDash: [5, 5], borderWidth: 2, pointRadius: 0 },
-          { label: `کران بالا (n=${range.upper})`, data: idealUpper, borderColor: '#e74c3c', borderDash: [5, 5], borderWidth: 2, pointRadius: 0 },
-          { label: 'منحنی ترکیبی', data: userCurve, borderColor: '#2980b9', backgroundColor: 'rgba(41, 128, 185, 0.1)', borderWidth: 3, pointRadius: 4, fill: true }
-        ]},
-        options: { responsive: true, maintainAspectRatio: false, scales: { x: { title: { display: false } }, y: { min: 0, max: 100, title: { display: true, text: 'عبوری (%)' } } }, plugins: { legend: { labels: { font: { size: 10 } } } } }
+        data: {
+          labels: reversedLabels,
+          datasets: [
+            { label: `کران پایین (n=${range.lower})`, data: idealLower, borderColor: '#e74c3c', borderDash: [5, 5], borderWidth: 2, pointRadius: 0, tension: 0.1, spanGaps: false },
+            { label: `کران بالا (n=${range.upper})`, data: idealUpper, borderColor: '#e74c3c', borderDash: [5, 5], borderWidth: 2, pointRadius: 0, tension: 0.1, spanGaps: false },
+            { label: 'منحنی ترکیبی', data: userCurve, borderColor: '#2980b9', backgroundColor: 'rgba(41, 128, 185, 0.1)', borderWidth: 3, pointRadius: 0, fill: true, tension: 0.1, spanGaps: false }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: {
+            x: { title: { display: false }, ticks: { font: { size: 9 }, autoSkip: false, maxRotation: 45, minRotation: 45 } },
+            y: { min: 0, max: 100, title: { display: true, text: 'درصد عبوری (%)', font: { size: 10 } }, ticks: { font: { size: 10 } } }
+          },
+          plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 12 } } }
+        }
       });
+      
       let insideCount = 0, totalCount = 0;
       userCurve.forEach((val, i) => {
-        if (idealLower[i] > 5 && idealLower[i] < 95) { totalCount++; if (val >= idealLower[i] - 5 && val <= idealUpper[i] + 5) insideCount++; }
+        if (val !== null && idealLower[i] !== null && idealLower[i] > 5 && idealLower[i] < 95) {
+          totalCount++;
+          if (val >= idealLower[i] - 5 && val <= idealUpper[i] + 5) insideCount++;
+        }
       });
       const matchRatio = totalCount > 0 ? (insideCount / totalCount) * 100 : 0;
       const statusEl = document.getElementById('chartStatus');
@@ -466,12 +456,11 @@ function attachStepLogic(stepIndex) {
       else { statusEl.innerHTML = `❌ تطبیق ضعیف (${matchRatio.toFixed(0)}%)`; statusEl.style.color = '#e74c3c'; }
     };
     rowSelect.addEventListener('change', drawChartStep3);
-    document.querySelectorAll('.agg-ratio-slider').forEach(inp => inp.addEventListener('input', drawChartStep3));
+    document.querySelectorAll('.agg-ratio-input').forEach(inp => inp.addEventListener('input', drawChartStep3));
     drawChartStep3();
   }
 
   if (stepIndex === 3) {
-    // گام ۴
     const calculateVoids = () => {
       let weightedSSD = 0, weightedBulk = 0, totalRatio = 0;
       document.querySelectorAll('.bulk-input').forEach(inp => {
@@ -500,16 +489,13 @@ function attachStepLogic(stepIndex) {
   }
 
   if (stepIndex === 4) {
-    // گام ۵
-    const rsaSelect = document.getElementById('in_rsa');
-    rsaSelect.addEventListener('change', (e) => {
+    document.getElementById('in_rsa').addEventListener('change', (e) => {
       state.data.rs_a = parseInt(e.target.value);
       document.getElementById('out_rsa_display').innerText = state.data.rs_a;
     });
   }
 
   if (stepIndex === 5) {
-    // گام ۶
     const sccTypeSelect = document.getElementById('in_sccType');
     const calculateVpaste = () => {
       state.data.sccType = sccTypeSelect.value;
@@ -532,6 +518,6 @@ function attachStepLogic(stepIndex) {
 }
 
 // ==========================================
-// ۷. شروع برنامه
+// ۵. شروع برنامه
 // ==========================================
 updateUI();
