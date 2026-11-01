@@ -423,25 +423,69 @@ function attachStepLogic(stepIndex) {
       const ctx = document.getElementById('chartStep3').getContext('2d');
       if (currentChart) currentChart.destroy();
       currentChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: reversedLabels,
-          datasets: [
-            { label: `کران پایین (n=${range.lower})`, data: idealLower, borderColor: '#e74c3c', borderDash: [5, 5], borderWidth: 2, pointRadius: 0, tension: 0.1, spanGaps: false },
-            { label: `کران بالا (n=${range.upper})`, data: idealUpper, borderColor: '#e74c3c', borderDash: [5, 5], borderWidth: 2, pointRadius: 0, tension: 0.1, spanGaps: false },
-            { label: 'منحنی ترکیبی', data: userCurve, borderColor: '#2980b9', backgroundColor: 'rgba(41, 128, 185, 0.1)', borderWidth: 3, pointRadius: 0, fill: true, tension: 0.1, spanGaps: false }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          scales: {
-            x: { title: { display: false }, ticks: { font: { size: 9 }, autoSkip: false, maxRotation: 45, minRotation: 45 } },
-            y: { min: 0, max: 100, title: { display: true, text: 'درصد عبوری (%)', font: { size: 10 } }, ticks: { font: { size: 10 } } }
+  type: 'line',
+  data: {
+    datasets: [
+      { 
+        label: `کران پایین (n=${range.lower})`, 
+        data: reversedSieves.map((s, i) => ({ x: s, y: idealLower[i] })).filter(p => p.y !== null),
+        borderColor: '#e74c3c', 
+        borderDash: [5, 5], 
+        borderWidth: 2, 
+        pointRadius: 0, 
+        tension: 0.1 
+      },
+      { 
+        label: `کران بالا (n=${range.upper})`, 
+        data: reversedSieves.map((s, i) => ({ x: s, y: idealUpper[i] })).filter(p => p.y !== null),
+        borderColor: '#e74c3c', 
+        borderDash: [5, 5], 
+        borderWidth: 2, 
+        pointRadius: 0, 
+        tension: 0.1 
+      },
+      { 
+        label: 'منحنی ترکیبی', 
+        data: reversedSieves.map((s, i) => ({ x: s, y: userCurve[i] })).filter(p => p.y !== null),
+        borderColor: '#2980b9', 
+        backgroundColor: 'rgba(41, 128, 185, 0.1)', 
+        borderWidth: 3, 
+        pointRadius: 0, 
+        fill: true, 
+        tension: 0.1 
+      }
+    ]
+  },
+  options: {
+    responsive: true, 
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        type: 'logarithmic',
+        title: { display: false },
+        ticks: {
+          callback: function(value) {
+            const labelMap = {0.075: '#200', 0.15: '#100', 0.3: '#50', 0.6: '#30', 1.18: '#16', 2.36: '#8', 4.75: '#4', 9.5: '3/8', 12.5: '1/2', 19: '3/4', 25: '1', 37.5: '1.1/2'};
+            return labelMap[value] || '';
           },
-          plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 12 } } }
+          font: { size: 9 },
+          autoSkip: false,
+          maxRotation: 45,
+          minRotation: 45
         }
-      });
-      
+      },
+      y: {
+        min: 0,
+        max: 100,
+        title: { display: true, text: 'درصد عبوری (%)', font: { size: 10 } },
+        ticks: { font: { size: 10 } }
+      }
+    },
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 12 } }
+    }
+  }
+});
       let insideCount = 0, totalCount = 0;
       userCurve.forEach((val, i) => {
         if (val !== null && idealLower[i] !== null && idealLower[i] > 5 && idealLower[i] < 95) {
