@@ -1,41 +1,73 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; }
-body { background-color: #f4f7f6; color: #333; line-height: 1.6; }
-header { background-color: #123e59; color: white; text-align: center; padding: 20px 10px; border-bottom: 4px solid #e74c3c; }
+body { 
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); 
+  background-attachment: fixed;
+  color: #1e293b; line-height: 1.6; min-height: 100vh; 
+}
+header { 
+  background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(10px); 
+  border-bottom: 1px solid rgba(255,255,255,0.5); 
+  color: white; text-align: center; padding: 20px 10px; 
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
 header h1 { font-size: 1.2rem; }
-main { padding: 15px; max-width: 600px; margin: 0 auto; }
+main { padding: 15px; max-width: 650px; margin: 0 auto; }
 
-/* نوار تب‌ها */
-#tabs { display: flex; overflow-x: auto; gap: 5px; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
+#tabs { display: flex; overflow-x: auto; gap: 6px; padding: 10px 0; scrollbar-width: none; }
 #tabs::-webkit-scrollbar { display: none; }
-.tab-btn { flex: 0 0 auto; padding: 8px 12px; border: 1px solid #cbd5e1; background: #fff; border-radius: 20px; font-size: 0.8rem; cursor: pointer; color: #64748b; }
-.tab-btn.active { background: #e74c3c; color: white; border-color: #e74c3c; font-weight: bold; }
+.tab-btn { 
+  flex: 0 0 auto; padding: 8px 14px; border: 1px solid rgba(255,255,255,0.6); 
+  background: rgba(255,255,255,0.3); backdrop-filter: blur(5px);
+  border-radius: 20px; font-size: 0.8rem; cursor: pointer; color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: all 0.3s;
+}
+.tab-btn.active { 
+  background: linear-gradient(180deg, #fff, #e2e8f0); color: #1a2a6c; 
+  font-weight: bold; border-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8);
+}
 
-/* محتوای صفحه */
-#screen { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); min-height: 400px; }
+#screen { 
+  background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); 
+  border: 1px solid rgba(255,255,255,0.9); border-radius: 15px; 
+  padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); 
+  min-height: 400px; 
+}
+#screen h2 { font-size: 1.1rem; color: #1a2a6c; margin-bottom: 15px; border-bottom: 2px solid #fdbb2d; padding-bottom: 8px; }
+#screen h3 { font-size: 0.95rem; color: #b21f1f; margin: 15px 0 10px; }
 
-/* فرم‌ها */
-.input-group { margin-bottom: 15px; }
-.input-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; font-weight: bold; color: #1e293b; }
-.input-group input, .input-group select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; background-color: #f8fafc; }
-.input-group input:focus, .input-group select:focus { outline: none; border-color: #3b82f6; background-color: white; }
+/* ورودی‌ها */
+.input-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; }
+.input-row label { flex: 1; font-size: 0.9rem; font-weight: bold; color: #334155; }
+.input-row input, .input-row select { flex: 1; max-width: 55%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background: #fff; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); }
+.input-row input:focus, .input-row select:focus { outline: none; border-color: #1a2a6c; box-shadow: 0 0 0 3px rgba(26,42,108,0.2); }
 
-/* جداول */
-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
-th, td { border: 1px solid #e2e8f0; padding: 8px; text-align: center; }
-th { background-color: #f1f5f9; color: #334155; }
-input[type="number"] { width: 70px; padding: 6px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; }
+/* جعبه‌ها */
+.highlight-box { 
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,240,240,0.7));
+  border: 1px solid rgba(255,255,255,0.8); border-radius: 10px; 
+  padding: 12px; margin: 10px 0; font-weight: bold; text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+  color: #1e293b;
+}
+.note { font-size: 0.8rem; color: #475569; margin-bottom: 10px; }
+
+/* جدول دانه‌بندی */
+.grading-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.8rem; background: #fff; border-radius: 8px; overflow: hidden; }
+.grading-table th, .grading-table td { border: 1px solid #e2e8f0; padding: 8px; text-align: center; }
+.grading-table th { background: #1a2a6c; color: #fff; font-weight: bold; }
+.grading-table input { width: 100%; padding: 6px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; }
 
 /* نمودار */
-.chart-container { position: relative; height: 300px; width: 100%; margin-top: 15px; }
+.chart-container { position: relative; height: 320px; width: 100%; margin-top: 15px; }
 
 /* دکمه‌ها */
-.actions { display: flex; justify-content: space-between; margin-top: 20px; }
-.actions button { padding: 12px 20px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; }
-#prev { background-color: #e2e8f0; color: #475569; }
-#next { background-color: #10b981; color: white; }
-#prev:disabled, #next:disabled { opacity: 0.5; cursor: not-allowed; }
-
-/* استایل‌های اختصاصی */
-.highlight-box { background: #fef2f2; border-right: 4px solid #e74c3c; padding: 15px; margin: 15px 0; border-radius: 8px; font-weight: bold; color: #991b1b; text-align: center; font-size: 1.1rem; }
-.note { font-size: 0.8rem; color: #64748b; margin-top: 5px; display: block; }
-.image-placeholder { width: 100%; height: 150px; background: #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.9rem; margin: 10px 0; }
+.actions { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
+.actions button { 
+  flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; 
+  cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: all 0.2s;
+}
+#prev { background: linear-gradient(180deg, #e2e8f0, #cbd5e1); color: #475569; }
+#next { background: linear-gradient(180deg, #10b981, #059669); color: white; }
+.actions button:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+.actions button:disabled { opacity: 0.5; cursor: not-allowed; }
