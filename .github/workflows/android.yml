@@ -5,6 +5,10 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+# این خط به گردش کار اجازه نوشتن (ساخت Release) می‌دهد
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build APK
