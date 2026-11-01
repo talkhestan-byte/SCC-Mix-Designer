@@ -23,7 +23,7 @@ jobs:
         run: npm install
 
       - name: Initialize Capacitor
-        run: npx cap init "SCC Mix Designer" "com.scc.mixdesigner" --web-dir=www
+        run: npx cap init "SCC Mix Designer" "com.scc.mixdesigner" --web-dir=.
 
       - name: Add Android Platform
         run: npx cap add android
