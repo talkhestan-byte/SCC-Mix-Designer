@@ -174,11 +174,18 @@ function renderStep3() {
   for (let i = 0; i < state.data.aggCount; i++) {
     const agg = state.data.aggregates[i] || { name: `سنگدانه ${i+1}` };
     const ratio = state.data.aggRatios[i] || 0;
-    ratioInputs += `<div class="input-row"><label>${agg.name}:</label><input type="range" class="agg-ratio-slider" data-agg="${i}" min="0" max="100" value="${ratio}" style="max-width:40%;"><span id="ratio-val-${i}" style="font-weight:bold; color:#1a2a6c;">${ratio}%</span></div>`;
+    ratioInputs += `
+      <div class="input-row">
+        <label>${agg.name}:</label>
+        <input type="number" class="agg-ratio-input" data-agg="${i}" min="0" max="100" value="${ratio}" step="1" style="max-width:80px;">
+        <span style="font-weight:bold; color:#1a2a6c; margin-right:5px;">%</span>
+      </div>`;
   }
+
   return `
     <h2>سهم‌بندی و انتخاب منحنی</h2>
-    <div class="input-row"><label>انتخاب کاربری (ردیف جدول ۶-۵):</label>
+    <div class="input-row">
+      <label>انتخاب کاربری (ردیف جدول ۶-۵):</label>
       <select id="in_fullerRow">
         <option value="1" ${state.data.fullerRow==='1'?'selected':''}>ردیف ۱</option>
         <option value="2" ${state.data.fullerRow==='2'?'selected':''}>ردیف ۲</option>
@@ -188,12 +195,60 @@ function renderStep3() {
       </select>
     </div>
     <div class="highlight-box" style="font-size:0.9rem;">محدوده n: <strong id="out_n_range">0.25 تا 0.35</strong></div>
-    <div style="background:#f8fafc; padding:10px; border-radius:8px; margin-bottom:10px;">${ratioInputs}</div>
+    <div style="background:#f8fafc; padding:10px; border-radius:8px; margin-bottom:10px;">
+      ${ratioInputs}
+      <div id="ratio-error" style="color:#e74c3c; font-weight:bold; font-size:0.85rem; margin-top:5px; display:none;">⚠️ جمع درصدها باید ۱۰۰ باشد.</div>
+    </div>
     <div class="chart-container"><canvas id="chartStep3"></canvas></div>
     <p id="chartStatus" style="text-align:center; font-weight:bold; margin-top:10px;"></p>
   `;
 }
 
+// ==========================================
+// منطق زنده گام ۳ (جایگزین بخش stepIndex === 2)
+// ==========================================
+if (stepIndex === 2) {
+  const rowSelect = document.getElementById('in_fullerRow');
+  const errorDiv = document.getElementById('ratio-error');
+
+  const getNRange = (row) => {
+    switch(row) {
+      case '1': return { lower: 0.3, upper: 0.4 };
+      case '2': return { lower: 0.25, upper: 0.35 };
+      case '3': return { lower: 0.2, upper: 0.3 };
+      case '4': return { lower: 0.15, upper: 0.25 };
+      case '5': return { lower: 0.1, upper: 0.2 };
+      default: return { lower: 0.25, upper: 0.35 };
+    }
+  };
+
+  const drawChartStep3 = () => {
+    // ۱. خواندن و ذخیره درصدهای دستی
+    let totalRatio = 0;
+    document.querySelectorAll('.agg-ratio-input').forEach(inp => {
+      const idx = parseInt(inp.dataset.agg);
+      const val = parseFloat(inp.value) || 0;
+      state.data.aggRatios[idx] = val;
+      totalRatio += val;
+    });
+
+    // ۲. بررسی جمع ۱۰۰
+    if (Math.abs(totalRatio - 100) > 0.1) {
+      errorDiv.style.display = 'block';
+      // پاک کردن نمودار قبلی
+      const ctx = document.getElementById('chartStep3').getContext('2d');
+      if (currentChart) currentChart.destroy();
+      document.getElementById('chartStatus').innerText = '';
+      return; // رسم نکن
+    } else {
+      errorDiv.style.display = 'none';
+    }
+
+    const range = getNRange(rowSelect.value);
+    state.data.n_lower = range.lower;
+    state.data.n_upper = range.upper;
+    state.data.n_power = (range.lower + range.upper) / 2;
+    document.getElementById('out_n_range').innerText = `${range.lower} تا ${range.upper}`;
 // --- گام ۴ ---
 function renderStep4() {
   let bulkInputs = '';
