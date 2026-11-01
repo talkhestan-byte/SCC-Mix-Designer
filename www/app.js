@@ -87,7 +87,6 @@ function renderStep1() {
         <option value="veryHigh" ${state.data.rebarDensity==='veryHigh'?'selected':''}>فوق‌العاده زیاد</option>
       </select>
     </div>
-
     <h3>مشخصات مقاومت</h3>
     <div class="input-row"><label>مقاومت مشخصه فشاری (MPa):</label><input type="number" id="in_fc" value="${state.data.fc}" min="15" max="50"></div>
     <div class="input-row"><label>روش تعیین انحراف معیار:</label>
@@ -96,7 +95,6 @@ function renderStep1() {
         <option value="manual" ${state.data.stdDevMethod==='manual'?'selected':''}>دستی</option>
       </select>
     </div>
-
     <div id="autoBox" style="display: ${state.data.stdDevMethod === 'auto' ? 'block' : 'none'};">
       <div class="input-row"><label>رتبه کارگاه:</label>
         <select id="in_workshopRank">
@@ -110,7 +108,6 @@ function renderStep1() {
         <div>رابطه ۲: f'cm = f'c + 2.33S - 4 = <span id="out_formula2">0</span></div>
       </div>
     </div>
-
     <div id="manualBox" style="display: ${state.data.stdDevMethod === 'manual' ? 'block' : 'none'};">
       <div class="input-row"><label>رتبه کارگاه:</label>
         <select id="in_manualRank">
@@ -121,7 +118,6 @@ function renderStep1() {
       </div>
       <div class="highlight-box" style="font-size:0.85rem;">مقدار S: <span id="out_manual_s_display">0</span></div>
     </div>
-
     <div class="input-row" style="margin-top:15px; background:#fffbeb; padding:10px; border-radius:8px; border:1px solid #fcd34d;">
       <label style="color:#b45309;">مقاومت هدف نهایی (f'cm) - ورودی:</label>
       <input type="number" id="in_fcm_final" value="${state.data.fcm || 0}" step="0.1">
@@ -130,7 +126,7 @@ function renderStep1() {
   `;
 }
 
-// --- گام ۲ (جدول عمودی) ---
+// --- گام ۲ ---
 function renderStep2() {
   let headerAggs = '';
   for (let i = 0; i < state.data.aggCount; i++) {
@@ -214,7 +210,6 @@ function renderStep4() {
     <div class="highlight-box">درصد فضای خالی = <span id="out_voidsPercent">0.0</span> %</div>
   `;
 }
-
 // --- گام ۵ ---
 function renderStep5() {
   return `
@@ -254,6 +249,7 @@ function renderStep8() { return `<h2>گام ۸: پودر و هوا</h2><p>در �
 function renderStep9() { return `<h2>گام ۹: خروجی</h2><p>در حال ساخت...</p>`; }
 
 const renderFunctions = [renderStep1, renderStep2, renderStep3, renderStep4, renderStep5, renderStep6, renderStep7, renderStep8, renderStep9];
+
 // ==========================================
 // ۵. منطق ناوبری
 // ==========================================
@@ -278,22 +274,18 @@ document.getElementById('prev').addEventListener('click', () => {
 document.getElementById('next').addEventListener('click', () => {
   if (state.currentStep < state.totalSteps - 1) goToStep(state.currentStep + 1);
 });
-
 // ==========================================
 // ۶. منطق زنده
 // ==========================================
 function attachStepLogic(stepIndex) {
-  
-  // ===== گام ۱ =====
   if (stepIndex === 0) {
+    // گام ۱
     const fcInput = document.getElementById('in_fc');
     const stdMethodSelect = document.getElementById('in_stdMethod');
     const autoBox = document.getElementById('autoBox');
     const manualBox = document.getElementById('manualBox');
     const fcmFinalInput = document.getElementById('in_fcm_final');
-
     const getSFromRank = (rank) => rank === 'الف' ? 4 : (rank === 'ج' ? 6 : 5);
-
     const updateFcm = () => {
       if (state.data.stdDevMethod === 'auto') {
         const s = getSFromRank(document.getElementById('in_workshopRank').value);
@@ -310,28 +302,22 @@ function attachStepLogic(stepIndex) {
         state.data.fcm = parseFloat(fcmFinalInput.value) || 0;
       }
     };
-
     stdMethodSelect.addEventListener('change', (e) => {
       state.data.stdDevMethod = e.target.value;
       autoBox.style.display = state.data.stdDevMethod === 'auto' ? 'block' : 'none';
       manualBox.style.display = state.data.stdDevMethod === 'manual' ? 'block' : 'none';
       updateFcm();
     });
-
     fcInput.addEventListener('input', updateFcm);
     document.getElementById('in_workshopRank').addEventListener('change', updateFcm);
     document.getElementById('in_manualRank').addEventListener('change', updateFcm);
-    fcmFinalInput.addEventListener('input', () => {
-      state.data.fcm = parseFloat(fcmFinalInput.value) || 0;
-    });
-
-    // سایر فیلدها
+    fcmFinalInput.addEventListener('input', () => { state.data.fcm = parseFloat(fcmFinalInput.value) || 0; });
     document.getElementById('in_projectName').addEventListener('input', e => state.data.projectName = e.target.value);
     document.getElementById('in_elementType').addEventListener('change', e => state.data.elementType = e.target.value);
-    document.getElementById('in_elementThickness').addEventListener('change', e => state.data.elementThickness = e.target.value);
-    document.getElementById('in_horizontalDistance').addEventListener('change', e => state.data.horizontalDistance = e.target.value);
+    document.getElementById('in_elementThickness').addEventListener('change', e => { state.data.elementThickness = e.target.value; updateSlump(); });
+    document.getElementById('in_horizontalDistance').addEventListener('change', e => { state.data.horizontalDistance = e.target.value; updateSlump(); });
     document.getElementById('in_maxAggSize').addEventListener('change', e => state.data.maxAggSize = parseFloat(e.target.value));
-    
+    document.getElementById('in_rebarDensity').addEventListener('change', e => { state.data.rebarDensity = e.target.value; updateSlump(); });
     const updateSlump = () => {
       const rebar = state.data.rebarDensity, thickness = state.data.elementThickness, distance = state.data.horizontalDistance;
       let slump = 'SF1';
@@ -341,16 +327,12 @@ function attachStepLogic(stepIndex) {
       state.data.slumpClass = slump;
       document.getElementById('out_slumpClass').innerText = slump;
     };
-    document.getElementById('in_rebarDensity').addEventListener('change', e => { state.data.rebarDensity = e.target.value; updateSlump(); });
-    document.getElementById('in_elementThickness').addEventListener('change', () => updateSlump());
-    document.getElementById('in_horizontalDistance').addEventListener('change', () => updateSlump());
-
     updateFcm();
     updateSlump();
   }
-  
-  // ===== گام ۲ =====
+
   if (stepIndex === 1) {
+    // گام ۲
     if (state.data.aggregates.length === 0) {
       for (let i = 0; i < 4; i++) state.data.aggregates.push({ name: `سنگدانه ${i+1}`, ssd: 2650, absorption: 1.5, passes: {} });
     }
@@ -372,8 +354,8 @@ function attachStepLogic(stepIndex) {
     saveData();
   }
 
-  // ===== گام ۳ =====
   if (stepIndex === 2) {
+    // گام ۳
     const rowSelect = document.getElementById('in_fullerRow');
     const getNRange = (row) => {
       switch(row) {
@@ -395,7 +377,6 @@ function attachStepLogic(stepIndex) {
         state.data.aggRatios[idx] = parseFloat(inp.value) || 0;
         document.getElementById(`ratio-val-${idx}`).innerText = state.data.aggRatios[idx] + '%';
       });
-      // استفاده از شماره الک به جای اندازه
       const xLabels = sieveLabels;
       const userCurve = sieves.map(s => {
         let combined = 0, totalRatio = 0;
@@ -434,8 +415,8 @@ function attachStepLogic(stepIndex) {
     drawChartStep3();
   }
 
-  // ===== گام ۴ =====
   if (stepIndex === 3) {
+    // گام ۴
     const calculateVoids = () => {
       let weightedSSD = 0, weightedBulk = 0, totalRatio = 0;
       document.querySelectorAll('.bulk-input').forEach(inp => {
@@ -462,9 +443,9 @@ function attachStepLogic(stepIndex) {
     document.querySelectorAll('.bulk-input').forEach(inp => inp.addEventListener('input', calculateVoids));
     calculateVoids();
   }
-}
-  // ===== گام ۵ =====
+
   if (stepIndex === 4) {
+    // گام ۵
     const rsaSelect = document.getElementById('in_rsa');
     rsaSelect.addEventListener('change', (e) => {
       state.data.rs_a = parseInt(e.target.value);
@@ -472,8 +453,8 @@ function attachStepLogic(stepIndex) {
     });
   }
 
-  // ===== گام ۶ =====
   if (stepIndex === 5) {
+    // گام ۶
     const sccTypeSelect = document.getElementById('in_sccType');
     const calculateVpaste = () => {
       state.data.sccType = sccTypeSelect.value;
@@ -493,8 +474,7 @@ function attachStepLogic(stepIndex) {
     sccTypeSelect.addEventListener('change', calculateVpaste);
     calculateVpaste();
   }
-
-} // پایان تابع attachStepLogic
+}
 
 // ==========================================
 // ۷. شروع برنامه
