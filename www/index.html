@@ -39,7 +39,7 @@ nav button:disabled{background:#9bb3cc;cursor:not-allowed}
 [hidden]{display:none!important}
 .math-card{background:#fff;border:1px solid #d1d9e6;border-radius:8px;padding:12px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.05);overflow-x:auto}
 .math-title{font-size:13px;color:#1f4e79;margin-bottom:8px;font-weight:bold;text-align:right}
-.sm-eq-row{display:flex;align-items:center;justify-content:center;direction:ltr;font-family:"Times New Roman",Times,serif;font-size:12px;flex-wrap:nowrap;white-space:nowrap}
+.sm-eq-row{display:flex;align-items:center;justify-content:center;direction:ltr;font-family:"Times New Roman",Times,serif;font-size:11px;flex-wrap:nowrap;white-space:nowrap;overflow-x:auto}
 .sm-eq-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 2px}
 .sm-eq-frac .num{border-bottom:1px solid #000;padding:0 2px;line-height:1.1;text-align:center}
 .sm-eq-frac .den{padding:0 2px;line-height:1.1;text-align:center}
@@ -243,7 +243,9 @@ R('درصد هوای ناخواسته Va (%)', I('va', '1.5'), 12) +
 '<span class="sm-eq-frac"><span class="num" id="eq-sp">0</span><span class="den" id="eq-rsp">1080</span></span><span>+</span>' +
 '<span class="sm-eq-frac"><span class="num" id="eq-w">0</span><span class="den" id="eq-rw">1000</span></span><span>+</span>' +
 '<span class="sm-eq-frac"><span class="num" id="eq-va">0</span><span class="den" id="eq-rva">100</span></span>' +
-'<span>)</span></div></div>' +
+'<span>) = </span>' +
+'<span style="background:#eef3f9;padding:3px 8px;border-radius:4px;font-weight:bold;color:#1f4e79;" id="eq-assd">-</span>' +
+'</div></div>' +
 '<div class="math-card"><div class="math-title">نتایج نهایی سنگدانه‌ها</div>' +
 '<table class="res-table"><tr><th>پارامتر</th><th>سنگدانه ۱</th><th>سنگدانه ۲</th></tr>' +
 '<tr><td>چگالی نسبی SSD</td><td id="res-dn1">-</td><td id="res-dn2">-</td></tr>' +
@@ -270,17 +272,23 @@ function renderTypeInput(){
   var t = $('ty') ? $('ty').value : 'فقط پودری';
   var oldPowder = $('powder_kg') ? $('powder_kg').value : '0';
   var oldVma = $('vma_pct') ? $('vma_pct').value : '0';
+  var oldRhoP = $('rho_powder') ? $('rho_powder').value : '2650';
+  var oldRhoV = $('rho_vma') ? $('rho_vma').value : '1000';
   if (t === 'فقط پودری') {
-    box.innerHTML = R('مقدار پودر (kg/m³)', I('powder_kg', oldPowder || 0));
+    box.innerHTML = R('مقدار پودر (kg/m³)', I('powder_kg', oldPowder || 0)) +
+                    R('وزن مخصوص پودر (kg/m³)', I('rho_powder', oldRhoP || 2650));
   } else if (t === 'فقط VMA') {
-    box.innerHTML = R('درصد VMA نسبت به سیمان (%)', I('vma_pct', oldVma || 0.1));
+    box.innerHTML = R('درصد VMA نسبت به سیمان (%)', I('vma_pct', oldVma || 0.1)) +
+                    R('وزن مخصوص VMA (kg/m³)', I('rho_vma', oldRhoV || 1000));
   } else {
     box.innerHTML = R('مقدار پودر (kg/m³)', I('powder_kg', oldPowder || 0)) +
-                    R('درصد VMA نسبت به سیمان (%)', I('vma_pct', oldVma || 0.05));
+                    R('وزن مخصوص پودر (kg/m³)', I('rho_powder', oldRhoP || 2650)) +
+                    R('درصد VMA نسبت به سیمان (%)', I('vma_pct', oldVma || 0.05)) +
+                    R('وزن مخصوص VMA (kg/m³)', I('rho_vma', oldRhoV || 1000));
   }
 }
 
-var AU = ['wcE','va','nl','nu','inc','kf','rcr','rc','spd','spr','ceq-kw','powder_kg','vma_pct'];
+var AU = ['wcE','va','nl','nu','inc','kf','rcr','rc','spd','spr','ceq-kw','powder_kg','vma_pct','rho_powder','rho_vma'];
 var MIX = [];
 var guideLines = [];
 
@@ -480,12 +488,14 @@ function calc(){
 
   var powderVol = 0;
   if (ty === 'فقط پودری' || ty === 'ترکیبی') {
-    powderVol = powderKg / (2.65 * 1000);
+    var rhoP = (v('rho_powder') || 2650);
+    powderVol = powderKg / rhoP;
   }
   var VMAkg = 0, vmaVol = 0;
   if (ty === 'فقط VMA' || ty === 'ترکیبی') {
     VMAkg = finalC * vmaPct / 100;
-    vmaVol = VMAkg / (1.0 * 1000);
+    var rhoV = (v('rho_vma') || 1000);
+    vmaVol = VMAkg / rhoV;
   }
 
   var vC = finalC/(rc*1000);
@@ -497,15 +507,16 @@ function calc(){
   if ($('eq-c')) $('eq-c').textContent = f(finalC,2);
   if ($('eq-rc')) $('eq-rc').textContent = 3150;
   if ($('eq-cr')) $('eq-cr').textContent = f(powderKg, 2);
-  if ($('eq-rcr')) $('eq-rcr').textContent = 2650;
+  if ($('eq-rcr')) $('eq-rcr').textContent = (v('rho_powder') || 2650);
   if ($('eq-ma')) $('eq-ma').textContent = f(VMAkg, 2);
-  if ($('eq-rma')) $('eq-rma').textContent = 1000;
+  if ($('eq-rma')) $('eq-rma').textContent = (v('rho_vma') || 1000);
   if ($('eq-sp')) $('eq-sp').textContent = f(SP,2);
   if ($('eq-rsp')) $('eq-rsp').textContent = f(rsp*1000, 0);
   if ($('eq-w')) $('eq-w').textContent = f(finalW,2);
   if ($('eq-rw')) $('eq-rw').textContent = 1000;
   if ($('eq-va')) $('eq-va').textContent = Va;
   if ($('eq-rva')) $('eq-rva').textContent = 100;
+  if ($('eq-assd')) $('eq-assd').textContent = f(Assd, 3) + ' m³';
 
   var VA_total = Assd*1000;
   var dry = 0, ab = 0;
@@ -534,22 +545,29 @@ function calc(){
     var Vj2 = VA_total*(rs[j4]||0)/(sum||1);
     var as2 = Vj2*(dn[j4]||0);
     var d2 = as2/(1+(ac[j4]||0));
-    t += ['شن','ماسه','پودرسنگ'][tp[j4]] + ' ' + j4 + ': V=' + f(Vj2,1) + 'L ، SSD=' + f(as2,0) + ' ، <b>خشک=' + f(d2,0) + '</b><br>';
+    t += ['شن','ماسه','پودرسنگ'][tp[j4]] + ' ' + j4 + ': V=' + f(Vj2/1000,3) + 'm³ ، SSD=' + f(as2,0) + ' ، <b>خشک=' + f(d2,0) + '</b><br>';
   }
   if (powderKg > 0) t += 'پودر سنگ: <b>' + f(powderKg,0) + '</b> kg<br>';
   if (VMAkg > 0) t += 'VMA: <b>' + f(VMAkg,2) + '</b> kg<br>';
   t += '<hr>خشک کل: <b>' + f(dry,0) + '</b> kg<br>سیمان: <b>' + f(finalC,0) + '</b> kg<br>روان‌کننده: <b>' + f(SP,1) + '</b> kg<br>آب آزاد: ' + f(finalW,0) + ' ، <b>آب کل: ' + f(finalW+ab,0) + '</b> (جذب ' + f(ab,0) + ')<br><b>G ≈ ' + f(totalWeight,0) + ' kg/m³</b>';
   if ($('o7')) $('o7').innerHTML = t;
 
-  if ($('cv')) drawAgg();
-  if ($('cw')) drawWC();
+  if (wcUser > 0 && Math.abs(wcUser - wc0) > 0.0005) {
+    guideLines = [{x: wc0}, {x: wcUser}];
+  } else {
+    guideLines = [{x: wc0}];
+  }
+
+  if ($('cv')) setTimeout(drawAgg, 0);
+  if ($('cw')) setTimeout(drawWC, 0);
 }
 
 function drawAgg(){
   try {
     var c = $('cv');
-    if (!c) { return; }
-    var w = c.offsetWidth || c.parentNode.offsetWidth || 600;
+    if (!c) { console.log('[drawAgg] no canvas'); return; }
+    var w = c.offsetWidth || c.clientWidth || 320;
+    if (w < 50) w = 320;
     var h = 320;
     var dpr = window.devicePixelRatio || 2;
     c.width = w*dpr; c.height = h*dpr; c.style.height = h+'px';
@@ -632,6 +650,7 @@ function drawAgg(){
     g.fillStyle = '#e00'; g.font = '10px Tahoma,sans-serif'; g.textAlign = 'left';
     g.fillText('n = ' + nl, 50, 20);
     g.fillText('n = ' + nu, 50, 34);
+    console.log('[drawAgg] OK w=' + w + ' MIX=' + MIX.length + ' D=' + D);
   } catch (err) {
     console.error('[drawAgg] ERROR:', err);
   }
@@ -742,8 +761,14 @@ function goTo(i){
   $('btnPrev').disabled = (i===0);
   $('btnNext').disabled = (i===PG.length-1);
   window.scrollTo(0,0);
-  if (i === 1) setTimeout(drawAgg, 300);
-  if (i === 2) setTimeout(drawWC, 300);
+  if (i === 1) {
+    setTimeout(drawAgg, 100);
+    setTimeout(drawAgg, 400);
+  }
+  if (i === 2) {
+    setTimeout(drawWC, 100);
+    setTimeout(drawWC, 400);
+  }
 }
 
 window.go = goTo;
@@ -763,10 +788,6 @@ function bindAll(){
       if (AU.indexOf(e.target.id) >= 0) e.target.dataset.m = '1';
       if (e.target.id === 'wcE') {
         if ($('wcR')) $('wcR').value = e.target.value;
-        var wcv = v('wcE');
-        if (wcv > 0) {
-          guideLines = [{x: wcv}];
-        }
       }
       if (e.target.id === 'ceq-opt') handleCeqOpt();
       if (e.target.id === 'na') bd();
@@ -788,6 +809,16 @@ function bindAll(){
       }
       if (e.target.id === 'na') bd();
       if (e.target.id === 'ceq-opt') handleCeqOpt();
+      if (e.target.id === 'wcE') {
+        var wcv = v('wcE');
+        var wc0cur = v('wcR');
+        if (wcv > 0 && Math.abs(wcv - wc0cur) > 0.0005) {
+          guideLines = [{x: wc0cur}, {x: wcv}];
+        } else {
+          guideLines = [{x: wc0cur}];
+        }
+        setTimeout(drawWC, 0);
+      }
       calc();
     }
   });
@@ -806,12 +837,12 @@ function bindAll(){
   $('mSave').addEventListener('click', function(){
     var o = {};
     document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(e){ if (e.id) o[e.id] = e.value; });
-    try { localStorage.setItem('scc_v9', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
+    try { localStorage.setItem('scc_v10', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
     $('menu').hidden = true;
   });
   $('mLoad').addEventListener('click', function(){
     var s;
-    try { s = localStorage.getItem('scc_v9'); } catch(err){}
+    try { s = localStorage.getItem('scc_v10'); } catch(err){}
     $('menu').hidden = true;
     if (!s) { alert('طرحی ذخیره نشده'); return; }
     var o = JSON.parse(s);
@@ -842,7 +873,14 @@ function init(){
     calc();
 
     var iw = v('wcE');
-    if (iw > 0) guideLines = [{x: iw}];
+    if (iw > 0) {
+      var wc0cur = v('wcR');
+      if (Math.abs(iw - wc0cur) > 0.0005) {
+        guideLines = [{x: wc0cur}, {x: iw}];
+      } else {
+        guideLines = [{x: wc0cur}];
+      }
+    }
 
     goTo(0);
     setTimeout(function(){ drawAgg(); drawWC(); }, 200);
