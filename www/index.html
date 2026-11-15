@@ -621,10 +621,11 @@ function drawAgg(){
     curve(function(d){ return PW(d, D, nl); }, '#e00', 1.5, [6,3]);
     curve(function(d){ return PW(d, D, nu); }, '#e00', 1.5, [6,3]);
 
-    if (MIX.length) {
+    /* منحنی مخلوط: MIX[i] با SVs[i] متناظر است */
+    if (MIX.length === SVs.length) {
       var pts = [];
       for (var i=0; i<SVs.length; i++) {
-        var val = MIX[10-i];
+        var val = MIX[i];
         if (isFinite(val) && val > 0) pts.push({ x: X(SVs[i][1]), y: Y(val), val: val });
       }
       if (pts.length > 1) {
@@ -716,14 +717,19 @@ function drawWC(){
     if (lastX !== null) labelData.push({ x: lastX, y: lastY, col: cols[k], label: labels[k] });
   });
 
-  /* لیبل‌ها در منتهی‌الیه سمت راست (انتهای پایین هر منحنی) */
+  /* لیبل‌ها: پایین‌ترین (راست‌ترین) نقطهٔ هر منحنی، ۴px پایین‌تر و ۴px به چپ */
   labelData.forEach(function(ld){
     g.fillStyle = ld.col;
     g.font = 'bold 10px Tahoma,sans-serif';
     g.textAlign = 'right';
-    /* 4 پیکسل بالاتر از نقطهٔ انتهای منحنی، کمی به چپ تا از لبهٔ راست بیرون نزند */
-    g.fillText(ld.label, Math.min(ld.x - 3, w - 4), ld.y - 3);
+    g.textBaseline = 'top';
+    var labelX = ld.x - 4;
+    var labelY = ld.y + 4;
+    if (labelX > w - 4) labelX = w - 4;
+    if (labelY > h - 14) labelY = h - 14;
+    g.fillText(ld.label, labelX, labelY);
   });
+  g.textBaseline = 'alphabetic';
 
   var gr = $('cg') ? $('cg').value : '425';
   guideLines.forEach(function(gl){
@@ -841,12 +847,12 @@ function bindAll(){
   $('mSave').addEventListener('click', function(){
     var o = {};
     document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(e){ if (e.id) o[e.id] = e.value; });
-    try { localStorage.setItem('scc_v12', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
+    try { localStorage.setItem('scc_v13', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
     $('menu').hidden = true;
   });
   $('mLoad').addEventListener('click', function(){
     var s;
-    try { s = localStorage.getItem('scc_v12'); } catch(err){}
+    try { s = localStorage.getItem('scc_v13'); } catch(err){}
     $('menu').hidden = true;
     if (!s) { alert('طرحی ذخیره نشده'); return; }
     var o = JSON.parse(s);
