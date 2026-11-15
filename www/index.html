@@ -552,8 +552,8 @@ function calc(){
   t += '<hr>خشک کل: <b>' + f(dry,0) + '</b> kg<br>سیمان: <b>' + f(finalC,0) + '</b> kg<br>روان‌کننده: <b>' + f(SP,1) + '</b> kg<br>آب آزاد: ' + f(finalW,0) + ' ، <b>آب کل: ' + f(finalW+ab,0) + '</b> (جذب ' + f(ab,0) + ')<br><b>G ≈ ' + f(totalWeight,0) + ' kg/m³</b>';
   if ($('o7')) $('o7').innerHTML = t;
 
-  if (wcUser > 0 && Math.abs(wcUser - wc0) > 0.0005) {
-    guideLines = [{x: wc0}, {x: wcUser}];
+  if (wc > 0 && Math.abs(wc - wc0) > 0.0005) {
+    guideLines = [{x: wc0}, {x: wc}];
   } else {
     guideLines = [{x: wc0}];
   }
@@ -565,7 +565,7 @@ function calc(){
 function drawAgg(){
   try {
     var c = $('cv');
-    if (!c) { console.log('[drawAgg] no canvas'); return; }
+    if (!c) { return; }
     var w = c.offsetWidth || c.clientWidth || 320;
     if (w < 50) w = 320;
     var h = 320;
@@ -650,7 +650,6 @@ function drawAgg(){
     g.fillStyle = '#e00'; g.font = '10px Tahoma,sans-serif'; g.textAlign = 'left';
     g.fillText('n = ' + nl, 50, 20);
     g.fillText('n = ' + nu, 50, 34);
-    console.log('[drawAgg] OK w=' + w + ' MIX=' + MIX.length + ' D=' + D);
   } catch (err) {
     console.error('[drawAgg] ERROR:', err);
   }
@@ -837,12 +836,12 @@ function bindAll(){
   $('mSave').addEventListener('click', function(){
     var o = {};
     document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(e){ if (e.id) o[e.id] = e.value; });
-    try { localStorage.setItem('scc_v10', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
+    try { localStorage.setItem('scc_v11', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
     $('menu').hidden = true;
   });
   $('mLoad').addEventListener('click', function(){
     var s;
-    try { s = localStorage.getItem('scc_v10'); } catch(err){}
+    try { s = localStorage.getItem('scc_v11'); } catch(err){}
     $('menu').hidden = true;
     if (!s) { alert('طرحی ذخیره نشده'); return; }
     var o = JSON.parse(s);
