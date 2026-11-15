@@ -18,8 +18,9 @@ h3{margin:6px 2px;font-size:15px;color:#1f4e79}
 .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:4px}
 .r{display:flex;align-items:center;gap:6px;background:#fff;padding:6px;border-radius:6px}
 .r label{flex:1;font-size:13px}
-.r input,.r select{width:92px;padding:5px;font-size:13px}
+.r input,.r select{width:92px;padding:5px;font-size:13px;border:1px solid #ccc;border-radius:4px}
 .r input[readonly]{background:#eef2f7;color:#1f4e79;font-weight:bold}
+.r input:disabled,.r select:disabled{background:#f0f0f0;color:#999}
 .t{font-size:12px;padding:4px 7px;border:1px solid #1f4e79;background:#fff;color:#1f4e79;border-radius:5px;cursor:pointer}
 .o{background:#e8f1fb;padding:8px;border-radius:6px;margin:6px 0;direction:ltr;text-align:left;line-height:1.7;font-size:13px}
 .w{overflow-x:auto;background:#fff;border-radius:6px}
@@ -37,20 +38,38 @@ nav button:disabled{background:#9bb3cc}
 #ts{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 14px;border-radius:16px;z-index:30}
 [hidden]{display:none!important}
 
-/* استایل فرمول و جدول صفحه ۵ */
-.math-card{background:#fff;border:1px solid #d1d9e6;border-radius:8px;padding:20px;margin-bottom:15px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
-.math-title{font-size:15px;color:#1f4e79;margin-bottom:15px;font-weight:bold;text-align:right}
+/* استایل صفحه جدید (مقدار سیمان) */
+.card{background:#fff;border:1px solid #d1d9e6;border-radius:12px;padding:20px;margin-bottom:15px;box-shadow:0 2px 6px rgba(0,0,0,0.05)}
+.card-title{font-size:16px;color:#1f4e79;margin-bottom:15px;font-weight:bold;text-align:right;border-bottom:1px solid #eee;padding-bottom:10px}
 .eq-row{display:flex;align-items:center;justify-content:center;direction:ltr;font-family:"Times New Roman",Times,serif;font-size:18px;flex-wrap:wrap;margin:15px 0}
 .eq-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 6px}
 .eq-frac .num{border-bottom:1.5px solid #000;padding:0 6px;line-height:1.2;text-align:center}
 .eq-frac .den{padding:0 6px;line-height:1.2;text-align:center}
+.val-box{background:#eef3f9;padding:5px 15px;border-radius:6px;font-weight:bold;font-size:18px;color:#1f4e79;min-width:80px;text-align:center}
+.alert-box{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;padding:15px;text-align:right;direction:rtl}
+.alert-title{color:#b71c1c;font-size:14px;margin-bottom:15px;font-weight:bold}
+.alert-sub{font-size:13px;color:#5d4037;margin-bottom:10px}
+.input-group{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:15px}
+.input-group input{width:120px;padding:8px;border:1px solid #ccc;border-radius:6px;text-align:center;font-size:16px}
+.summary-text{text-align:center;font-size:14px;color:#333;margin-bottom:15px}
+.summary-text span{color:#b71c1c;font-weight:bold}
+.select-box{background:#fff;border:2px solid #80cbc4;border-radius:8px;padding:10px 20px;display:inline-block;cursor:pointer;color:#00796b;font-weight:bold}
+select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;padding:10px;font-size:14px;color:#00796b;font-weight:bold;width:100%;max-width:280px;outline:none}
+
+.math-card{background:#fff;border:1px solid #d1d9e6;border-radius:8px;padding:15px;margin-bottom:15px;box-shadow:0 1px 3px rgba(0,0,0,0.05);overflow-x:auto}
+.math-title{font-size:14px;color:#1f4e79;margin-bottom:10px;font-weight:bold;text-align:right}
+.sm-eq-row{display:flex;align-items:center;justify-content:center;direction:ltr;font-family:"Times New Roman",Times,serif;font-size:14px;flex-wrap:nowrap;white-space:nowrap}
+.sm-eq-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 3px}
+.sm-eq-frac .num{border-bottom:1px solid #000;padding:0 3px;line-height:1.1;text-align:center}
+.sm-eq-frac .den{padding:0 3px;line-height:1.1;text-align:center}
+
 .res-table{width:100%;border-collapse:collapse;font-size:13px;text-align:center}
-.res-table th,.res-table td{border:1px solid #d1d9e6;padding:10px}
+.res-table th,.res-table td{border:1px solid #d1d9e6;padding:8px}
 .res-table th{background:#eef3f9;color:#1f4e79;font-weight:bold}
 .res-box{display:flex;gap:10px;justify-content:center;margin-top:15px}
-.res-box div{background:#f4f7fb;border-radius:8px;padding:10px 20px;flex:1;text-align:center;font-weight:bold;color:#1f4e79;border:1px solid #e2e8f0}
-.res-box span{display:block;font-size:12px;color:#555;font-weight:normal;margin-bottom:5px}
-.res-box-final{background:#e1f0fa !important;border-color:#b3d4ed !important;color:#0073e6 !important;font-size:16px;padding:15px !important;margin-top:10px}
+.res-box div{background:#f4f7fb;border-radius:8px;padding:10px;flex:1;text-align:center;font-weight:bold;color:#1f4e79;border:1px solid #e2e8f0}
+.res-box span{display:block;font-size:11px;color:#555;font-weight:normal;margin-bottom:5px}
+.res-box-final{background:#e1f0fa !important;border-color:#b3d4ed !important;color:#0073e6 !important;font-size:15px;padding:12px !important;margin-top:10px}
 
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
 </style>
@@ -73,7 +92,6 @@ nav button:disabled{background:#9bb3cc}
 <div id="ts" hidden></div>
 
 <script>
-/* ================= توابع پایه و تعاریف ================= */
 const $ = id => document.getElementById(id);
 const v = id => { const el = $(id); return el ? parseFloat(el.value) || 0 : 0; };
 const f = (x, d = 1) => isFinite(x) ? (+x).toFixed(d) : '-';
@@ -117,7 +135,7 @@ function fcmFromWcValue(wc, gr, sh, pl) {
 function SV() {
   const o = {};
   document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(e => { if (e.id) o[e.id] = e.value; });
-  try { localStorage.setItem('scc_design_v3', JSON.stringify(o)); toast('طرح ذخیره شد'); } catch (e) { toast('ذخیره ناموفق'); }
+  try { localStorage.setItem('scc_design_v4', JSON.stringify(o)); toast('طرح ذخیره شد'); } catch (e) { toast('ذخیره ناموفق'); }
   $('menu').hidden = true;
 }
 function sv(o) {
@@ -127,7 +145,7 @@ function sv(o) {
   }
 }
 function RS() {
-  let s; try { s = localStorage.getItem('scc_design_v3'); } catch (e) {}
+  let s; try { s = localStorage.getItem('scc_design_v4'); } catch (e) {}
   $('menu').hidden = true;
   if (!s) return toast('طرحی ذخیره نشده');
   const o = JSON.parse(s);
@@ -143,7 +161,7 @@ function SH() {
 }
 const toast = m => { $('ts').textContent = m; $('ts').hidden = false; setTimeout(() => $('ts').hidden = true, 1600); };
 
-/* ================= تعریف جدول‌ها (اتصال به عکس t1 تا t13) ================= */
+/* ================= تعریف جدول‌ها ================= */
 const T = {
 1:['جدول ۶-۱ رده جریان اسلامپ',['رده','جریان (mm)'],[['SF0','450-550'],['SF1','550-650'],['SF2','650-750'],['SF3','750-850']]],
 2:['جدول ۶-۲ بافت دانه‌بندی',['بافت','n'],[['خیلی درشت','0.6-0.67'],['درشت','0.5-0.6'],['متوسط','0.4-0.5'],['ریز','0.3-0.4'],['خیلی ریز','0.2-0.3'],['فوق‌العاده ریز','0.1-0.2']]],
@@ -165,17 +183,15 @@ s4:['جدول ۳-۴ مقاومت سنین مختلف',['نوع سیمان','28',
 d11:['جدول ۱۱-۴ چگالی سیمان‌ها',['نوع','چگالی فرضی'],[['پرتلند 1','3.05-3.10'],['پرتلند 2','3.10-3.15'],['خاکستر بادی','2.2-2.4']]]
 };
 function TB(k) {
-  const t = T[k];
-  if (!t) return;
+  const t = T[k]; if (!t) return;
   const fallbackHTML = `<b>${t[0]}</b><table class="gt" style="width:100%;margin-top:6px"><tr>${t[1].map(x => `<th>${x}</th>`).join('')}</tr>${t[2].map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</table>`;
   $('mb').innerHTML = `<img src="tables/${k}.png" style="width:100%" onerror="this.parentNode.innerHTML=this.parentNode.dataset.h">`;
-  $('mb').dataset.h = fallbackHTML;
-  $('md').hidden = false;
+  $('mb').dataset.h = fallbackHTML; $('md').hidden = false;
 }
 
 /* ================= تعریف صفحات ================= */
 const PG = [
-`<h3>۱) اطلاعات اولیه</h3>
+`<h3>۱) اطلاعات اولیه و مقاومت هدف</h3>
 <div class="g2">
 ${R('مقاومت مشخصه fc (MPa)', I('fc', 35))}
 ${R('رده سیمان', S('cg', [325, 425, 525], 1))}
@@ -188,9 +204,9 @@ ${R('ضخامت قطعه', S('th', ['خیلی نازک', 'نازک', 'نسبتا
 ${R('بافت دانه‌بندی', S('tx', ['خیلی درشت', 'درشت', 'متوسط', 'ریز', 'خیلی ریز', 'فوق‌العاده ریز'], 3), 2)}
 ${R('ردیف کاربرد (توان n)', S('rw', [1, 2, 3, 4, 5], 2), 5)}
 ${R('نوع SCC', S('ty', ['فقط پودری', 'فقط VMA', 'ترکیبی']), 10)}
-</div>`,
+</div>
 
-`<h3>۲) انحراف معیار و مقاومت هدف</h3>
+<h3 style="margin-top:20px">۲) محاسبه مقاومت هدف</h3>
 <div class="g2">
 ${R('روش', S('sm', ['۱) دستی (جدول رتبه کارگاه)', '۲) خودکار (از نتایج نمونه‌ها)', '۳) کارگاه بدون اطلاعات']))}
 <div id="g1">${R('رتبه کارگاه', S('rk', ['الف', 'ب', 'ج']), 's2')}${R('s از جدول ۳-۱ (MPa)', '<b id="sv"></b>', 's1')}</div>
@@ -219,22 +235,63 @@ ${R('مقاومت متناظر (MPa)', `<input id="fcmE" readonly value="">`)}
 <canvas id="cw" height="360"></canvas>
 <div class="o" id="o5"></div>`,
 
-`<h3>۵) فرمول حجم مطلق و نتایج</h3>
+`<h3>۵) تعیین مقدار سیمان</h3>
+<div class="card">
+  <div class="card-title">تعیین مقدار سیمان</div>
+  <div class="eq-row">
+    <span>C = </span>
+    <span class="eq-frac"><span class="num">Wf</span><span class="den">W/C</span></span>
+    <span> = </span>
+    <span class="eq-frac"><span class="num" id="ceq-wf">196.60</span><span class="den" id="ceq-wc">0.450</span></span>
+    <span> = </span>
+    <span class="val-box" id="ceq-c">436.89</span>
+    <span> kg/m³</span>
+  </div>
+</div>
+
+<div class="alert-box">
+  <div class="alert-title">هشدار: سیمان (<span id="ceq-c-raw">436.89</span>) از حد پیش‌فرض (350) بیشتر است.</div>
+  <div class="eq-row" style="margin:10px 0; justify-content:center;">
+    <span>C_new = </span>
+    <span class="eq-frac"><span class="num" id="ceq-c-new-num">209.63</span><span class="den" id="ceq-c-new-den">0.450</span></span>
+    <span> = </span>
+    <span style="color:#b71c1c; font-weight:bold; font-size:20px;" id="ceq-c-new">465.85 kg/m³</span>
+  </div>
+  
+  <div class="input-group">
+    <input type="number" id="ceq-kw" value="1.5" step="any" oninput="U(this)">
+    <span>ضریب اصلاح آب (kg/10kg)</span>
+  </div>
+  
+  <div class="summary-text">
+    سیمان اضافی: <span id="ceq-add-c">86.89</span> kg &nbsp;&nbsp;|&nbsp;&nbsp; آب اضافی: <span id="ceq-add-w">13.03</span> kg
+  </div>
+  
+  <div style="text-align:center; margin-top:15px;">
+    <select class="styled-select" id="ceq-opt" onchange="U(this)">
+      <option value="1">1. نادیده گرفتن و ادامه</option>
+      <option value="2">2. اصلاح بافت دانه‌بندی</option>
+      <option value="3">3. اصلاح نسبت آب به سیمان</option>
+    </select>
+  </div>
+</div>`,
+
+`<h3>۶) فرمول حجم مطلق و نتایج</h3>
 <div class="math-card">
   <div class="math-title">محاسبه حجم مطلق سنگدانه‌ها (Assd)</div>
-  <div class="eq-row">
+  <div class="sm-eq-row">
     <span>Assd = 1 - (</span>
-    <span class="eq-frac"><span class="num" id="eq-c">465.85</span><span class="den" id="eq-rc">3150</span></span>
+    <span class="sm-eq-frac"><span class="num" id="eq-c">465.85</span><span class="den" id="eq-rc">3150</span></span>
     <span>+</span>
-    <span class="eq-frac"><span class="num" id="eq-cr">0.00</span><span class="den" id="eq-rcr">1000</span></span>
+    <span class="sm-eq-frac"><span class="num" id="eq-cr">0.00</span><span class="den" id="eq-rcr">1000</span></span>
     <span>+</span>
-    <span class="eq-frac"><span class="num" id="eq-ma">0.00</span><span class="den" id="eq-rma">1100</span></span>
+    <span class="sm-eq-frac"><span class="num" id="eq-ma">0.00</span><span class="den" id="eq-rma">1100</span></span>
     <span>+</span>
-    <span class="eq-frac"><span class="num" id="eq-sp">0.00</span><span class="den" id="eq-rsp">1000</span></span>
+    <span class="sm-eq-frac"><span class="num" id="eq-sp">0.00</span><span class="den" id="eq-rsp">1000</span></span>
     <span>+</span>
-    <span class="eq-frac"><span class="num" id="eq-w">170</span><span class="den" id="eq-rw">1000</span></span>
+    <span class="sm-eq-frac"><span class="num" id="eq-w">170</span><span class="den" id="eq-rw">1000</span></span>
     <span>+</span>
-    <span class="eq-frac"><span class="num" id="eq-va">1.5</span><span class="den" id="eq-rva">100</span></span>
+    <span class="sm-eq-frac"><span class="num" id="eq-va">1.5</span><span class="den" id="eq-rva">100</span></span>
     <span>)</span>
   </div>
 </div>
@@ -264,7 +321,7 @@ ${R('مقاومت متناظر (MPa)', `<input id="fcmE" readonly value="">`)}
   </div>
 </div>`,
 
-`<h3>۶) مقادیر مصالح در ۱ مترمکعب</h3>
+`<h3>۷) مقادیر مصالح در ۱ مترمکعب</h3>
 <div class="g2">${R('راهنمای اصلاح مخلوط (پس از مخلوط آزمایشی)', '', 13)}</div>
 <div class="o" id="o7"></div>`
 ];
@@ -275,25 +332,32 @@ $('mn').innerHTML = PG.map((h, i) => `<section id="p${i}">${h}</section>`).join(
 $('menuBtn').addEventListener('click', () => { $('menu').hidden = !$('menu').hidden; });
 
 function go(i) {
-  if (i < 0 || i > 5) return;
+  if (i < 0 || i > 6) return;
   pg = i;
   PG.forEach((_, k) => $('p' + k).classList.toggle('on', k == i));
-  $('pn').textContent = (i + 1) + ' / 6';
+  $('pn').textContent = (i + 1) + ' / 7';
   $('menu').hidden = true;
   $('btnPrev').disabled = (i == 0);
-  $('btnNext').disabled = (i == 5);
+  $('btnNext').disabled = (i == 6);
   scrollTo(0, 0);
   if (i == 2) setTimeout(ch, 50);
   if (i == 3) setTimeout(cw, 50);
 }
 
 /* ================= توابع داینامیک ================= */
-const AU = ['wcE', 'Wv', 'va', 'nl', 'nu', 'inc', 'kf', 'rcr', 'rc', 'spd', 'spr'];
+const AU = ['wcE', 'Wv', 'va', 'nl', 'nu', 'inc', 'kf', 'rcr', 'rc', 'spd', 'spr', 'ceq-kw'];
 function U(e) {
   if (AU.includes(e.id)) e.dataset.m = 1;
+  if (e.id === 'pl') {
+    const plVal = $('pl').selectedIndex === 0; // 0 = دارد
+    $('spd').disabled = !plVal;
+    $('spr').disabled = !plVal;
+    if (!plVal) { $('spd').value = 0; $('spr').value = 0; }
+    else { if($('spd').value == 0) $('spd').value = 1; if($('spr').value == 0) $('spr').value = 1.08; }
+  }
   if (/^(cr|tp|dn|ab)\d$|^r\d$|^g\d+_\d$/.test(e.id)) { if ($('Wv')) delete $('Wv').dataset.m; }
   if (e.id == 'na') bd();
-  if (e.id == 'wcE' && $('wcR')) $('wcR').value = e.value;
+  if (e.id == 'wcE' && $('wcR')) { $('wcR').value = e.value; addGuideLine(v('wcE')); }
   calc();
 }
 const A = (id, x, d) => { if ($(id) && !$(id).dataset.m) $(id).value = f(x, d); };
@@ -338,6 +402,7 @@ function bd() {
 
 const PW = (d, D, n) => d >= D ? 100 : d <= .075 ? 0 : 100 * (d ** n - .075 ** n) / (D ** n - .075 ** n);
 let MIX = [], WCP = { x: .5, y: 30, a: 0 };
+let guideLines = []; // آرایه‌ای برای ذخیره خطوط چین راهنما
 
 function calc() {
   if (!$('sm')) return;
@@ -427,30 +492,56 @@ function calc() {
   
   WCP = { x: wc0, y: fcm28, a: aG };
   
-  // تعیین شکستگی برای پیدا کردن مقاومت از منحنی درست
-  const mainSh = aG > 50 ? 1 : 0; // اگر شکستگی > 50% باشد، منحنی شکسته (0 در CI) ملاک است
-  const fcmFromWc = fcmFromWcValue(wc, g, 0, pl); // برای محاسبه دقیق همیشه از C استفاده می‌کنیم
+  const fcmFromWc = fcmFromWcValue(wc, g, 0, pl);
   $('fcmE').value = f(fcmFromWc, 1);
   $('o5').innerHTML = `<b>w/c نهایی = ${f(wc, 3)}</b> ؛ مقاومت متناظر = ${f(fcmFromWc, 1)} MPa`;
   cw();
 
-  /* محاسبات حجم مطلق */
+  /* محاسبات صفحه مقدار سیمان */
   const airMap = { 9.5: 2.25, 12.5: 1.875, 19: 1.5, 25: 1.125, 38: .75 };
   const Va = airMap[D] || 1.5;
   const rc = 3.15;
   const Wd = 170;
   const Cm = Wd / (wc || 0.4);
-  const SP = Cm * (v('spd') / 100);
+  
+  if ($('ceq-wf')) $('ceq-wf').textContent = f(Wd, 2);
+  if ($('ceq-wc')) $('ceq-wc').textContent = f(wc, 3);
+  if ($('ceq-c')) $('ceq-c').textContent = f(Cm, 2);
+  if ($('ceq-c-raw')) $('ceq-c-raw').textContent = f(Cm, 2);
+  
+  let C_new = Cm;
+  if (Cm > 350) {
+    const kw = v('ceq-kw');
+    const addW = kw * (Cm - 350) / 10;
+    const newW = Wd + addW;
+    C_new = newW / wc;
+    
+    if ($('ceq-c-new-num')) $('ceq-c-new-num').textContent = f(newW, 2);
+    if ($('ceq-c-new-den')) $('ceq-c-new-den').textContent = f(wc, 3);
+    if ($('ceq-c-new')) $('ceq-c-new').textContent = f(C_new, 2) + ' kg/m³';
+    if ($('ceq-add-c')) $('ceq-add-c').textContent = f(C_new - Cm, 2);
+    if ($('ceq-add-w')) $('ceq-add-w').textContent = f(addW, 2);
+  } else {
+    if ($('ceq-c-new-num')) $('ceq-c-new-num').textContent = f(Cm, 2);
+    if ($('ceq-c-new-den')) $('ceq-c-new-den').textContent = f(wc, 3);
+    if ($('ceq-c-new')) $('ceq-c-new').textContent = f(Cm, 2) + ' kg/m³';
+    if ($('ceq-add-c')) $('ceq-add-c').textContent = "0.00";
+    if ($('ceq-add-w')) $('ceq-add-w').textContent = "0.00";
+  }
+  
+  const finalC = C_new;
+  const finalW = finalC * wc;
+  const SP = finalC * (v('spd') / 100);
   const rsp = v('spr') || 1.08;
   
-  const vC = Cm / (rc * 1000);
+  const vC = finalC / (rc * 1000);
   const vSP = SP / (rsp * 1000);
-  const vW = Wd / 1000;
+  const vW = finalW / 1000;
   const vA = Va / 100;
   
   const Assd = 1 - (vC + vSP + vW + vA);
   
-  if ($('eq-c')) $('eq-c').textContent = f(Cm, 2);
+  if ($('eq-c')) $('eq-c').textContent = f(finalC, 2);
   if ($('eq-rc')) $('eq-rc').textContent = 3150;
   if ($('eq-cr')) $('eq-cr').textContent = "0.00";
   if ($('eq-rcr')) $('eq-rcr').textContent = 1000;
@@ -458,7 +549,7 @@ function calc() {
   if ($('eq-rma')) $('eq-rma').textContent = 1100;
   if ($('eq-sp')) $('eq-sp').textContent = f(SP, 2);
   if ($('eq-rsp')) $('eq-rsp').textContent = 1000;
-  if ($('eq-w')) $('eq-w').textContent = f(Wd, 2);
+  if ($('eq-w')) $('eq-w').textContent = f(finalW, 2);
   if ($('eq-rw')) $('eq-rw').textContent = 1000;
   if ($('eq-va')) $('eq-va').textContent = Va;
   if ($('eq-rva')) $('eq-rva').textContent = 100;
@@ -482,9 +573,9 @@ function calc() {
     }
   }
   
-  const totalWeight = dry + Cm + SP + Wd + ab;
+  const totalWeight = dry + finalC + SP + finalW + ab;
   if ($('res-Ad')) $('res-Ad').textContent = `kg/m³ ${f(dry, 0)}`;
-  if ($('res-Wt')) $('res-Wt').textContent = `kg/m³ ${f(Wd + ab, 0)}`;
+  if ($('res-Wt')) $('res-Wt').textContent = `kg/m³ ${f(finalW + ab, 0)}`;
   if ($('res-G')) $('res-G').textContent = `kg/m³ ${f(totalWeight, 0)}`;
 
   let t = `V_ASSD = ${f(Assd*1000,1)} dm³<br><hr>`;
@@ -494,7 +585,7 @@ function calc() {
     const d = as / (1 + ac[j]);
     t += `${['شن','ماسه','پودرسنگ'][tp[j]]} ${j}: حجم ${f(Vj,1)} L ؛ SSD ${f(as,0)} ؛ <b>خشک ${f(d,0)} kg</b><br>`;
   }
-  t += `<hr>سنگدانه خشک کل: <b>${f(dry,0)}</b> kg<br>سیمان: <b>${f(Cm,0)}</b> kg<br>فوق‌روان‌کننده: <b>${f(SP,1)}</b> kg<br>آب آزاد: ${f(Wd,0)} kg ؛ <b>آب کل: ${f(Wd+ab,0)}</b> kg (جذب سنگدانه ${f(ab,0)})<br>w/c = ${f(Wd/Cm,3)}<br><b>وزن مخصوص محاسباتی = ${f(totalWeight,0)} kg/m³</b>`;
+  t += `<hr>سنگدانه خشک کل: <b>${f(dry,0)}</b> kg<br>سیمان: <b>${f(finalC,0)}</b> kg<br>فوق‌روان‌کننده: <b>${f(SP,1)}</b> kg<br>آب آزاد: ${f(finalW,0)} kg ؛ <b>آب کل: ${f(finalW+ab,0)}</b> kg (جذب سنگدانه ${f(ab,0)})<br>w/c = ${f(finalW/finalC,3)}<br><b>وزن مخصوص محاسباتی = ${f(totalWeight,0)} kg/m³</b>`;
   if ($('o7')) $('o7').innerHTML = t;
 }
 
@@ -545,24 +636,44 @@ function ch() {
   L(d => PW(d, D, v('nl')), '#e00', 1.2);
   L(d => PW(d, D, v('nu')), '#e00', 1.2);
   
-  let started = false, stopped = false;
+  // منحنی مخلوط: قطع در یک الک مانده به 100
+  let pts = SVs.map((s,i) => ({ x: x(s[1]), y: y(MIX[10-i]), val: MIX[10-i] })).reverse();
+  let stopIdx = -1;
+  for (let i = 0; i < pts.length; i++) {
+    if (pts[i].val >= 99.99) { stopIdx = i; break; }
+  }
+  
   g.beginPath(); g.strokeStyle = '#0645c8'; g.lineWidth = 2.5;
-  SVs.slice().reverse().forEach((s, i) => {
-    const p = MIX[10 - i];
-    if (stopped) return;
-    if (p >= 99.99) { if (!started) { g.moveTo(x(s[1]), y(p)); started = true; } stopped = true; return; }
-    if (!started) { g.moveTo(x(s[1]), y(p)); started = true; }
-    else g.lineTo(x(s[1]), y(p));
-  });
+  let drawn = 0;
+  if (stopIdx !== -1) {
+    // اگر به 100 رسید، تا یک نقطه قبل از آن رسم کن
+    const limit = Math.max(1, stopIdx); 
+    for (let i = 0; i < limit; i++) {
+      if (drawn == 0) g.moveTo(pts[i].x, pts[i].y);
+      else g.lineTo(pts[i].x, pts[i].y);
+      drawn++;
+    }
+  } else {
+    for (let i = 0; i < pts.length; i++) {
+      if (drawn == 0) g.moveTo(pts[i].x, pts[i].y);
+      else g.lineTo(pts[i].x, pts[i].y);
+      drawn++;
+    }
+  }
   g.stroke();
   
-  g.fillStyle = '#0645c8'; stopped = false;
-  SVs.slice().reverse().forEach((s, i) => {
-    if (stopped) return;
-    const p = MIX[10 - i];
-    if (p >= 99.99) { stopped = true; return; }
-    g.beginPath(); g.arc(x(s[1]), y(p), 3.5, 0, 7); g.fill();
-  });
+  g.fillStyle = '#0645c8';
+  const pointLimit = stopIdx !== -1 ? Math.max(1, stopIdx) : pts.length;
+  for (let i = 0; i < pointLimit; i++) {
+    g.beginPath(); g.arc(pts[i].x, pts[i].y, 3.5, 0, 7); g.fill();
+  }
+}
+
+function addGuideLine(wc) {
+  if (wc >= .2 && wc <= .7) {
+    guideLines.push({ x: wc });
+    cw(); // رسم مجدد
+  }
 }
 
 function cw() {
@@ -573,8 +684,9 @@ function cw() {
   const g = c.getContext('2d');
   g.setTransform(dpr, 0, 0, dpr, 0, 0);
   
+  // محور X از 0.2 تا 0.7
   const L = 44, B = 34;
-  const X = q => L + (q - .3) / .25 * (w - L - 14);
+  const X = q => L + (q - .2) / .5 * (w - L - 14);
   const Y = q => h - B - (q - 10) / 60 * (h - B - 12);
   
   g.clearRect(0, 0, w, h);
@@ -588,7 +700,7 @@ function cw() {
   }
   g.textAlign = 'center';
   
-  for (let q = .3; q <= .5501; q += .05) {
+  for (let q = .2; q <= .7001; q += .05) {
     g.beginPath(); g.moveTo(X(q), Y(10)); g.lineTo(X(q), Y(70)); g.stroke();
     g.fillStyle = '#333'; g.fillText(q.toFixed(2), X(q), h - 14);
   }
@@ -597,7 +709,6 @@ function cw() {
   g.font = 'bold 11px Tahoma,sans-serif'; g.fillText('w/c', w / 2, h - 2);
   
   const pl = $('pl').selectedIndex == 0;
-  // ترتیب رسم: 325C, 325R, 425C, 425R, 525C, 525R
   const idxs = [4, 5, 2, 3, 0, 1]; 
   const cols = ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b'];
   const labels = ['325C','325R','425C','425R','525C','525R'];
@@ -610,8 +721,8 @@ function cw() {
     
     g.beginPath(); g.strokeStyle = cols[k]; g.lineWidth = 1.5; g.setLineDash([6, 4]);
     let a = true;
+    // فقط از 0.3 تا 0.55 رسم شود
     for (let q = .3; q <= .5501; q += .002) {
-      if (q < .325 || q > .525) continue;
       const val = yy(q);
       if (val < 10 || val > 70) continue;
       a ? g.moveTo(X(q), Y(val)) : g.lineTo(X(q), Y(val)); a = false;
@@ -624,24 +735,30 @@ function cw() {
     g.fillText(labels[k], lx, ly);
   });
 
-  const wcE = v('wcE');
-  if (wcE >= .3 && wcE <= .55) {
-    const px = wcE;
-    const py = fcmFromWcValue(wcE, $('cg').value, 0, pl);
-    g.setLineDash([5, 4]); g.strokeStyle = '#000'; g.lineWidth = 1.8;
-    g.beginPath(); g.moveTo(L, Y(py)); g.lineTo(X(px), Y(py)); g.lineTo(X(px), Y(10)); g.stroke();
-    g.setLineDash([]);
-    g.fillStyle = '#000'; g.beginPath(); g.arc(X(px), Y(py), 5, 0, 7); g.fill();
-    g.font = 'bold 11px Tahoma,sans-serif'; g.textAlign = 'center';
-    g.fillText(py.toFixed(1), L + 12, Y(py) - 6);
-    g.fillText(px.toFixed(3), X(px) + 15, Y(10) - 6);
-  }
+  // خطوط راهنما (خط‌چین) - قبلی‌ها می‌مانند
+  guideLines.forEach(gl => {
+    if (gl.x >= .2 && gl.x <= .7) {
+      const px = gl.x;
+      const py = fcmFromWcValue(px, $('cg').value, 0, pl);
+      g.setLineDash([5, 4]); g.strokeStyle = '#000'; g.lineWidth = 1.5;
+      g.beginPath(); g.moveTo(L, Y(py)); g.lineTo(X(px), Y(py)); g.lineTo(X(px), Y(10)); g.stroke();
+      g.setLineDash([]);
+      g.fillStyle = '#000'; g.beginPath(); g.arc(X(px), Y(py), 4, 0, 7); g.fill();
+      g.font = 'bold 10px Tahoma,sans-serif'; g.textAlign = 'center';
+      g.fillText(py.toFixed(1), L + 12, Y(py) - 6);
+      g.fillText(px.toFixed(3), X(px) + 15, Y(10) - 6);
+    }
+  });
 }
 
 /* ================= شروع ================= */
 window.addEventListener('DOMContentLoaded', () => {
   bd();
   calc();
+  // خط راهنمای اولیه بر اساس wc محاسبه‌شده
+  const initWc = v('wcE');
+  if (initWc > 0) guideLines.push({ x: initWc });
+  cw();
   go(0);
 });
 window.addEventListener('resize', () => { ch(); cw(); });
