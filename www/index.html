@@ -56,7 +56,7 @@ nav button:disabled{background:#9bb3cc;cursor:not-allowed}
 .input-group input{width:120px;padding:8px;border:1px solid #ccc;border-radius:6px;text-align:center;font-size:16px}
 .summary-text{text-align:center;font-size:14px;color:#333;margin-bottom:15px}
 .summary-text span{color:#b71c1c;font-weight:bold}
-select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;padding:10px;font-size:14px;color:#00796b;font-weight:bold;width:100%;max-width:280px;outline:none}
+select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;padding:10px;font-size:14px;color:#00796b;font-weight:bold;width:100%;max-width:340px;outline:none}
 .res-table{width:100%;border-collapse:collapse;font-size:13px;text-align:center}
 .res-table th,.res-table td{border:1px solid #d1d9e6;padding:8px}
 .res-table th{background:#eef3f9;color:#1f4e79;font-weight:bold}
@@ -85,12 +85,14 @@ select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;
 <div id="ts" hidden></div>
 
 <script>
+/* pg باید گلوبال باشد تا onclick دکمه‌ها ببیندش */
 var pg = 0;
 </script>
 <script>
 (function(){
 'use strict';
 
+/* ================= helpers ================= */
 function $(id){ return document.getElementById(id); }
 function v(id){ var el = $(id); return el ? (parseFloat(el.value) || 0) : 0; }
 function f(x, d){ d = (d === undefined) ? 1 : d; return isFinite(x) ? (+x).toFixed(d) : '-'; }
@@ -98,6 +100,7 @@ function R(l, h, t){ return '<div class="r"><label>'+l+'</label>'+h+(t ? ' <butt
 function I(id, val, extra){ val = val === undefined ? '' : val; extra = extra || ''; return '<input id="'+id+'" type="number" step="any" value="'+val+'" data-u="1" '+extra+'>'; }
 function S(id, o, sel){ sel = sel || 0; return '<select id="'+id+'" data-u="1">' + o.map(function(x,i){ return '<option'+(i==sel?' selected':'')+'>'+x+'</option>'; }).join('') + '</select>'; }
 
+/* ================= constants ================= */
 var SVs = [["1½",38.1],["1",25],["¾",19],["½",12.5],["⅜",9.5],["4",4.75],["8",2.36],["16",1.18],["30",.6],["50",.3],["100",.15]];
 var FMI = [0,2,4,5,6,7,8,9,10];
 var N5 = [[.4,.3],[.35,.25],[.3,.2],[.25,.15],[.2,.1]];
@@ -105,6 +108,7 @@ var NP = [[573.91,-984.34,435.71,4.4767],[545.45,-894.81,369.48,13.818],[525.25,
 var QP = [[0,43.589,-173.59,124.01],[0,80.04,-207,126.63],[0,119.86,-240.12,130.32],[0,123.42,-234.33,122.57],[0,126.73,-228.34,116.36],[0,107.59,-198.24,102.72]];
 var CI = {'525':0,'425':2,'325':4};
 function ST(c,x){ return ((c[0]*x+c[1])*x+c[2])*x+c[3]; }
+
 function wcOf(y, g, sh, pl){
   var c = (pl ? QP : NP)[CI[g] + sh];
   var lo = .3, hi = .55;
@@ -116,6 +120,7 @@ function wcOf(y, g, sh, pl){
   }
   return (lo + hi) / 2;
 }
+
 var _fc = {};
 function fcmFromWc(wc, gr, sh, pl){
   var k = wc.toFixed(3) + '_' + gr + '_' + sh + '_' + pl;
@@ -129,6 +134,7 @@ function fcmFromWc(wc, gr, sh, pl){
   return _fc[k];
 }
 
+/* ================= tables ================= */
 var T = {
 1:['جدول ۶-۱ رده جریان اسلامپ',['رده','جریان (mm)'],[['SF0','450-550'],['SF1','550-650'],['SF2','650-750'],['SF3','750-850']]],
 2:['جدول ۶-۲ بافت دانه‌بندی',['بافت','n'],[['خیلی درشت','0.6-0.67'],['درشت','0.5-0.6'],['متوسط','0.4-0.5'],['ریز','0.3-0.4'],['خیلی ریز','0.2-0.3'],['فوق‌العاده ریز','0.1-0.2']]],
@@ -162,6 +168,7 @@ function openTable(k){
   $('md').hidden = false;
 }
 
+/* ================= pages ================= */
 var PG = [
 '<h3>۱) اطلاعات اولیه و مقاومت هدف</h3>' +
 '<div class="g2">' +
@@ -175,7 +182,8 @@ R('تراکم میلگرد', S('rb', ['خیلی کم', 'کم', 'متوسط', 'ز
 R('ضخامت قطعه', S('th', ['خیلی نازک', 'نازک', 'نسبتاً نازک', 'نیمه ضخیم', 'ضخیم', 'بسیار ضخیم'], 2), 4) +
 R('بافت دانه‌بندی', S('tx', ['خیلی درشت', 'درشت', 'متوسط', 'ریز', 'خیلی ریز', 'فوق‌العاده ریز'], 3), 2) +
 R('ردیف کاربرد (توان n)', S('rw', [1, 2, 3, 4, 5], 2), 5) +
-R('نوع SCC', S('ty', ['فقط پودری', 'فقط VMA', 'ترکیبی']), 10) +
+R('نوع SCC', S('ty', ['فقط پودری', 'فقط VMA', 'ترکیبی'])) +
+'<div id="extra-input"></div>' +
 '</div>' +
 '<h3 style="margin-top:20px">۲) محاسبه مقاومت هدف</h3>' +
 '<div class="g2">' +
@@ -212,13 +220,20 @@ R('مقاومت متناظر (MPa)', '<input id="fcmE" readonly value="">') +
 '<div class="eq-row"><span>C = </span>' +
 '<span class="eq-frac"><span class="num" id="ceq-wf">0</span><span class="den" id="ceq-wc">0</span></span>' +
 '<span> = </span><span class="val-box" id="ceq-c">0</span><span> kg/m³</span></div></div>' +
-'<div class="alert-box">' +
+'<div id="cement-warn" class="alert-box" hidden>' +
 '<div class="alert-title">هشدار: سیمان (<span id="ceq-c-raw">0</span>) از حد پیش‌فرض (350) بیشتر است.</div>' +
 '<div class="eq-row" style="margin:10px 0; justify-content:center;"><span>C_new = </span>' +
 '<span class="eq-frac"><span class="num" id="ceq-c-new-num">0</span><span class="den" id="ceq-c-new-den">0</span></span>' +
 '<span> = </span><span style="color:#b71c1c;font-weight:bold;font-size:20px;" id="ceq-c-new">0 kg/m³</span></div>' +
 '<div class="input-group"><input type="number" id="ceq-kw" value="1.5" step="any" data-u="1"><span>ضریب اصلاح آب (kg/10kg)</span></div>' +
 '<div class="summary-text">سیمان اضافی: <span id="ceq-add-c">0</span> kg &nbsp;|&nbsp; آب اضافی: <span id="ceq-add-w">0</span> kg</div>' +
+'<div style="text-align:center;margin-top:15px;">' +
+'<select class="styled-select" id="ceq-opt" data-u="1">' +
+'<option value="1">1. نادیده گرفتن و ادامه</option>' +
+'<option value="2">2. اصلاح بافت دانه‌بندی</option>' +
+'<option value="3">3. اصلاح نسبت آب به سیمان</option>' +
+'</select></div>' +
+'<div style="text-align:center;margin-top:12px;font-size:12px;color:#555;" id="ceq-hint"></div>' +
 '</div>',
 
 '<h3>۶) فرمول حجم مطلق و نتایج</h3>' +
@@ -251,9 +266,27 @@ function buildPages(){
   $('mn').innerHTML = PG.map(function(h,i){ return '<section id="p'+i+'">'+h+'</section>'; }).join('');
 }
 
-var AU = ['wcE','va','nl','nu','inc','kf','rcr','rc','spd','spr','ceq-kw'];
+/* ================= dynamic type input ================= */
+function renderTypeInput(){
+  var box = $('extra-input');
+  if (!box) return;
+  var t = $('ty') ? $('ty').value : 'فقط پودری';
+  var oldPowder = $('powder_kg') ? $('powder_kg').value : '0';
+  var oldVma = $('vma_pct') ? $('vma_pct').value : '0';
+  if (t === 'فقط پودری') {
+    box.innerHTML = R('مقدار پودر (kg/m³)', I('powder_kg', oldPowder || 0));
+  } else if (t === 'فقط VMA') {
+    box.innerHTML = R('درصد VMA نسبت به سیمان (%)', I('vma_pct', oldVma || 0.1));
+  } else {
+    box.innerHTML = R('مقدار پودر (kg/m³)', I('powder_kg', oldPowder || 0)) +
+                    R('درصد VMA نسبت به سیمان (%)', I('vma_pct', oldVma || 0.05));
+  }
+}
+
+/* ================= state ================= */
+var AU = ['wcE','va','nl','nu','inc','kf','rcr','rc','spd','spr','ceq-kw','powder_kg','vma_pct'];
 var MIX = [];
-var guideLines = [];
+var guideLines = [];   /* آرایه‌ای از همهٔ خطوط w/c */
 
 function A(id, x, d){
   var el = $(id);
@@ -261,7 +294,9 @@ function A(id, x, d){
   el.value = (+x).toFixed(d);
 }
 
+/* ================= aggregate table ================= */
 function bd(){
+  if (!$('gw')) return;
   var old = {};
   document.querySelectorAll('#gw input, #gw select').forEach(function(e){ old[e.id] = e.value; });
   var n = +$('na').value;
@@ -308,8 +343,16 @@ function PW(d, D, n){
   return 100 * (Math.pow(d,n) - Math.pow(.075,n)) / (Math.pow(D,n) - Math.pow(.075,n));
 }
 
+/* ================= main calc ================= */
 function calc(){
   if (!$('sm')) return;
+
+  /* ---------- type-specific inputs ---------- */
+  var ty = $('ty') ? $('ty').value : 'فقط پودری';
+  var powderKg = $('powder_kg') ? v('powder_kg') : 0;
+  var vmaPct = $('vma_pct') ? v('vma_pct') : 0;
+
+  /* ---------- strength ---------- */
   var m = $('sm').selectedIndex;
   var n = +$('na').value, D = v('D');
   if ($('g1')) $('g1').style.display = m===0 ? 'block' : 'none';
@@ -353,6 +396,7 @@ function calc(){
   var fcm28 = fcm;
   if ($('o2')) $('o2').innerHTML = out;
 
+  /* ---------- gradation ---------- */
   var rw = (+$('rw').value || 1) - 1;
   if (rw < 0) rw = 0; if (rw > 4) rw = 4;
   A('nl', N5[rw][0], 2);
@@ -386,6 +430,7 @@ function calc(){
   var FM = FMI.reduce(function(acc,i){ return acc + 100 - MIX[i]; }, 0)/100;
   if ($('o3')) $('o3').innerHTML = 'FM = ' + f(FM,2) + (Math.abs(sum-100)>.01 ? '<br>⚠ مجموع نسبت‌ها ۱۰۰ نیست' : '');
 
+  /* ---------- w/c ---------- */
   var g = $('cg').value, pl = $('pl').selectedIndex===0;
   var wR = wcOf(fcm28, g, 1, pl), wC = wcOf(fcm28, g, 0, pl);
   var wc0 = wR + (wC-wR)*aG/100;
@@ -398,9 +443,7 @@ function calc(){
   if ($('fcmE')) $('fcmE').value = f(fcmWc,1);
   if ($('o5')) $('o5').innerHTML = '<b>w/c = ' + f(wc,3) + '</b> ؛ fcm = ' + f(fcmWc,1) + ' MPa';
 
-  if ($('cw') && $('cw').offsetWidth > 0) drawWC();
-  if ($('cv') && $('cv').offsetWidth > 0) drawAgg();
-
+  /* ---------- cement ---------- */
   var airMap = {9.5:2.25, 12.5:1.875, 19:1.5, 25:1.125, 38:.75};
   var Va = airMap[D] || 1.5;
   var rc = 3.15;
@@ -413,7 +456,10 @@ function calc(){
   if ($('ceq-c-raw')) $('ceq-c-raw').textContent = f(Cm,2);
 
   var finalW = Wd, finalC = Cm;
+
+  /* شرط سیمان > 350 — برگشت داده شد */
   if (Cm > 350) {
+    if ($('cement-warn')) $('cement-warn').hidden = false;
     var kw = v('ceq-kw') || 1.5;
     var addW = kw*(Cm-350)/10;
     var newW = Wd + addW;
@@ -425,25 +471,57 @@ function calc(){
     if ($('ceq-add-c')) $('ceq-add-c').textContent = f(finalC-Cm,2);
     if ($('ceq-add-w')) $('ceq-add-w').textContent = f(addW,2);
   } else {
-    if ($('ceq-c-new-num')) $('ceq-c-new-num').textContent = f(Wd,2);
-    if ($('ceq-c-new-den')) $('ceq-c-new-den').textContent = f(wc,3);
-    if ($('ceq-c-new')) $('ceq-c-new').textContent = f(Cm,2) + ' kg/m³';
-    if ($('ceq-add-c')) $('ceq-add-c').textContent = '0.00';
-    if ($('ceq-add-w')) $('ceq-add-w').textContent = '0.00';
+    if ($('cement-warn')) $('cement-warn').hidden = true;
   }
 
+  /* گزینه‌های سه‌گانه — هر کدام به مرحلهٔ مربوطه می‌رود */
+  var ceqOpt = $('ceq-opt') ? $('ceq-opt').value : '1';
+  var hint = $('ceq-hint');
+  if (hint) {
+    if (ceqOpt === '1') {
+      hint.textContent = 'سیمان اضافی در محاسبات لحاظ شده و ادامه می‌دهیم.';
+    } else if (ceqOpt === '2') {
+      hint.innerHTML = '⚠ به صفحه <b>۳) دانه‌بندی</b> بروید و منحنی مخلوط را با نوار فولر-تامسون تطبیق دهید.';
+      /* اگر کاربر گزینهٔ ۲ را انتخاب کرد، صفحه ۳ را باز کن */
+    } else if (ceqOpt === '3') {
+      hint.innerHTML = '⚠ به صفحه <b>۴) نسبت آب به سیمان</b> بروید و w/c را افزایش دهید.';
+    }
+  }
+
+  /* ---------- absolute volume ---------- */
   var SP = finalC*(v('spd')/100);
   var rsp = v('spr') || 1.08;
+
+  /* پودر (فقط پودری یا ترکیبی) */
+  var powderVol = 0;
+  if (ty === 'فقط پودری' || ty === 'ترکیبی') {
+    powderVol = powderKg / (2.65 * 1000);  /* چگالی پودر سنگ = 2.65 */
+  }
+  /* VMA (فقط VMA یا ترکیبی) */
+  var VMAkg = 0, vmaVol = 0;
+  if (ty === 'فقط VMA' || ty === 'ترکیبی') {
+    VMAkg = finalC * vmaPct / 100;
+    vmaVol = VMAkg / (1.0 * 1000); /* چگالی VMA ≈ 1.0 */
+  }
+
   var vC = finalC/(rc*1000);
   var vSP = SP/(rsp*1000);
   var vW = finalW/1000;
   var vA = Va/100;
-  var Assd = 1 - (vC+vSP+vW+vA);
+  var Assd = 1 - (vC + vSP + vW + vA + powderVol + vmaVol);
 
   if ($('eq-c')) $('eq-c').textContent = f(finalC,2);
+  if ($('eq-rc')) $('eq-rc').textContent = 3150;
+  if ($('eq-cr')) $('eq-cr').textContent = f(powderKg, 2);
+  if ($('eq-rcr')) $('eq-rcr').textContent = 2650;
+  if ($('eq-ma')) $('eq-ma').textContent = f(VMAkg, 2);
+  if ($('eq-rma')) $('eq-rma').textContent = 1000;
   if ($('eq-sp')) $('eq-sp').textContent = f(SP,2);
+  if ($('eq-rsp')) $('eq-rsp').textContent = f(rsp*1000, 0);
   if ($('eq-w')) $('eq-w').textContent = f(finalW,2);
+  if ($('eq-rw')) $('eq-rw').textContent = 1000;
   if ($('eq-va')) $('eq-va').textContent = Va;
+  if ($('eq-rva')) $('eq-rva').textContent = 100;
 
   var VA_total = Assd*1000;
   var dry = 0, ab = 0;
@@ -462,7 +540,7 @@ function calc(){
       if ($('res-d'+j3)) $('res-d'+j3).textContent = f(d,0);
     }
   }
-  var totalWeight = dry + finalC + SP + finalW + ab;
+  var totalWeight = dry + finalC + SP + finalW + ab + powderKg + VMAkg;
   if ($('res-Ad')) $('res-Ad').textContent = f(dry,0) + ' kg/m³';
   if ($('res-Wt')) $('res-Wt').textContent = f(finalW+ab,0) + ' kg/m³';
   if ($('res-G')) $('res-G').textContent = f(totalWeight,0) + ' kg/m³';
@@ -474,22 +552,32 @@ function calc(){
     var d2 = as2/(1+(ac[j4]||0));
     t += ['شن','ماسه','پودرسنگ'][tp[j4]] + ' ' + j4 + ': V=' + f(Vj2,1) + 'L ، SSD=' + f(as2,0) + ' ، <b>خشک=' + f(d2,0) + '</b><br>';
   }
+  if (powderKg > 0) t += 'پودر سنگ: <b>' + f(powderKg,0) + '</b> kg<br>';
+  if (VMAkg > 0) t += 'VMA: <b>' + f(VMAkg,2) + '</b> kg<br>';
   t += '<hr>خشک کل: <b>' + f(dry,0) + '</b> kg<br>سیمان: <b>' + f(finalC,0) + '</b> kg<br>روان‌کننده: <b>' + f(SP,1) + '</b> kg<br>آب آزاد: ' + f(finalW,0) + ' ، <b>آب کل: ' + f(finalW+ab,0) + '</b> (جذب ' + f(ab,0) + ')<br><b>G ≈ ' + f(totalWeight,0) + ' kg/m³</b>';
   if ($('o7')) $('o7').innerHTML = t;
+
+  /* ---------- draw ---------- */
+  if ($('cv') && $('cv').offsetWidth > 0) drawAgg();
+  if ($('cw') && $('cw').offsetWidth > 0) drawWC();
 }
 
+/* ================= aggregate chart (always draws, never blank) ================= */
 function drawAgg(){
   var c = $('cv');
-  if (!c || !c.offsetWidth || !MIX.length) return;
+  if (!c) return;
+  var w = c.offsetWidth || 600;
+  var h = 320;
   var dpr = window.devicePixelRatio || 2;
-  var w = c.offsetWidth, h = 320;
   c.width = w*dpr; c.height = h*dpr; c.style.height = h+'px';
   var g = c.getContext('2d');
   g.setTransform(dpr,0,0,dpr,0,0);
+
   var D = v('D') || 19;
   var mnLog = Math.log10(.075), mxLog = Math.log10(50);
   function X(d){ return 42 + (Math.log10(d)-mnLog)/(mxLog-mnLog)*(w-52); }
   function Y(p){ return h-32-p*(h-48)/100; }
+
   g.fillStyle = '#fff'; g.fillRect(0,0,w,h);
   g.font = '11px Tahoma,sans-serif'; g.textAlign = 'right';
   for (var p=0; p<=100; p+=20) {
@@ -497,7 +585,10 @@ function drawAgg(){
     g.beginPath(); g.moveTo(42,Y(p)); g.lineTo(w-10,Y(p)); g.stroke();
     g.fillStyle = '#333'; g.fillText(p, 38, Y(p)+4);
   }
-  g.save(); g.translate(14,h/2); g.rotate(-Math.PI/2); g.textAlign='center'; g.font='bold 11px Tahoma,sans-serif'; g.fillText('درصد عبوری (%)',0,0); g.restore();
+  g.save(); g.translate(14,h/2); g.rotate(-Math.PI/2);
+  g.textAlign='center'; g.font='bold 11px Tahoma,sans-serif';
+  g.fillText('درصد عبوری (%)',0,0); g.restore();
+
   g.textAlign='center'; g.font='11px Tahoma,sans-serif';
   SVs.forEach(function(s){
     var xx = X(s[1]);
@@ -506,9 +597,17 @@ function drawAgg(){
     g.fillStyle = '#333'; g.fillText(s[0], xx, h-14);
   });
   g.font='bold 11px Tahoma,sans-serif'; g.fillText('اندازه الک (mm)', w/2, h-2);
+
+  /* reference curves (n پایین / بالا) — همیشه رسم */
   var dStart = .15, dEnd = Math.min(D, 50);
-  function curve(fn, col, lw){
+  var nl = v('nl'), nu = v('nu');
+  if (!nl && !nu) { nl = 0.3; nu = 0.2; }  /* پیش‌فرض */
+  var nlUse = nl || (N5[2][0]);
+  var nuUse = nu || (N5[2][1]);
+
+  function curve(fn, col, lw, dash){
     g.beginPath(); g.strokeStyle = col; g.lineWidth = lw;
+    if (dash) g.setLineDash(dash); else g.setLineDash([]);
     var first = true;
     for (var q=0; q<=160; q++) {
       var d = dStart * Math.pow(dEnd/dStart, q/160);
@@ -517,63 +616,86 @@ function drawAgg(){
       else g.lineTo(X(d), Y(pv));
     }
     g.stroke();
+    g.setLineDash([]);
   }
-  curve(function(d){ return PW(d, D, v('nl')||0.3); }, '#e00', 1.2);
-  curve(function(d){ return PW(d, D, v('nu')||0.2); }, '#e00', 1.2);
-  var pts = [];
-  for (var i=0; i<SVs.length; i++) {
-    var val = MIX[10-i];
-    if (isFinite(val)) pts.push({ x: X(SVs[i][1]), y: Y(val), val: val });
+  curve(function(d){ return PW(d, D, nlUse); }, '#e00', 1.5, [6,3]);
+  curve(function(d){ return PW(d, D, nuUse); }, '#e00', 1.5, [6,3]);
+
+  /* نقاط مخلوط فقط اگر داده باشد */
+  if (MIX.length) {
+    var pts = [];
+    for (var i=0; i<SVs.length; i++) {
+      var val = MIX[10-i];
+      if (isFinite(val) && val > 0) pts.push({ x: X(SVs[i][1]), y: Y(val), val: val });
+    }
+    if (pts.length > 1) {
+      pts.sort(function(a,b){ return a.x-b.x; });
+      g.beginPath(); g.strokeStyle = '#0645c8'; g.lineWidth = 2.5;
+      var started = false, done = false;
+      for (var k=0; k<pts.length; k++) {
+        if (done && pts[k].val > 0) continue;
+        if (!started) { g.moveTo(pts[k].x, pts[k].y); started = true; }
+        else g.lineTo(pts[k].x, pts[k].y);
+        if (pts[k].val >= 99.99) done = true;
+      }
+      g.stroke();
+      g.fillStyle = '#0645c8';
+      done = false;
+      for (var k2=0; k2<pts.length; k2++) {
+        if (done) break;
+        g.beginPath(); g.arc(pts[k2].x, pts[k2].y, 3.5, 0, Math.PI*2); g.fill();
+        if (pts[k2].val >= 99.99) done = true;
+      }
+    }
   }
-  pts.sort(function(a,b){ return a.x-b.x; });
-  g.beginPath(); g.strokeStyle = '#0645c8'; g.lineWidth = 2.5;
-  var started = false, done = false;
-  for (var k=0; k<pts.length; k++) {
-    if (done && pts[k].val > 0) continue;
-    if (!started) { g.moveTo(pts[k].x, pts[k].y); started = true; }
-    else g.lineTo(pts[k].x, pts[k].y);
-    if (pts[k].val >= 99.99) done = true;
-  }
-  g.stroke();
-  g.fillStyle = '#0645c8';
-  done = false;
-  for (var k2=0; k2<pts.length; k2++) {
-    if (done) break;
-    g.beginPath(); g.arc(pts[k2].x, pts[k2].y, 3.5, 0, Math.PI*2); g.fill();
-    if (pts[k2].val >= 99.99) done = true;
-  }
+
+  /* راهنما */
+  g.fillStyle = '#e00'; g.font = '10px Tahoma,sans-serif'; g.textAlign = 'left';
+  g.fillText('n = ' + nlUse, 50, 20);
+  g.fillStyle = '#e00';
+  g.fillText('n = ' + nuUse, 50, 34);
 }
 
+/* ================= w/c chart (range 0.25 – 0.60) ================= */
 function drawWC(){
   var c = $('cw');
-  if (!c || !c.offsetWidth) return;
+  if (!c) return;
+  var w = c.offsetWidth || 600;
+  var h = 360;
   var dpr = window.devicePixelRatio || 2;
-  var w = c.offsetWidth, h = 360;
   c.width = w*dpr; c.height = h*dpr; c.style.height = h+'px';
   var g = c.getContext('2d');
   g.setTransform(dpr,0,0,dpr,0,0);
+
   var L = 44, B = 34;
-  function X(q){ return L + (q-.2)/.5*(w-L-14); }
-  function Y(q){ return h-B - (q-10)/60*(h-B-12); }
+  var XMIN = 0.25, XMAX = 0.60;   /* ← بازهٔ جدید */
+  function X(q){ return L + (q - XMIN)/(XMAX - XMIN)*(w - L - 14); }
+  function Y(q){ return h - B - (q - 10)/60 * (h - B - 12); }
+
   g.fillStyle='#fff'; g.fillRect(0,0,w,h);
   g.font = '11px Tahoma,sans-serif'; g.textAlign='right';
+
   for (var q=10; q<=70; q+=10) {
     g.strokeStyle='#e5e5e5'; g.lineWidth=1;
     g.beginPath(); g.moveTo(L,Y(q)); g.lineTo(w-14,Y(q)); g.stroke();
     g.fillStyle='#333'; g.fillText(q, 40, Y(q)+4);
   }
   g.textAlign='center';
-  for (var q2=.2; q2<=.7001; q2+=.05) {
+  for (var q2=XMIN; q2<=XMAX+0.001; q2+=0.05) {
     g.strokeStyle='#e5e5e5'; g.lineWidth=1;
     g.beginPath(); g.moveTo(X(q2),Y(10)); g.lineTo(X(q2),Y(70)); g.stroke();
     g.fillStyle='#333'; g.fillText(q2.toFixed(2), X(q2), h-14);
   }
-  g.save(); g.translate(14,h/2); g.rotate(-Math.PI/2); g.textAlign='center'; g.font='bold 11px Tahoma,sans-serif'; g.fillText('fcm (MPa)',0,0); g.restore();
+  g.save(); g.translate(14,h/2); g.rotate(-Math.PI/2);
+  g.textAlign='center'; g.font='bold 11px Tahoma,sans-serif';
+  g.fillText('fcm (MPa)',0,0); g.restore();
   g.font='bold 11px Tahoma,sans-serif'; g.fillText('w/c', w/2, h-2);
+
   var pl = $('pl') ? ($('pl').selectedIndex===0) : true;
   var idxs = [4,5,2,3,0,1];
   var cols = ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b'];
   var labels = ['325C','325R','425C','425R','525C','525R'];
+
   idxs.forEach(function(idx, k){
     var co = (pl ? QP : NP)[idx];
     g.beginPath(); g.strokeStyle = cols[k]; g.lineWidth = 1.5;
@@ -589,27 +711,35 @@ function drawWC(){
     g.setLineDash([]);
     var lx = X(0.37 + (k%3)*0.04);
     var lv = ST(co, 0.37 + (k%3)*0.04);
-    if (isFinite(lv)) {
+    if (isFinite(lv) && lv >= 10 && lv <= 70) {
       g.fillStyle = cols[k]; g.font = 'bold 10px Tahoma,sans-serif'; g.textAlign = 'left';
       g.fillText(labels[k], lx, Y(lv) - 5 - Math.floor(k/3)*10);
     }
   });
+
+  /* همهٔ خطوط راهنما را رسم کن (نه فقط آخرین) */
   var gr = $('cg') ? $('cg').value : '425';
   guideLines.forEach(function(gl){
-    if (!(gl.x >= .2 && gl.x <= .7)) return;
+    if (!(gl.x >= XMIN && gl.x <= XMAX)) return;
     var px = gl.x;
     var py = fcmFromWc(px, gr, 0, pl);
     if (!isFinite(py)) return;
     g.setLineDash([5,4]); g.strokeStyle = '#000'; g.lineWidth = 1.5;
-    g.beginPath(); g.moveTo(L, Y(py)); g.lineTo(X(px), Y(py)); g.lineTo(X(px), Y(10)); g.stroke();
+    g.beginPath();
+    g.moveTo(L, Y(py));
+    g.lineTo(X(px), Y(py));
+    g.lineTo(X(px), Y(10));
+    g.stroke();
     g.setLineDash([]);
-    g.fillStyle = '#000'; g.beginPath(); g.arc(X(px), Y(py), 4, 0, Math.PI*2); g.fill();
+    g.fillStyle = '#000';
+    g.beginPath(); g.arc(X(px), Y(py), 4, 0, Math.PI*2); g.fill();
     g.font = 'bold 10px Tahoma,sans-serif'; g.textAlign = 'center';
     g.fillText(py.toFixed(1), L + 12, Y(py) - 6);
     g.fillText(px.toFixed(3), X(px) + 15, Y(10) - 6);
   });
 }
 
+/* ================= navigation ================= */
 function goTo(i){
   if (typeof i !== 'number' || isNaN(i)) i = 0;
   if (i < 0 || i >= PG.length) return;
@@ -627,26 +757,31 @@ function goTo(i){
   $('btnPrev').disabled = (i===0);
   $('btnNext').disabled = (i===PG.length-1);
   window.scrollTo(0,0);
-  if (i === 1) { setTimeout(drawAgg, 100); }
-  if (i === 2) { setTimeout(drawWC, 100); }
+  if (i === 1) setTimeout(drawAgg, 100);
+  if (i === 2) setTimeout(drawWC, 100);
 }
 
 window.go = goTo;
 
+/* ================= events ================= */
 function bindAll(){
   document.addEventListener('input', function(e){
     if (e.target && e.target.dataset && e.target.dataset.u === '1') {
       if (AU.indexOf(e.target.id) >= 0) e.target.dataset.m = '1';
-      if (e.target.id === 'pl') {
-        var plOn = $('pl').selectedIndex === 0;
-        $('spd').disabled = !plOn;
-        $('spr').disabled = !plOn;
-      }
-      if (e.target.id === 'na') bd();
       if (e.target.id === 'wcE') {
         if ($('wcR')) $('wcR').value = e.target.value;
-        guideLines = [{x: v('wcE')}];
+        var wcv = v('wcE');
+        if (wcv > 0) {
+          /* به‌جای جایگزینی، خط جدید اضافه کن */
+          var found = false;
+          for (var i=0; i<guideLines.length; i++) {
+            if (Math.abs(guideLines[i].x - wcv) < 0.0005) { found = true; break; }
+          }
+          if (!found) guideLines.push({x: wcv});
+        }
       }
+      if (e.target.id === 'ceq-opt') handleCeqOpt();
+      if (e.target.id === 'na') bd();
       calc();
     }
   });
@@ -660,7 +795,11 @@ function bindAll(){
         if (!plOn) { $('spd').value = 0; $('spr').value = 0; }
         else { if (+$('spd').value === 0) $('spd').value = 1; if (+$('spr').value === 0) $('spr').value = 1.08; }
       }
+      if (e.target.id === 'ty') {
+        renderTypeInput();
+      }
       if (e.target.id === 'na') bd();
+      if (e.target.id === 'ceq-opt') handleCeqOpt();
       calc();
     }
   });
@@ -679,16 +818,18 @@ function bindAll(){
   $('mSave').addEventListener('click', function(){
     var o = {};
     document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(e){ if (e.id) o[e.id] = e.value; });
-    try { localStorage.setItem('scc_v7', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
+    try { localStorage.setItem('scc_v8', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
     $('menu').hidden = true;
   });
   $('mLoad').addEventListener('click', function(){
     var s;
-    try { s = localStorage.getItem('scc_v7'); } catch(err){}
+    try { s = localStorage.getItem('scc_v8'); } catch(err){}
     $('menu').hidden = true;
     if (!s) { alert('طرحی ذخیره نشده'); return; }
     var o = JSON.parse(s);
     if (o.na && $('na')) $('na').value = o.na;
+    if (o.ty && $('ty')) $('ty').value = o.ty;
+    renderTypeInput();
     bd();
     Object.keys(o).forEach(function(k){ var el = $(k); if (el) { el.value = o[k]; if (AU.indexOf(k) >= 0) el.dataset.m = '1'; } });
     calc();
@@ -704,19 +845,34 @@ function bindAll(){
   });
 }
 
+function handleCeqOpt(){
+  var opt = $('ceq-opt') ? $('ceq-opt').value : '1';
+  if (opt === '2') {
+    /* برو به صفحه دانه‌بندی */
+    goTo(1);
+  } else if (opt === '3') {
+    /* برو به صفحه w/c */
+    goTo(2);
+  }
+}
+
+/* ================= init ================= */
 function init(){
   try {
     buildPages();
+    renderTypeInput();
     bindAll();
     bd();
     calc();
+
     var iw = v('wcE');
     if (iw > 0) guideLines = [{x: iw}];
+
     goTo(0);
     setTimeout(function(){ drawAgg(); drawWC(); }, 150);
   } catch(err) {
     console.error('INIT ERROR:', err);
-    document.body.innerHTML += '<div style="background:#fdd;color:#900;padding:20px;font:14px monospace">خطا در راه‌اندازی: ' + err.message + '</div>';
+    document.body.innerHTML += '<div style="background:#fdd;color:#900;padding:20px;font:14px monospace">خطا: ' + err.message + '</div>';
   }
 }
 
