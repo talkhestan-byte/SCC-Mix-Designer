@@ -38,7 +38,14 @@ nav button:disabled{background:#9bb3cc}
 #ts{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 14px;border-radius:16px;z-index:30}
 [hidden]{display:none!important}
 
-/* استایل صفحه جدید (مقدار سیمان) */
+/* فرمول حجم مطلق کوچک‌تر */
+.math-card{background:#fff;border:1px solid #d1d9e6;border-radius:8px;padding:12px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.05);overflow-x:auto}
+.math-title{font-size:13px;color:#1f4e79;margin-bottom:8px;font-weight:bold;text-align:right}
+.sm-eq-row{display:flex;align-items:center;justify-content:center;direction:ltr;font-family:"Times New Roman",Times,serif;font-size:12px;flex-wrap:nowrap;white-space:nowrap}
+.sm-eq-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 2px}
+.sm-eq-frac .num{border-bottom:1px solid #000;padding:0 2px;line-height:1.1;text-align:center}
+.sm-eq-frac .den{padding:0 2px;line-height:1.1;text-align:center}
+
 .card{background:#fff;border:1px solid #d1d9e6;border-radius:12px;padding:20px;margin-bottom:15px;box-shadow:0 2px 6px rgba(0,0,0,0.05)}
 .card-title{font-size:16px;color:#1f4e79;margin-bottom:15px;font-weight:bold;text-align:right;border-bottom:1px solid #eee;padding-bottom:10px}
 .eq-row{display:flex;align-items:center;justify-content:center;direction:ltr;font-family:"Times New Roman",Times,serif;font-size:18px;flex-wrap:wrap;margin:15px 0}
@@ -55,13 +62,6 @@ nav button:disabled{background:#9bb3cc}
 .summary-text span{color:#b71c1c;font-weight:bold}
 .select-box{background:#fff;border:2px solid #80cbc4;border-radius:8px;padding:10px 20px;display:inline-block;cursor:pointer;color:#00796b;font-weight:bold}
 select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;padding:10px;font-size:14px;color:#00796b;font-weight:bold;width:100%;max-width:280px;outline:none}
-
-.math-card{background:#fff;border:1px solid #d1d9e6;border-radius:8px;padding:15px;margin-bottom:15px;box-shadow:0 1px 3px rgba(0,0,0,0.05);overflow-x:auto}
-.math-title{font-size:14px;color:#1f4e79;margin-bottom:10px;font-weight:bold;text-align:right}
-.sm-eq-row{display:flex;align-items:center;justify-content:center;direction:ltr;font-family:"Times New Roman",Times,serif;font-size:14px;flex-wrap:nowrap;white-space:nowrap}
-.sm-eq-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 3px}
-.sm-eq-frac .num{border-bottom:1px solid #000;padding:0 3px;line-height:1.1;text-align:center}
-.sm-eq-frac .den{padding:0 3px;line-height:1.1;text-align:center}
 
 .res-table{width:100%;border-collapse:collapse;font-size:13px;text-align:center}
 .res-table th,.res-table td{border:1px solid #d1d9e6;padding:8px}
@@ -104,8 +104,6 @@ const SVs = [["1½",38.1],["1",25],["¾",19],["½",12.5],["⅜",9.5],["4",4.75],
 const FMI = [0,2,4,5,6,7,8,9,10];
 const N5 = [[.4,.3],[.35,.25],[.3,.2],[.25,.15],[.2,.1]];
 
-/* منحنی‌های w/c-مقاومت 
-   0: 525C, 1: 525R, 2: 425C, 3: 425R, 4: 325C, 5: 325R */
 const NP = [[573.91,-984.34,435.71,4.4767],[545.45,-894.81,369.48,13.818],[525.25,-817.75,313.6,22.121],[707.07,-1087.4,450.57,-5.6061],[545.45,-823.38,319.24,11.818],[505.05,-769.26,305.34,6.9242]];
 const QP = [[0,43.589,-173.59,124.01],[0,80.04,-207,126.63],[0,119.86,-240.12,130.32],[0,123.42,-234.33,122.57],[0,126.73,-228.34,116.36],[0,107.59,-198.24,102.72]];
 const CI = {'525': 0, '425': 2, '325': 4};
@@ -131,7 +129,6 @@ function fcmFromWcValue(wc, gr, sh, pl) {
   return best;
 }
 
-/* ================= دکمه‌های منو ================= */
 function SV() {
   const o = {};
   document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(e => { if (e.id) o[e.id] = e.value; });
@@ -161,7 +158,6 @@ function SH() {
 }
 const toast = m => { $('ts').textContent = m; $('ts').hidden = false; setTimeout(() => $('ts').hidden = true, 1600); };
 
-/* ================= تعریف جدول‌ها ================= */
 const T = {
 1:['جدول ۶-۱ رده جریان اسلامپ',['رده','جریان (mm)'],[['SF0','450-550'],['SF1','550-650'],['SF2','650-750'],['SF3','750-850']]],
 2:['جدول ۶-۲ بافت دانه‌بندی',['بافت','n'],[['خیلی درشت','0.6-0.67'],['درشت','0.5-0.6'],['متوسط','0.4-0.5'],['ریز','0.3-0.4'],['خیلی ریز','0.2-0.3'],['فوق‌العاده ریز','0.1-0.2']]],
@@ -189,7 +185,6 @@ function TB(k) {
   $('mb').dataset.h = fallbackHTML; $('md').hidden = false;
 }
 
-/* ================= تعریف صفحات ================= */
 const PG = [
 `<h3>۱) اطلاعات اولیه و مقاومت هدف</h3>
 <div class="g2">
@@ -344,12 +339,11 @@ function go(i) {
   if (i == 3) setTimeout(cw, 50);
 }
 
-/* ================= توابع داینامیک ================= */
 const AU = ['wcE', 'Wv', 'va', 'nl', 'nu', 'inc', 'kf', 'rcr', 'rc', 'spd', 'spr', 'ceq-kw'];
 function U(e) {
   if (AU.includes(e.id)) e.dataset.m = 1;
   if (e.id === 'pl') {
-    const plVal = $('pl').selectedIndex === 0; // 0 = دارد
+    const plVal = $('pl').selectedIndex === 0;
     $('spd').disabled = !plVal;
     $('spr').disabled = !plVal;
     if (!plVal) { $('spd').value = 0; $('spr').value = 0; }
@@ -402,7 +396,7 @@ function bd() {
 
 const PW = (d, D, n) => d >= D ? 100 : d <= .075 ? 0 : 100 * (d ** n - .075 ** n) / (D ** n - .075 ** n);
 let MIX = [], WCP = { x: .5, y: 30, a: 0 };
-let guideLines = []; // آرایه‌ای برای ذخیره خطوط چین راهنما
+let guideLines = [];
 
 function calc() {
   if (!$('sm')) return;
@@ -497,24 +491,29 @@ function calc() {
   $('o5').innerHTML = `<b>w/c نهایی = ${f(wc, 3)}</b> ؛ مقاومت متناظر = ${f(fcmFromWc, 1)} MPa`;
   cw();
 
-  /* محاسبات صفحه مقدار سیمان */
+  /* ====== محاسبات صفحه ۵ (تعیین مقدار سیمان) طبق نشریه ۴۷۹ ====== */
   const airMap = { 9.5: 2.25, 12.5: 1.875, 19: 1.5, 25: 1.125, 38: .75 };
   const Va = airMap[D] || 1.5;
   const rc = 3.15;
-  const Wd = 170;
-  const Cm = Wd / (wc || 0.4);
+  const Wd = 170; // آب آزاد اولیه
+  const Cm = Wd / (wc || 0.4); // سیمان اولیه
   
   if ($('ceq-wf')) $('ceq-wf').textContent = f(Wd, 2);
   if ($('ceq-wc')) $('ceq-wc').textContent = f(wc, 3);
   if ($('ceq-c')) $('ceq-c').textContent = f(Cm, 2);
   if ($('ceq-c-raw')) $('ceq-c-raw').textContent = f(Cm, 2);
   
-  let C_new = Cm;
+  let finalW = Wd;
+  let finalC = Cm;
+  
   if (Cm > 350) {
     const kw = v('ceq-kw');
     const addW = kw * (Cm - 350) / 10;
     const newW = Wd + addW;
-    C_new = newW / wc;
+    const C_new = newW / wc;
+    
+    finalW = newW;
+    finalC = C_new;
     
     if ($('ceq-c-new-num')) $('ceq-c-new-num').textContent = f(newW, 2);
     if ($('ceq-c-new-den')) $('ceq-c-new-den').textContent = f(wc, 3);
@@ -522,15 +521,13 @@ function calc() {
     if ($('ceq-add-c')) $('ceq-add-c').textContent = f(C_new - Cm, 2);
     if ($('ceq-add-w')) $('ceq-add-w').textContent = f(addW, 2);
   } else {
-    if ($('ceq-c-new-num')) $('ceq-c-new-num').textContent = f(Cm, 2);
+    if ($('ceq-c-new-num')) $('ceq-c-new-num').textContent = f(Wd, 2);
     if ($('ceq-c-new-den')) $('ceq-c-new-den').textContent = f(wc, 3);
     if ($('ceq-c-new')) $('ceq-c-new').textContent = f(Cm, 2) + ' kg/m³';
     if ($('ceq-add-c')) $('ceq-add-c').textContent = "0.00";
     if ($('ceq-add-w')) $('ceq-add-w').textContent = "0.00";
   }
   
-  const finalC = C_new;
-  const finalW = finalC * wc;
   const SP = finalC * (v('spd') / 100);
   const rsp = v('spr') || 1.08;
   
@@ -636,7 +633,6 @@ function ch() {
   L(d => PW(d, D, v('nl')), '#e00', 1.2);
   L(d => PW(d, D, v('nu')), '#e00', 1.2);
   
-  // منحنی مخلوط: قطع در یک الک مانده به 100
   let pts = SVs.map((s,i) => ({ x: x(s[1]), y: y(MIX[10-i]), val: MIX[10-i] })).reverse();
   let stopIdx = -1;
   for (let i = 0; i < pts.length; i++) {
@@ -646,7 +642,6 @@ function ch() {
   g.beginPath(); g.strokeStyle = '#0645c8'; g.lineWidth = 2.5;
   let drawn = 0;
   if (stopIdx !== -1) {
-    // اگر به 100 رسید، تا یک نقطه قبل از آن رسم کن
     const limit = Math.max(1, stopIdx); 
     for (let i = 0; i < limit; i++) {
       if (drawn == 0) g.moveTo(pts[i].x, pts[i].y);
@@ -672,7 +667,7 @@ function ch() {
 function addGuideLine(wc) {
   if (wc >= .2 && wc <= .7) {
     guideLines.push({ x: wc });
-    cw(); // رسم مجدد
+    cw();
   }
 }
 
@@ -684,7 +679,6 @@ function cw() {
   const g = c.getContext('2d');
   g.setTransform(dpr, 0, 0, dpr, 0, 0);
   
-  // محور X از 0.2 تا 0.7
   const L = 44, B = 34;
   const X = q => L + (q - .2) / .5 * (w - L - 14);
   const Y = q => h - B - (q - 10) / 60 * (h - B - 12);
@@ -721,7 +715,6 @@ function cw() {
     
     g.beginPath(); g.strokeStyle = cols[k]; g.lineWidth = 1.5; g.setLineDash([6, 4]);
     let a = true;
-    // فقط از 0.3 تا 0.55 رسم شود
     for (let q = .3; q <= .5501; q += .002) {
       const val = yy(q);
       if (val < 10 || val > 70) continue;
@@ -735,7 +728,6 @@ function cw() {
     g.fillText(labels[k], lx, ly);
   });
 
-  // خطوط راهنما (خط‌چین) - قبلی‌ها می‌مانند
   guideLines.forEach(gl => {
     if (gl.x >= .2 && gl.x <= .7) {
       const px = gl.x;
@@ -751,11 +743,9 @@ function cw() {
   });
 }
 
-/* ================= شروع ================= */
 window.addEventListener('DOMContentLoaded', () => {
   bd();
   calc();
-  // خط راهنمای اولیه بر اساس wc محاسبه‌شده
   const initWc = v('wcE');
   if (initWc > 0) guideLines.push({ x: initWc });
   cw();
