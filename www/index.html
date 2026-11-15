@@ -562,10 +562,11 @@ function calc(){
   if ($('cw')) setTimeout(drawWC, 0);
 }
 
+/* ================= نمودار سنگدانه ================= */
 function drawAgg(){
   try {
     var c = $('cv');
-    if (!c) { return; }
+    if (!c) return;
     var w = c.offsetWidth || c.clientWidth || 320;
     if (w < 50) w = 320;
     var h = 320;
@@ -655,6 +656,7 @@ function drawAgg(){
   }
 }
 
+/* ================= نمودار w/c ================= */
 function drawWC(){
   var c = $('cw');
   if (!c) return;
@@ -714,12 +716,13 @@ function drawWC(){
     if (lastX !== null) labelData.push({ x: lastX, y: lastY, col: cols[k], label: labels[k] });
   });
 
+  /* لیبل‌ها در منتهی‌الیه سمت راست (انتهای پایین هر منحنی) */
   labelData.forEach(function(ld){
     g.fillStyle = ld.col;
     g.font = 'bold 10px Tahoma,sans-serif';
-    g.textAlign = 'center';
-    var labelY = h - B + 14;
-    g.fillText(ld.label, ld.x, labelY);
+    g.textAlign = 'right';
+    /* 4 پیکسل بالاتر از نقطهٔ انتهای منحنی، کمی به چپ تا از لبهٔ راست بیرون نزند */
+    g.fillText(ld.label, Math.min(ld.x - 3, w - 4), ld.y - 3);
   });
 
   var gr = $('cg') ? $('cg').value : '425';
@@ -761,10 +764,12 @@ function goTo(i){
   $('btnNext').disabled = (i===PG.length-1);
   window.scrollTo(0,0);
   if (i === 1) {
+    setTimeout(function(){ try { calc(); } catch(e){ console.error(e); } }, 60);
     setTimeout(drawAgg, 100);
     setTimeout(drawAgg, 400);
   }
   if (i === 2) {
+    setTimeout(function(){ try { calc(); } catch(e){ console.error(e); } }, 60);
     setTimeout(drawWC, 100);
     setTimeout(drawWC, 400);
   }
@@ -836,12 +841,12 @@ function bindAll(){
   $('mSave').addEventListener('click', function(){
     var o = {};
     document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(e){ if (e.id) o[e.id] = e.value; });
-    try { localStorage.setItem('scc_v11', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
+    try { localStorage.setItem('scc_v12', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
     $('menu').hidden = true;
   });
   $('mLoad').addEventListener('click', function(){
     var s;
-    try { s = localStorage.getItem('scc_v11'); } catch(err){}
+    try { s = localStorage.getItem('scc_v12'); } catch(err){}
     $('menu').hidden = true;
     if (!s) { alert('طرحی ذخیره نشده'); return; }
     var o = JSON.parse(s);
