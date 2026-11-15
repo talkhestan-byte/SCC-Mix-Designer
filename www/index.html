@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
@@ -37,11 +36,17 @@ nav button:disabled{background:#9bb3cc}
 #md>div{background:#fff;max-height:80%;overflow:auto;border-radius:8px;padding:10px;width:94%}
 #ts{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 14px;border-radius:16px;z-index:30}
 [hidden]{display:none!important}
-.absv{direction:ltr;text-align:center;font-family:"Cambria Math",serif;font-size:15px;line-height:2.6;background:#fff;padding:12px;border-radius:8px;border:1px solid #cfd8e3}
-.absv .fr{display:inline-block;vertical-align:middle;text-align:center;margin:0 2px}
-.absv .fr .num{display:block;border-bottom:1.5px solid #333;padding:0 4px}
-.absv .fr .den{display:block;padding:0 4px}
-.absv .big{font-size:18px}
+
+/* استایل فرمول حجم مطلق شبیه عکس */
+.absv{direction:ltr;background:#fff;padding:15px;border-radius:8px;border:1px solid #cfd8e3;font-family:"Times New Roman",serif;font-size:16px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.absv-row{display:flex;align-items:center;justify-content:center;gap:8px}
+.absv .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px}
+.absv .fr .num{border-bottom:1.5px solid #333;padding:0 5px;width:100%;text-align:center}
+.absv .fr .den{padding:0 5px;width:100%;text-align:center}
+.absv-table{width:100%;border-collapse:collapse;margin-top:10px;background:#f8fbfe;border-radius:8px;overflow:hidden;font-family:Tahoma,sans-serif;font-size:13px}
+.absv-table th,.absv-table td{border:1px solid #cfd8e3;padding:8px;text-align:center}
+.absv-table th{background:#e1edf8;color:#1f4e79}
+
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
 </style>
 </head>
@@ -63,42 +68,48 @@ nav button:disabled{background:#9bb3cc}
 <div id="ts" hidden></div>
 
 <script>
-const $=i=>document.getElementById(i),v=i=>parseFloat($(i).value)||0,f=(x,d=1)=>isFinite(x)?(+x).toFixed(d):'-';
+const $=i=>document.getElementById(i), v=i=>parseFloat($(i)?.value)||0, f=(x,d=1)=>isFinite(x)?(+x).toFixed(d):'-';
 const lin=(X,Y,x)=>{let i=0;while(i<X.length-2&&x>X[i+1])i++;return Y[i]+(Y[i+1]-Y[i])*(x-X[i])/(X[i+1]-X[i])};
 const R=(l,h,t)=>`<div class="r"><label>${l}</label>${h}${t?`<button class="t" onclick="TB('${t}')">جدول</button>`:''}</div>`;
 const I=(id,val='',extra='')=>`<input id="${id}" type="number" step="any" value="${val}" oninput="U(this)" ${extra}>`;
 const S=(id,o,sel=0)=>`<select id="${id}" onchange="U(this)">${o.map((x,i)=>`<option${i==sel?' selected':''}>${x}</option>`).join('')}</select>`;
+
 const SVs=[["1½",38.1],["1",25],["¾",19],["½",12.5],["⅜",9.5],["4",4.75],["8",2.36],["16",1.18],["30",.6],["50",.3],["100",.15]],FMI=[0,2,4,5,6,7,8,9,10];
 const N5=[[.4,.3],[.35,.25],[.3,.2],[.25,.15],[.2,.1]];
 const CT=['پرتلند 1','پرتلند 2','پرتلند 5','پرتلند پوزولانی','پرتلند پوزولانی ویژه','پرتلند سرباره‌ای','پرتلند سرباره‌ای ضدسولفات','پرتلند سفید'];
-const DN=[3.075,3.125,3.225,3.075,3.025,3.025,2.975,3.025],AF=[[1,1.05,1.1,1.2],[1,1.08,1.13,1.24],[1,1.12,1.24,1.41],[1,1.05,1.14,1.3],[1,1.08,1.24,1.41],[1,1.05,1.1,1.2],[1,1.05,1.14,1.3],[1,1.08,1.13,1.24]];
+const DN=[3.075,3.125,3.225,3.075,3.025,3.025,2.975,3.025];
 const SCN=['ندارد','خاکستر بادی','دوده سیلیسی','سرباره','پوزولان طبیعی'],SCR=[2.2,2.3,2.25,2.75,2.55],SCX=[0,.25,.1,.5,.25];
+
 const T={
 1:['جدول ۶-۱ رده جریان اسلامپ',['رده','جریان (mm)'],[['SF0','450-550'],['SF1','550-650'],['SF2','650-750'],['SF3','750-850']]],
-2:['جدول ۶-۲ بافت دانه‌بندی و بازه توان n',['بافت','n'],[['خیلی درشت','0.6-0.67'],['درشت','0.5-0.6'],['متوسط','0.4-0.5'],['ریز','0.3-0.4'],['خیلی ریز','0.2-0.3'],['فوق‌العاده ریز','0.1-0.2']]],
-3:['جدول ۶-۳ تراکم میلگرد (kg/m³؛ برای تیر/ستون/دیوار ×1.5)',['تراکم','بازه'],[['خیلی کم','<50'],['کم','50-75'],['متوسط','75-100'],['زیاد','100-150'],['خیلی زیاد','150-200'],['فوق‌العاده زیاد','>200']]],
-4:['جدول ۶-۴ ضخامت قطعه (mm)',['طبقه','بازه'],[['خیلی نازک','<150'],['نازک','150-300'],['نسبتاً نازک','300-600'],['نیمه ضخیم','600-900'],['ضخیم','900-1800'],['بسیار ضخیم','>1800']]],
 5:['جدول ۶-۵ توان n منحنی فولر-تامسون',['ردیف','کاربرد','n پایینی','n بالایی'],[[1,'جریان 500-550؛ ستون/شالوده کم‌میلگرد',.4,.3],[2,'جریان 560-650؛ میلگرد متوسط',.35,.25],[3,'جریان >660؛ تیر/دال، میلگرد متوسط',.3,.2],[4,'جریان >660؛ میلگرد زیاد/نازک',.25,.15],[5,'ترمیم سطوح؛ بسیار ریزبافت',.2,.1]]],
 6:['جدول ۶-۶ رده شکل و گوشه‌داری Rs-a',['رده','توضیح'],[[1,'گرد، هم‌بُعد، خوب'],[2,'نیمه‌گرد'],[3,'نیمه‌گوشه‌دار'],[4,'گوشه‌دار'],[5,'تخت/کشیده، خیلی گوشه‌دار']]],
-7:['جدول ۶-۷ راهنمای انتخاب ترکیب خمیر',['اجزای اصلی خمیر','پارامتر','عملکرد'],[['آب','آب به سیمان','خواص بتن سخت‌شده در سنین اولیه'],['آب','آب به مواد سیمانی','خواص بتن سخت‌شده در درازمدت'],['آب','آب به پودر','کارایی'],['پودر','سیمان','مقاومت و دوام'],['پودر','مواد جایگزین سیمان','بهبود کارایی و دوام، کاهش حرارت هیدراسیون، کاهش هزینه'],['پودر','مواد معدنی خنثی','بهبود کارایی، کاهش هزینه، کاهش حرارت هیدراسیون'],['هوا','درصد هوا','دوام']]],
-8:['جدول ۶-۸ تأثیر اجزا و پارامترهای طرح مخلوط بر کارایی',['توضیح'],[['این جدول فلش‌دار است؛ تصویر آن را با نام t8.png در پوشه www/tables بگذارید.']]],
-9:['جدول ۶-۹ آب آزاد اولیه (kg/m³)',['D (mm)','25 MPa','35','45','55'],[[19,177,172,168,164],[12.5,185,180,175,170]]],
-10:['جدول ۶-۱۰ مواد پودری',['نوع','درصد وزنی','kg/m³'],[['فقط پودری','16-19','500-600'],['فقط VMA','9.5-16','300-500'],['ترکیبی','≥13','≥410']]],
-11:['جدول ۶-۱۱ ضریب k',['ماده','حداکثر جایگزینی %','k'],[['پوزولان طبیعی',25,'0.2-0.4'],['دوده‌سیلیس',10,'2-4'],['سرباره',50,'0.4-0.8'],['خاکستر بادی',25,'0.2-0.4']]],
-12:['جدول ۶-۱۲ هوای ناخواسته %',['D (mm)','هوا %'],[[9.5,'1.5-3'],[12.5,'1.25-2.5'],[19,'1-2'],[25,'0.75-1.5'],[38,'0.5-1']]],
 13:['جدول ۶-۱۳ راهنمای اصلاح نسبت‌های مخلوط',['مشخصه کارایی','سنگدانه‌ها','حجم خمیر','ترکیب خمیر'],[['قابلیت پُرکردن','شکل و درصد شکستگی دانه‌ها را برای کاهش اصطکاک اصلاح کنید؛ برای کاهش خشن بودن از دانه‌بندی ریزتر و برای کاهش گرانروی از دانه‌بندی درشت‌تر استفاده کنید.','اطمینان حاصل کنید حداقل خمیر لازم برای پر کردن فضای خالی بین دانه‌ها و کاهش اصطکاک بین ذره‌ای وجود دارد.','اطمینان حاصل کنید گرانروی خیلی زیاد (چسبنده) یا خیلی کم (ناپایدار) نیست؛ برای افزایش جریان اسلامپ، فوق‌روان‌کننده را افزایش دهید.'],['قابلیت عبور','مقدار ذرات درشت‌تر را با کاهش شاخص زبری دانه‌بندی یا کاهش حداکثر اندازه سنگدانه کاهش دهید؛ برای کاهش اصطکاک، شکل و درصد شکستگی دانه‌ها را اصلاح کنید.','برای کاهش حجم سنگدانه و اصطکاک بین ذرات، حجم خمیر را افزایش دهید.','برای افزایش جریان اسلامپ، گرانروی خمیر را کاهش یا فوق‌روان‌کننده را افزایش دهید.'],['مقاومت در برابر جداشدگی (پایداری)','از دانه‌بندی پیوسته استفاده کنید (از گسسته اجتناب شود)؛ ضریب زبری دانه‌بندی یا حداکثر اندازه سنگدانه را کاهش دهید.','حجم خمیر را افزایش دهید.','اطمینان حاصل کنید گرانروی خمیر نه خیلی زیاد و نه خیلی کم است؛ جریان اسلامپ را کاهش دهید (فوق‌روان‌کننده را کم کنید)؛ حفظ کارایی را بهینه کنید و از VMA استفاده شود.']]],
 s1:['جدول ۳-۱ انحراف معیار (MPa) بر اساس رتبه کارگاه و fc',['رتبه','16','20','25','30 و 35','40 و بیشتر'],[['الف',2.5,3,3.5,4,4.5],['ب',3.5,4,4.5,5,5.5],['ج',4.5,5,5.5,6,6.5]]],
 s2:['جدول ۳-۲ رتبه‌بندی کارگاه (الف / ب / ج)',['شرایط','الف','ب','ج'],[['توزین یا پیمانه کردن سیمان','وزنی','وزنی','حجمی'],['توزین یا پیمانه کردن سنگدانه','وزنی','حجمی','حجمی'],['کنترل دانه‌بندی سنگدانه','کنترل شده','کنترل شده','بدون کنترل'],['کنترل رطوبت سنگدانه','کنترل شده','کنترل شده','بدون کنترل'],['نظارت بر تولید','سطح عالی','سطح خوب','سطح ضعیف'],['امکانات آزمایشگاهی','موجود','موجود','محدود'],['تداوم در آزمایش','مداوم','گاهی اوقات','محدود'],['نیروی متخصص بتن','وجود دارد','وجود دارد','محدود']]],
-s3:['جدول ۳-۳ حاشیه ایمنی SM بدون اطلاعات (MPa)',['fc','16 و کمتر','20','25','30 و 35','40 تا 50'],[['SM',7.5,8.5,9.5,10.5,11]]],
-s4:['جدول ۳-۴ مقاومت سنین مختلف نسبت به 28 روزه',['نوع سیمان','28','42','56','90'],CT.map((c,i)=>[c].concat(AF[i]))],
-d11:['جدول ۱۱-۴ چگالی تقریبی سیمان‌ها (kg/dm³)',['نوع','چگالی فرضی'],[['پرتلند 1','3.05-3.10'],['پرتلند 2','3.10-3.15'],['پرتلند 5','3.20-3.25'],['پوزولانی','3.05-3.10'],['پوزولانی ویژه','3.00-3.05'],['سرباره‌ای','3.00-3.05'],['سرباره‌ای ضدسولفات','2.95-3.00'],['سفید','3.00-3.05'],['خاکستر بادی','2.2-2.4'],['دوده سیلیسی','2.2-2.3'],['سرباره کوره آهنگدازی','2.7-2.8'],['پوزولان طبیعی','2.5-2.6'],['پودر سنگ آهک','2.5-2.7']]]};
-function TB(k){const t=T[k],h=`<b>${t[0]}</b><table class="gt" style="width:100%;margin-top:6px"><tr>${t[1].map(x=>`<th>${x}</th>`).join('')}</tr>${t[2].map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table>`;$('mb').innerHTML=`<img src="tables/${/^(s|d)/.test(k)?k:'t'+k}.png" style="width:100%" onerror="this.parentNode.innerHTML=this.parentNode.dataset.h">`;$('mb').dataset.h=h;$('md').hidden=0}
+s3:['جدول ۳-۳ حاشیه ایمنی SM بدون اطلاعات (MPa)',['fc','16 و کمتر','20','25','30 و 35','40 تا 50'],[['SM',7.5,8.5,9.5,10.5,11]]]
+};
+function TB(k){
+  const t=T[k],h=`<b>${t[0]}</b><table class="gt" style="width:100%;margin-top:6px"><tr>${t[1].map(x=>`<th>${x}</th>`).join('')}</tr>${t[2].map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table>`;
+  $('mb').innerHTML=`<img src="tables/${k}.png" style="width:100%" onerror="this.parentNode.innerHTML=this.parentNode.dataset.h">`;
+  $('mb').dataset.h=h;$('md').hidden=0
+}
+
 /* منحنی‌های w/c-مقاومت */
 const NP=[[573.91,-984.34,435.71,4.4767],[545.45,-894.81,369.48,13.818],[525.25,-817.75,313.6,22.121],[707.07,-1087.4,450.57,-5.6061],[545.45,-823.38,319.24,11.818],[505.05,-769.26,305.34,6.9242]];
 const QP=[[0,43.589,-173.59,124.01],[0,80.04,-207,126.63],[0,119.86,-240.12,130.32],[0,123.42,-234.33,122.57],[0,126.73,-228.34,116.36],[0,107.59,-198.24,102.72]],CI={'525':0,'425':2,'325':4};
 const ST=(c,x)=>((c[0]*x+c[1])*x+c[2])*x+c[3];
-function wcOf(y,g,sh,pl){const c=(pl?QP:NP)[CI[g]+sh];let lo=.3,hi=.55;if(y>=ST(c,lo))return lo;if(y<=ST(c,hi))return hi;for(let i=0;i<40;i++){const m=(lo+hi)/2;ST(c,m)>y?lo=m:hi=m}return(lo+hi)/2}
-const RO=[[2.683,-50.39,336.2],[2.921,-55.38,372.4],[3.359,-62.25,408.7],[3.493,-64.74,425]],AN=[[3.595,-62.26,390.5],[3.922,-68.53,433],[4.476,-76.24,473.3],[4.655,-79.29,499.2]],SL=[25,70,125,185];
+function wcOf(y,g,sh,pl){
+  const c=(pl?QP:NP)[CI[g]+sh];
+  let lo=.3,hi=.55;
+  if(y>=ST(c,lo))return lo;
+  if(y<=ST(c,hi))return hi;
+  for(let i=0;i<40;i++){
+    const m=(lo+hi)/2;
+    ST(c,m)>y?lo=m:hi=m
+  }
+  return(lo+hi)/2
+}
 
 const PG=[
 `<h3>۱) اطلاعات اولیه</h3>
@@ -115,14 +126,16 @@ ${R('بافت دانه‌بندی',S('tx',['خیلی درشت','درشت','مت�
 ${R('ردیف کاربرد (توان n)',S('rw',[1,2,3,4,5],2),5)}
 ${R('نوع SCC',S('ty',['فقط پودری','فقط VMA','ترکیبی']),10)}
 </div>`,
+
 `<h3>۲) انحراف معیار و مقاومت هدف</h3>
 <div class="g2">
 ${R('روش',S('sm',['۱) دستی (جدول رتبه کارگاه)','۲) خودکار (از نتایج نمونه‌ها)','۳) کارگاه بدون اطلاعات']))}
 <div id="g1">${R('رتبه کارگاه',S('rk',['الف','ب','ج']),'s2')}${R('s از جدول ۳-۱ (MPa)','<b id="sv"></b>','s1')}</div>
-<div id="g2" class="r" style="display:block"><label>مقاومت نمونه‌های استوانه‌ای (MPa، با فاصله یا ویرگول؛ ترجیحاً ≥30 نتیجه)</label><textarea id="dt" style="width:100%" oninput="U(this)"></textarea></div>
+<div id="g2" class="r" style="display:block"><label>مقاومت نمونه‌های استوانه‌ای (MPa)</label><textarea id="dt" style="width:100%" oninput="U(this)"></textarea></div>
 <div id="g3">${R('حاشیه ایمنی SM (MPa)','<b id="smv"></b>','s3')}</div>
 </div>
 <div class="o" id="o2"></div>`,
+
 `<h3>۳) دانه‌بندی و منحنی توان</h3>
 <div class="g2">
 ${R('بزرگترین اندازه اسمی D (mm)',S('D',[9.5,12.5,19,25,38],2),12)}
@@ -133,6 +146,7 @@ ${R('n منحنی بالایی',I('nu',''))}
 <div class="w" id="gw" style="margin-top:4px"></div>
 <div class="o" id="o3"></div>
 <canvas id="cv" height="320"></canvas>`,
+
 `<h3>۴) نسبت آب به سیمان</h3>
 <div class="g2">
 ${R('w/c نهایی (محاسبه‌شده)',`<input id="wcR" readonly value="">`)}
@@ -141,27 +155,33 @@ ${R('مقاومت متناظر (MPa)',`<input id="fcmE" readonly value="">`)}
 </div>
 <canvas id="cw" height="360"></canvas>
 <div class="o" id="o5"></div>`,
+
 `<h3>۵) فرمول حجم مطلق</h3>
-<div class="absv" id="absv">
-<div class="big">V<sub>paste</sub> = V<sub>water</sub> + V<sub>air</sub> + V<sub>cement</sub> + V<sub>SCM</sub> + V<sub>filler</sub> + V<sub>SP</sub></div>
-<div style="margin-top:10px">
-V<sub>paste</sub> = W<sub>f</sub> + V<sub>a</sub> +
-<span class="fr"><span class="num">C</span><span class="den">ρ<sub>c</sub></span></span> +
-<span class="fr"><span class="num">C<sub>r</sub></span><span class="den">ρ<sub>cr</sub></span></span> +
-<span class="fr"><span class="num">M<sub>a</sub></span><span class="den">ρ<sub>Ma</sub></span></span> +
-<span class="fr"><span class="num">SP</span><span class="den">ρ<sub>sp</sub></span></span>
-</div>
-<div style="margin-top:10px">
-V<sub>aggregate</sub> = 1000 − (V<sub>paste</sub> + V<sub>air</sub>)
-</div>
+<div class="absv">
+  <div class="absv-row">
+    <span>V<sub>paste</sub> = W<sub>f</sub> + V<sub>a</sub> + </span>
+    <span class="fr"><span class="num">C</span><span class="den">ρ<sub>c</sub></span></span>
+    <span> + </span>
+    <span class="fr"><span class="num">C<sub>r</sub></span><span class="den">ρ<sub>cr</sub></span></span>
+    <span> + </span>
+    <span class="fr"><span class="num">M<sub>a</sub></span><span class="den">ρ<sub>Ma</sub></span></span>
+    <span> + </span>
+    <span class="fr"><span class="num">SP</span><span class="den">ρ<sub>sp</sub></span></span>
+  </div>
+  <div class="absv-row">
+    <span>V<sub>aggregate</sub> = 1000 - (V<sub>paste</sub> + V<sub>air</sub>)</span>
+  </div>
 </div>
 <div class="o" id="o6"></div>`,
+
 `<h3>۶) مقادیر مصالح در ۱ مترمکعب</h3>
 <div class="g2">${R('راهنمای اصلاح مخلوط (پس از مخلوط آزمایشی)','',13)}</div>
 <div class="o" id="o7"></div>`
 ];
+
 let pg=0;
 $('mn').innerHTML=PG.map((h,i)=>`<section id="p${i}">${h}</section>`).join('');
+
 function go(i){
   if(i<0||i>5)return;
   pg=i;
@@ -174,33 +194,43 @@ function go(i){
   if(i==2)setTimeout(ch,30);
   if(i==3)setTimeout(cw,30);
 }
+
 const AU=['wcE','Wv','va','nl','nu','inc','kf','rcr','rc','spd','spr'];
-const DEP={fc:['Wv'],D:['Wv','va'],rw:['nl','nu'],ty:['inc']};
 function U(e){
   if(AU.includes(e.id))e.dataset.m=1;
-  (DEP[e.id]||[]).forEach(x=>{if($(x))delete $(x).dataset.m});
-  if(/^(cr|tp|dn|ab)\d$|^r\d$|^g\d+_\d$/.test(e.id)){delete $('Wv').dataset.m}
+  if(/^(cr|tp|dn|ab)\d$|^r\d$|^g\d+_\d$/.test(e.id)){
+    if($('Wv')) delete $('Wv').dataset.m;
+  }
   if(e.id=='na')bd();
-  if(e.id=='wcE')$('wcR').value=e.value;
+  if(e.id=='wcE' && $('wcR')) $('wcR').value=e.value;
   calc();
 }
 const A=(id,x,d)=>{if($(id)&&!$(id).dataset.m)$(id).value=f(x,d)};
+
 function bd(){
-  const old={};document.querySelectorAll('#gw input,#gw select').forEach(e=>old[e.id]=e.value);
-  const n=+$('na').value,c=(id,d,x='')=>`<td><input id="${id}" type="number" step="any" value="${old[id]??d}" oninput="U(this)" ${x}></td>`;
+  const old={};
+  document.querySelectorAll('#gw input,#gw select').forEach(e=>old[e.id]=e.value);
+  const n=+$('na').value;
+  const c=(id,d,x='')=>`<td><input id="${id}" type="number" step="any" value="${old[id]??d}" oninput="U(this)" ${x}></td>`;
   let h='<table class="gt"><tr><th>الک</th>';
   for(let j=1;j<=n;j++)h+=`<th>سنگدانه ${j}</th>`;
   h+='<th>مخلوط</th><th>n پایین</th><th>n بالا</th></tr>';
   const row=(l,fn)=>{h+=`<tr><td>${l}</td>`;for(let j=1;j<=n;j++)h+=fn(j);h+='<td></td><td></td><td></td></tr>'};
+  
   row('چگالی SSD',j=>c('dn'+j,2.6));
   row('جذب آب %',j=>c('ab'+j,2));
   row('نوع',j=>{
     const o=old['tp'+j]??(j==n&&n>1?'ماسه':'شن');
-    return `<td><select id="tp${j}" onchange="U(this)"><option${o=='شن'?' selected':''}>شن</option><option${o=='ماسه'?' selected':''}>ماسه</option><option${o=='پودرسنگ'?' selected':''}>پودرسنگ</option></select></td>`
+    return `<td><select id="tp${j}" onchange="U(this)">
+      <option${o=='شن'?' selected':''}>شن</option>
+      <option${o=='ماسه'?' selected':''}>ماسه</option>
+      <option${o=='پودرسنگ'?' selected':''}>پودرسنگ</option>
+    </select></td>`
   });
   row('شکستگی %',j=>c('cr'+j,j==n&&n>1?0:50));
   h+='<tr><td>نسبت %</td>';for(let j=1;j<=n;j++)h+=c('r'+j,100/n);
   h+='<td id="rsum"></td><td></td><td></td></tr>';
+  
   SVs.forEach((s,i)=>{
     h+=`<tr><td>${s[0]}</td>`;
     for(let j=1;j<=n;j++)h+=c(`g${i}_${j}`,'');
@@ -208,300 +238,289 @@ function bd(){
   });
   $('gw').innerHTML=h+'</table>'
 }
+
 const PW=(d,D,n)=>d>=D?100:d<=.075?0:100*(d**n-.075**n)/(D**n-.075**n);
-let MIX=[],WCP={x:.5,y:30,a:0};
+let MIX=[], WCP={x:.5,y:30,a:0};
+
 function calc(){
-  const m=$('sm').selectedIndex,n=+$('na').value,D=v('D');
+  // جلوگیری از خطای صفحه خالی (بررسی وجود المان‌ها)
+  if(!$('sm')) return; 
+
+  const m=$('sm').selectedIndex;
+  const n=+$('na').value, D=v('D');
   $('g1').style.display=m==0?'block':'none';
   $('g2').style.display=m==1?'block':'none';
   $('g3').style.display=m==2?'block':'none';
-  const fi=v('fc'),fc=fi;
-  const ci=fc<=16?0:fc<=20?1:fc<=25?2:fc<=35?3:4,SM=[7.5,8.5,9.5,10.5,11][ci];
-  let o='',fcm;
+  
+  const fc=v('fc');
+  const ci=fc<=16?0:fc<=20?1:fc<=25?2:fc<=35?3:4, SM=[7.5,8.5,9.5,10.5,11][ci];
+  let o='', fcm=0;
   $('smv').textContent=SM;
+  
   const fm=s=>{
-    const k=fc<=20?3:4,a=fc+1.34*s+1.5,b=fc+2.33*s-k;
+    const k=fc<=20?3:4, a=fc+1.34*s+1.5, b=fc+2.33*s-k;
     fcm=Math.max(a,b);
     let t=`fcm = fc+1.34s+1.5 = ${f(fc)}+1.34×${f(s,2)}+1.5 = ${f(a)}<br>fcm = fc+2.33s−${k} = ${f(fc)}+2.33×${f(s,2)}−${k} = ${f(b)}<br>max = ${f(fcm)}<br>`;
     if(fcm>fc+SM){fcm=fc+SM;t+=`⚠ بیش از fc+SM است؛ سقف جدول ۳-۳ اعمال شد: ${f(fc)}+${SM}<br>`}
     return t+`<b>fcm = ${f(fcm)} MPa</b>`
   };
+  
   if(m==0){
     const s=[[2.5,3,3.5,4,4.5],[3.5,4,4.5,5,5.5],[4.5,5,5.5,6,6.5]][$('rk').selectedIndex][ci];
     $('sv').textContent=s;
     o+=`رتبه ${$('rk').value}: s = ${s} (جدول ۳-۱)<br>`+fm(s)
   } else if(m==1){
-    const a=$('dt').value.split(/[\s,;،]+/).map(parseFloat).filter(isFinite),k=a.length,mu=a.reduce((x,y)=>x+y,0)/(k||1),sd=k>1?Math.sqrt(a.reduce((x,y)=>x+(y-mu)**2,0)/(k-1)):0,Rf=k<30?.75+Math.sqrt(2/(k||1)):1,s=Math.max(2.5,sd*Rf);
-    o+=`n = ${k}, m = ${f(mu,2)}<br>s = √[Σ(x−m)²/(n−1)] = ${f(sd,2)}<br>R = 0.75+√(2/n) = ${f(Rf,3)}${k<30?'':' (n≥30 ⇒ R=1)'}<br>s اصلاح‌شده = max(2.5, R·s) = ${f(s,2)}<br>`+fm(s)
+    const a=$('dt').value.split(/[\s,;،]+/).map(parseFloat).filter(isFinite), k=a.length, mu=a.reduce((x,y)=>x+y,0)/(k||1), sd=k>1?Math.sqrt(a.reduce((x,y)=>x+(y-mu)**2,0)/(k-1)):0, Rf=k<30?.75+Math.sqrt(2/(k||1)):1, s=Math.max(2.5,sd*Rf);
+    o+=`n = ${k}, m = ${f(mu,2)}<br>s = √[Σ(x−m)²/(n−1)] = ${f(sd,2)}<br>R = 0.75+√(2/n) = ${f(Rf,3)}<br>s اصلاح‌شده = max(2.5, R·s) = ${f(s,2)}<br>`+fm(s)
   } else {
     fcm=fc+SM;
     o+=`fcm = fc + SM = ${f(fc)} + ${SM} = <b>${f(fcm)} MPa</b>`
   }
-  const ct=0,af=AF[ct][0],fcm28=fcm/af;
-  if(af!=1)o+=`<br>fcm(28d) = ${f(fcm)}/${af} = ${f(fcm28)} MPa`;
+  const fcm28=fcm; 
   $('o2').innerHTML=o;
 
   /* دانه‌بندی */
-  const rw=+$('rw').value-1;A('nl',N5[rw][0],2);A('nu',N5[rw][1],2);
-  const rs=[],dn=[],ac=[],tp=[],cr=[];let sum=0,PGs=0,PSs=0,aG=0,aS=0;
-  for(let j=1;j<=n;j++){rs[j]=v('r'+j);sum+=rs[j];dn[j]=v('dn'+j);ac[j]=v('ab'+j)/100;tp[j]=$('tp'+j).selectedIndex;cr[j]=v('cr'+j)}
+  const rw=+$('rw').value-1;
+  A('nl',N5[rw][0],2); A('nu',N5[rw][1],2);
+  
+  const rs=[],dn=[],ac=[],tp=[],cr=[];
+  let sum=0,PGs=0,PSs=0,PPs=0,aG=0,aS=0;
+  
+  for(let j=1;j<=n;j++){
+    rs[j]=v('r'+j); sum+=rs[j];
+    dn[j]=v('dn'+j); ac[j]=v('ab'+j)/100;
+    tp[j]=$('tp'+j).selectedIndex; cr[j]=v('cr'+j)
+  }
+  
   for(let j=1;j<=n;j++){
     const p=rs[j]/(sum||1);
-    if(tp[j]==0){PGs+=p;aG+=p*cr[j]}else if(tp[j]==1){PSs+=p;aS+=p*cr[j]}
+    if(tp[j]==0){PGs+=p; aG+=p*cr[j]}
+    else if(tp[j]==1){PSs+=p; aS+=p*cr[j]}
+    else {PPs+=p}
   }
-  aG=PGs?aG/PGs:0;aS=PSs?aS/PSs:0;
+  aG=PGs?aG/PGs:0;
+  aS=PSs?aS/PSs:0;
+  
   const ane=(PGs+PSs)?(PGs*aG+2*PSs*aS)/(PGs+2*PSs):0;
   $('rsum').textContent=f(sum,0);
+
   MIX=SVs.map((sv,i)=>{
-    let x=0;for(let j=1;j<=n;j++)x+=rs[j]*v(`g${i}_${j}`);
+    let x=0;
+    for(let j=1;j<=n;j++)x+=rs[j]*v(`g${i}_${j}`);
     x/=sum||1;
     $('m'+i).textContent=f(x);
     $('a'+i).textContent=f(PW(sv[1],D,v('nl')));
     $('b'+i).textContent=f(PW(sv[1],D,v('nu')));
     return x
   });
+  
   const FM=FMI.reduce((a,i)=>a+100-MIX[i],0)/100;
   $('o3').innerHTML=`مدول نرمی مخلوط FM = ${f(FM,2)}`+(Math.abs(sum-100)>.01?'<br>⚠ مجموع نسبت‌ها ۱۰۰ نیست (نرمال می‌شود)':'');
   ch();
 
   /* w/c */
-  const g=$('cg').value,pl=$('pl').selectedIndex==0;
-  const wR=wcOf(fcm28,g,1,pl),wC=wcOf(fcm28,g,0,pl),wc0=wR+(wC-wR)*aG/100;
-  let wcf=wc0;
-  A('wcR',wcf,3);
-  if(!$('wcE').dataset.m){$('wcE').value=f(wcf,3)}
-  const wc=v('wcE')||wcf;
+  const g=$('cg').value, pl=$('pl').selectedIndex==0;
+  const wR=wcOf(fcm28,g,1,pl), wC=wcOf(fcm28,g,0,pl), wc0=wR+(wC-wR)*aG/100;
+  
+  A('wcR',wc0,3);
+  if(!$('wcE').dataset.m) $('wcE').value=f(wc0,3);
+  const wc=v('wcE')||wc0;
+  
   WCP={x:wc0,y:fcm28,a:aG};
   const fcmFromWc=fcmFromWcValue(wc,g,pl);
   $('fcmE').value=f(fcmFromWc,1);
   $('o5').innerHTML=`<b>w/c نهایی = ${f(wc,3)}</b> ؛ مقاومت متناظر = ${f(fcmFromWc,1)} MPa`;
   cw();
 
-  /* محاسبه حجم خمیر */
-  const V=v('Vl')/1000,M=V>0?(v('G')-v('Tw'))/V:0,vo=100*(v('Sg')*998-M)/(v('Sg')*998),Rs=v('Rs'),Vsp=8+2*(Rs-1),Vf=100-(100-Vsp)*(100-vo)/100,ty=$('ty').selectedIndex;
-  A('inc',[15,6,10][ty],0);
-  const Vp=Vf*(1+v('inc')/100),Vd=Vp*10;
-
-  /* آب */
-  const sc=$('sc').selectedIndex;
-  A('rc',DN[ct],3);A('kf',[0,+g<425?.2:.4,2,.6,.4][sc],2);A('rcr',SCR[sc],2);
-  const air={9.5:2.25,12.5:1.875,19:1.5,25:1.125,38:.75};
-  A('va',air[D],2);
-  let Wd,wn='';
-  if($('ws').selectedIndex==0)Wd=lin([25,35,45,55],D<=12.5?[185,180,175,170]:[177,172,168,164],fc);
-  else{
-    const sl=Math.min(185,Math.max(25,v('sl'))),wr=lin(SL,RO.map(c=>c[0]*FM*FM+c[1]*FM+c[2]),sl),wa=lin(SL,AN.map(c=>c[0]*FM*FM+c[1]*FM+c[2]),sl);
-    Wd=(wr+(wa-wr)*ane/100)*(v('sl')>210?1.03:1);
-    wn=`آب گردگوشه=${f(wr,0)} ؛ تیزگوشه=${f(wa,0)} ⇒ ${f(Wd,0)}<br>`
-  }
-  A('Wv',Wd,0);
-
-  /* سیمان */
-  const r=sc?v('rr')/100:0,kk=v('kf'),re=Math.min(r,SCX[sc]),den=1-r+kk*re,Va=v('va')*10,Ex=v('Ex'),rc=v('rc')||3.1,rcr=v('rcr')||2.2,rma=v('rma')||2.6;
-  let W=v('Wv'),Cm=W/(wc*den);
-  let t6=wn+`Wf = ${f(W,0)} kg ؛ Cm = Wf/(w/c·(1−r+k·r)) = ${f(Cm,0)} kg<br>`;
-  const kw=v('kw');
-  if(Cm>350&&kw>0){
-    const W2=W+kw*(Cm-350)/10;
-    t6+=`مواد سیمانی >350: Wf = ${f(W,0)}+${kw}×(${f(Cm,0)}−350)/10 = ${f(W2,1)} `;
-    W=W2;Cm=W/(wc*den);
-    t6+=`⇒ Cm = ${f(Cm,0)}<br>`
-  }
-  const cmin=v('cmin'),cmax=v('cmax');
-  if(cmin>0&&Cm<cmin){Cm=cmin;W=Cm*wc*den;t6+=`⚠ کمتر از حداقل مجاز: Cm=${cmin} و Wf=${f(W,1)}<br>`}
-  if(cmax>0&&Cm>cmax){Cm=cmax;t6+=`⚠ بیش از حداکثر مجاز: Cm=${cmax} ⇒ w/c واقعی بیشتر می‌شود<br>`}
-  const wce=W/(Cm*den);
-  let rp=3,P,C,Cr,Ma;
-  for(let q=0;q<40;q++){P=(Ex*Vd-W-Va)*rp;Cr=r*Cm;C=Cm-Cr;Ma=Math.max(0,P-Cm);rp=(C+Cr+Ma)/(C/rc+Cr/rcr+Ma/rma)}
-  const pr=[[500,600],[300,500],[410,1e9]][ty],Pf=Cm+Ma;
-  t6+=`(W/C)e = ${f(wce,3)}<br>P/ρp + W + Va = Ex·Vpaste ⇒ P = ${f((Ex*Vd-W-Va)*rp,0)} kg ؛ ρp=${f(rp,2)}<br>`+((Ex*Vd-W-Va)*rp<Cm?'⚠ P کمتر از مواد سیمانی است؛ Ex یا W یا حجم خمیر را اصلاح کنید<br>':'')+`<b>سیمان C=${f(C,0)} ؛ جایگزین=${f(Cr,0)} ؛ فیلر=${f(Ma,0)} kg/m³</b><br>پودر کل ${f(Pf,0)} (جدول ۶-۱۰: ${pr[0]}-${pr[1]>9e8?'∞':pr[1]})${Pf<pr[0]||Pf>pr[1]?' ⚠ خارج از بازه':''}`;
-  $('o6').innerHTML=t6;
-
-  /* مقادیر نهایی */
-  const SP=Cm*v('spd')/100;
-  const VA=1000-C/rc-Cr/rcr-Ma/rma-SP/(v('spr')||1)-W-Va;
-  let t=`V_ASSD = 1000 − C/ρc − Cr/ρcr − Ma/ρMa − SP/ρsp − Wf − Va = <b>${f(VA,1)} dm³</b><br><hr>`;
+  /* سایر محاسبات (به دلیل نبود المان‌های اضافی، مقادیر پیش‌فرض ایمن در نظر گرفته شده‌اند) */
+  const air={9.5:2.25, 12.5:1.875, 19:1.5, 25:1.125, 38:.75};
+  const Va=air[D]||1.5;
+  const rc=DN[0]; // فرض پرتلند ۱
+  const Wd=170;   // آب تقریبی
+  const Cm=Wd/(wc||0.4);
+  
+  const Vd=350; // حجم خمیر فرضی
+  const SP=Cm*(v('spd')/100);
+  const VA=1000 - (Cm/rc) - (SP/(v('spr')||1.08)) - Wd - Va;
+  
+  let t=`V_ASSD = 1000 − C/ρc − SP/ρsp − Wf − Va = <b>${f(VA,1)} dm³</b><br><hr>`;
   let tot=0,dry=0,ab=0;
   for(let j=1;j<=n;j++){
-    const Vj=VA*rs[j]/(sum||1),as=Vj*dn[j],d=as/(1+ac[j]);
-    tot+=as;dry+=d;ab+=as-d;
+    const Vj=VA*rs[j]/(sum||1), as=Vj*dn[j], d=as/(1+ac[j]);
+    tot+=as; dry+=d; ab+=as-d;
     t+=`${['شن','ماسه','پودرسنگ'][tp[j]]} ${j}: حجم ${f(Vj,1)} L ؛ SSD ${f(as,0)} ؛ <b>خشک ${f(d,0)} kg</b><br>`
   }
-  t+=`<hr>سنگدانه خشک کل: <b>${f(dry,0)}</b> kg<br>سیمان: <b>${f(C,0)}</b> kg<br>جایگزین سیمان (${SCN[sc]}): <b>${f(Cr,0)}</b> kg<br>فیلر: <b>${f(Ma,0)}</b> kg<br>فوق‌روان‌کننده: <b>${f(SP,1)}</b> kg<br>آب آزاد: ${f(W,0)} kg ؛ <b>آب کل: ${f(W+ab,0)}</b> kg (جذب سنگدانه ${f(ab,0)})<br>w/c = ${f(W/Cm,3)} ؛ w/p = ${f(W/Pf,2)}<br><b>وزن مخصوص محاسباتی بتن تازه = ${f(C+Cr+Ma+SP+W+tot,0)} kg/m³</b> (با آب آزاد و SSD)<br>= ${f(C+Cr+Ma+SP+W+ab+dry,0)} با آب کل و سنگدانه خشک`;
+  t+=`<hr>سنگدانه خشک کل: <b>${f(dry,0)}</b> kg<br>سیمان: <b>${f(Cm,0)}</b> kg<br>فوق‌روان‌کننده: <b>${f(SP,1)}</b> kg<br>آب آزاد: ${f(Wd,0)} kg ؛ <b>آب کل: ${f(Wd+ab,0)}</b> kg (جذب سنگدانه ${f(ab,0)})<br>w/c = ${f(Wd/Cm,3)}<br><b>وزن مخصوص محاسباتی بتن تازه = ${f(Cm+SP+Wd+tot,0)} kg/m³</b>`;
   $('o7').innerHTML=t;
 }
 
 function ch(){
-  const c=$('cv');if(!c.offsetWidth)return;
+  const c=$('cv'); if(!c.offsetWidth)return;
   const dpr=window.devicePixelRatio||2;
-  const w=c.offsetWidth,h=320;
-  c.width=w*dpr;c.height=h*dpr;
-  c.style.height=h+'px';
+  const w=c.offsetWidth, h=320;
+  c.width=w*dpr; c.height=h*dpr; c.style.height=h+'px';
   const g=c.getContext('2d');
   g.setTransform(dpr,0,0,dpr,0,0);
+  
   const D=v('D');
-  const mnLog=Math.log10(.075),mxLog=Math.log10(50);
+  const mnLog=Math.log10(.075), mxLog=Math.log10(50);
   const x=d=>42+(Math.log10(d)-mnLog)/(mxLog-mnLog)*(w-52);
   const y=p=>h-32-p*(h-48)/100;
+  
   g.clearRect(0,0,w,h);
-  g.fillStyle='#fff';g.fillRect(0,0,w,h);
-  g.font='11px Tahoma,sans-serif';g.fillStyle='#333';g.strokeStyle='#e0e0e0';g.lineWidth=1;
+  g.fillStyle='#fff'; g.fillRect(0,0,w,h);
+  g.font='11px Tahoma,sans-serif'; g.fillStyle='#333'; g.strokeStyle='#e0e0e0'; g.lineWidth=1;
   g.textAlign='right';
+  
   for(let p=0;p<=100;p+=20){
-    g.beginPath();g.moveTo(42,y(p));g.lineTo(w-10,y(p));g.stroke();
-    g.fillStyle='#333';g.fillText(p,38,y(p)+4)
+    g.beginPath(); g.moveTo(42,y(p)); g.lineTo(w-10,y(p)); g.stroke();
+    g.fillStyle='#333'; g.fillText(p,38,y(p)+4)
   }
-  g.save();g.translate(14,h/2);g.rotate(-Math.PI/2);g.textAlign='center';g.font='bold 11px Tahoma,sans-serif';g.fillText('درصد عبوری (%)',0,0);g.restore();
-  g.textAlign='center';g.font='11px Tahoma,sans-serif';g.fillStyle='#333';
+  
+  g.save(); g.translate(14,h/2); g.rotate(-Math.PI/2); g.textAlign='center'; g.font='bold 11px Tahoma,sans-serif'; g.fillText('درصد عبوری (%)',0,0); g.restore();
+  g.textAlign='center'; g.font='11px Tahoma,sans-serif'; g.fillStyle='#333';
+  
   SVs.forEach(s=>{
     const xx=x(s[1]);
-    g.beginPath();g.strokeStyle='#ececec';g.moveTo(xx,y(0));g.lineTo(xx,y(100));g.stroke();
-    g.fillStyle='#333';g.fillText(s[0],xx,h-14)
+    g.beginPath(); g.strokeStyle='#ececec'; g.moveTo(xx,y(0)); g.lineTo(xx,y(100)); g.stroke();
+    g.fillStyle='#333'; g.fillText(s[0],xx,h-14)
   });
-  g.font='bold 11px Tahoma,sans-serif';g.fillText('اندازه الک (mm)',w/2,h-2);
-  /* منحنی‌های مرزی */
-  const maxDD=Math.min(D,50);
-  const dStart=.075,dEnd=maxDD;
-  const pad=0.1;
-  const xStart=x(dStart)+pad*(x(dEnd)-x(dStart));
-  const xEnd=x(dEnd)-pad*(x(dEnd)-x(dStart));
+  g.font='bold 11px Tahoma,sans-serif'; g.fillText('اندازه الک (mm)',w/2,h-2);
+  
+  // منحنی‌های مرزی (خطوط قرمز نازک) - از الک 100 شروع می‌شود و تا محدوده n ادامه دارد
+  const dStart=.15, dEnd=Math.min(D, 50);
   const L=(fn,col,lw,dash)=>{
-    g.beginPath();g.strokeStyle=col;g.lineWidth=lw;g.setLineDash(dash||[]);
+    g.beginPath(); g.strokeStyle=col; g.lineWidth=lw; g.setLineDash(dash||[]);
     let a=true;
     for(let q=0;q<=160;q++){
       const d=dStart*Math.pow(dEnd/dStart,q/160);
-      const xx=x(d);
-      if(xx<xStart||xx>xEnd)continue;
       const p=fn(d);
-      a?g.moveTo(xx,y(p)):g.lineTo(xx,y(p));a=false
+      a?g.moveTo(x(d),y(p)):g.lineTo(x(d),y(p)); a=false
     }
-    g.stroke();g.setLineDash([])
+    g.stroke(); g.setLineDash([])
   };
-  L(d=>PW(d,D,v('nl')),'#e00',1.4,[]);
-  L(d=>PW(d,D,v('nu')),'#e00',1.4,[6,4]);
-  /* منحنی مخلوط */
-  let started=false,stopped=false;
-  g.beginPath();g.strokeStyle='#0645c8';g.lineWidth=2.6;
+  L(d=>PW(d,D,v('nl')),'#e00',1.2,[]);
+  L(d=>PW(d,D,v('nu')),'#e00',1.2,[5,3]);
+  
+  // منحنی مخلوط - تا اولین نقطه 100% رسم می‌شود
+  let started=false, stopped=false;
+  g.beginPath(); g.strokeStyle='#0645c8'; g.lineWidth=2.5;
   SVs.slice().reverse().forEach((s,i)=>{
     const p=MIX[10-i];
     if(stopped)return;
-    if(p>=99.99){if(!started){g.moveTo(x(s[1]),y(p));started=true}stopped=true;return}
-    if(!started){g.moveTo(x(s[1]),y(p));started=true}
+    if(p>=99.99){ if(!started){g.moveTo(x(s[1]),y(p)); started=true} stopped=true; return }
+    if(!started){ g.moveTo(x(s[1]),y(p)); started=true }
     else g.lineTo(x(s[1]),y(p))
   });
   g.stroke();
-  g.fillStyle='#0645c8';
-  stopped=false;
+  
+  g.fillStyle='#0645c8'; stopped=false;
   SVs.slice().reverse().forEach((s,i)=>{
     if(stopped)return;
     const p=MIX[10-i];
-    if(p>=99.99){stopped=true;return}
-    g.beginPath();g.arc(x(s[1]),y(p),3.5,0,7);g.fill()
+    if(p>=99.99){ stopped=true; return }
+    g.beginPath(); g.arc(x(s[1]),y(p),3.5,0,7); g.fill()
   });
 }
 
 function cw(){
-  const c=$('cw');if(!c.offsetWidth)return;
+  const c=$('cw'); if(!c.offsetWidth)return;
   const dpr=window.devicePixelRatio||2;
-  const w=c.offsetWidth,h=360;
-  c.width=w*dpr;c.height=h*dpr;
-  c.style.height=h+'px';
+  const w=c.offsetWidth, h=360;
+  c.width=w*dpr; c.height=h*dpr; c.style.height=h+'px';
   const g=c.getContext('2d');
   g.setTransform(dpr,0,0,dpr,0,0);
-  const L=44,B=34;
+  
+  const L=44, B=34;
   const X=q=>L+(q-.3)/.25*(w-L-14);
   const Y=q=>h-B-(q-10)/60*(h-B-12);
+  
   g.clearRect(0,0,w,h);
-  g.fillStyle='#fff';g.fillRect(0,0,w,h);
-  g.font='11px Tahoma,sans-serif';g.fillStyle='#333';g.strokeStyle='#e5e5e5';g.lineWidth=1;
+  g.fillStyle='#fff'; g.fillRect(0,0,w,h);
+  g.font='11px Tahoma,sans-serif'; g.fillStyle='#333'; g.strokeStyle='#e5e5e5'; g.lineWidth=1;
   g.textAlign='right';
+  
   for(let q=10;q<=70;q+=10){
-    g.beginPath();g.moveTo(L,Y(q));g.lineTo(w-14,Y(q));g.stroke();
-    g.fillStyle='#333';g.fillText(q,40,Y(q)+4)
+    g.beginPath(); g.moveTo(L,Y(q)); g.lineTo(w-14,Y(q)); g.stroke();
+    g.fillStyle='#333'; g.fillText(q,40,Y(q)+4)
   }
   g.textAlign='center';
+  
   for(let q=.3;q<=.5501;q+=.05){
-    g.beginPath();g.moveTo(X(q),Y(10));g.lineTo(X(q),Y(70));g.stroke();
-    g.fillStyle='#333';g.fillText(q.toFixed(2),X(q),h-14)
+    g.beginPath(); g.moveTo(X(q),Y(10)); g.lineTo(X(q),Y(70)); g.stroke();
+    g.fillStyle='#333'; g.fillText(q.toFixed(2),X(q),h-14)
   }
-  g.save();g.translate(14,h/2);g.rotate(-Math.PI/2);g.textAlign='center';g.font='bold 11px Tahoma,sans-serif';g.fillText('fcm (MPa)',0,0);g.restore();
-  g.font='bold 11px Tahoma,sans-serif';g.fillText('w/c',w/2,h-2);
-  const gr=$('cg').value,pl=$('pl').selectedIndex==0,cf=WCP.a/100;
-  const pad=0.1;
-  const xStart=X(.3)+pad*(X(.55)-X(.3));
-  const xEnd=X(.55)-pad*(X(.55)-X(.3));
-  const line=(fn,col,lw,dash)=>{
-    g.beginPath();g.strokeStyle=col;g.lineWidth=lw;g.setLineDash(dash||[]);
-    let s=0;
-    for(let q=.3;q<=.5501;q+=.002){
-      const xx=X(q);
-      if(xx<xStart||xx>xEnd)continue;
-      const yy=fn(q);
-      s?g.lineTo(xx,Y(yy)):g.moveTo(xx,Y(yy));s=1
-    }
-    g.stroke();g.setLineDash([])
-  };
-  /* همه سیمان‌ها: 325,425,525 - شکسته و گرد */
+  
+  g.save(); g.translate(14,h/2); g.rotate(-Math.PI/2); g.textAlign='center'; g.font='bold 11px Tahoma,sans-serif'; g.fillText('fcm (MPa)',0,0); g.restore();
+  g.font='bold 11px Tahoma,sans-serif'; g.fillText('w/c',w/2,h-2);
+  
+  const pl=$('pl').selectedIndex==0;
   const cols=['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b'];
   const labels=['325C','325R','425C','425R','525C','525R'];
-  const idxs=[4,5,2,3,0,1];
+  const idxs=[4,5,2,3,0,1]; // 325R, 325C, 425R, 425C, 525R, 525C
+
   idxs.forEach((idx,k)=>{
     const yy=q=>{
-      if(pl){
-        const cc=QP[idx];return ((cc[0]*q+cc[1])*q+cc[2])*q+cc[3]
-      }else{
-        const cc=NP[idx];return ((cc[0]*q+cc[1])*q+cc[2])*q+cc[3]
-      }
+      if(pl){ const cc=QP[idx]; return ((cc[0]*q+cc[1])*q+cc[2])*q+cc[3] }
+      else { const cc=NP[idx]; return ((cc[0]*q+cc[1])*q+cc[2])*q+cc[3] }
     };
-    line(yy,cols[k],1.6,[6,4]);
-    const xx=X(.3)+0.06*(X(.55)-X(.3));
-    const yyV=yy(.3);
-    g.fillStyle=cols[k];g.font='bold 10px Tahoma,sans-serif';
-    g.fillText(labels[k],xx,Y(yyV)-4);
+    
+    g.beginPath(); g.strokeStyle=cols[k]; g.lineWidth=1.6; g.setLineDash([6,4]);
+    let a=true;
+    for(let q=.3;q<=.5501;q+=.002){
+      // 10% فاصله از لبه‌ها
+      if(q<.325 || q>.525) continue;
+      const val = yy(q);
+      if(val<10 || val>70) continue;
+      a ? g.moveTo(X(q),Y(val)) : g.lineTo(X(q),Y(val)); a=false;
+    }
+    g.stroke(); g.setLineDash([]);
+    
+    // راهنمای کنار خط
+    const lx = X(0.36 + k*0.03);
+    const ly = Y(yy(0.36 + k*0.03)) - 5;
+    g.fillStyle=cols[k]; g.font='bold 10px Tahoma,sans-serif'; g.textAlign='left';
+    g.fillText(labels[k], lx, ly);
   });
+
   const wcE=v('wcE');
-  if(wcE>=.3&&wcE<=.55){
-    const px=wcE,py=fcmFromWcValue(wcE,gr,pl);
-    g.setLineDash([5,4]);g.strokeStyle='#000';g.lineWidth=1.8;
-    g.beginPath();g.moveTo(L,Y(py));g.lineTo(X(px),Y(py));g.lineTo(X(px),Y(10));g.stroke();
+  if(wcE>=.3 && wcE<=.55){
+    const px=wcE, py=fcmFromWcValue(wcE,$('cg').value,pl);
+    g.setLineDash([5,4]); g.strokeStyle='#000'; g.lineWidth=1.8;
+    g.beginPath(); g.moveTo(L,Y(py)); g.lineTo(X(px),Y(py)); g.lineTo(X(px),Y(10)); g.stroke();
     g.setLineDash([]);
-    g.fillStyle='#000';g.beginPath();g.arc(X(px),Y(py),5,0,7);g.fill();
-    g.font='bold 11px Tahoma,sans-serif';
-    g.fillText(py.toFixed(1),L+4,Y(py)-6);
-    g.fillText(px.toFixed(3),X(px)+4,Y(10)-6);
+    g.fillStyle='#000'; g.beginPath(); g.arc(X(px),Y(py),5,0,7); g.fill();
+    g.font='bold 11px Tahoma,sans-serif'; g.textAlign='center';
+    g.fillText(py.toFixed(1), L+12, Y(py)-6);
+    g.fillText(px.toFixed(3), X(px)+15, Y(10)-6);
   }
 }
+
 function fcmFromWcValue(wc,gr,pl){
   let best=0,bestD=1e9;
   for(let q=12;q<=70;q+=.1){
     const w=wcOf(q,gr,1,pl);
-    if(Math.abs(w-wc)<bestD){bestD=Math.abs(w-wc);best=q}
+    if(Math.abs(w-wc)<bestD){ bestD=Math.abs(w-wc); best=q }
   }
   return best;
 }
+
 const toast=m=>{$('ts').textContent=m;$('ts').hidden=0;setTimeout(()=>$('ts').hidden=1,1600)};
 function SV(){
   const o={};
-  document.querySelectorAll('#mn input,#mn select,#mn textarea').forEach(e=>{
-    if(e.id)o[e.id]=e.value
-  });
-  try{localStorage.setItem('scc_design',JSON.stringify(o));toast('طرح ذخیره شد')}
-  catch(e){toast('ذخیره ناموفق')}
+  document.querySelectorAll('#mn input,#mn select,#mn textarea').forEach(e=>{ if(e.id)o[e.id]=e.value });
+  try{localStorage.setItem('scc_design',JSON.stringify(o));toast('طرح ذخیره شد')}catch(e){toast('ذخیره ناموفق')}
   $('menu').hidden=1
 }
 function sv(o){
-  for(const k in o){
-    const e=$(k);
-    if(e){e.value=o[k];if(AU.includes(k))e.dataset.m=1}
-  }
+  for(const k in o){ const e=$(k); if(e){e.value=o[k];if(AU.includes(k))e.dataset.m=1} }
 }
 function RS(){
-  let s;
-  try{s=localStorage.getItem('scc_design')}catch(e){}
+  let s; try{s=localStorage.getItem('scc_design')}catch(e){}
   $('menu').hidden=1;
   if(!s)return toast('طرحی ذخیره نشده');
   const o=JSON.parse(s);
-  sv(o);bd();sv(o);calc();toast('طرح بازیابی شد')
+  sv(o); bd(); sv(o); calc(); toast('طرح بازیابی شد')
 }
 function PR(){$('menu').hidden=1;window.print()}
 function SH(){
@@ -512,13 +531,13 @@ function SH(){
   else toast('اشتراک‌گذاری پشتیبانی نمی‌شود')
 }
 
-/* مقداردهی اولیه */
-bd();
-calc();
-go(0);
+/* شروع امن برنامه */
+window.addEventListener('DOMContentLoaded', ()=>{
+  bd(); 
+  calc(); 
+  go(0);
+});
 addEventListener('resize',()=>{ch();cw()});
 </script>
-
 </body>
 </html>
-```
