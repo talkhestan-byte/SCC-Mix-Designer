@@ -444,6 +444,67 @@ R('مقاومت متناظر (MPa)', '<input id="fcmE" type="text" inputmode="de
 '<option value="3">اصلاح نسبت آب به سیمان</option>' +
 '</select>' +
 '</div>' +
+/* ===== صفحه ۵: تعیین مقدار سیمان ===== */
+'<div class="cement-page">' +
+
+'<h3>۵) تعیین مقدار سیمان</h3>' +
+
+'<div class="cement-main">' +
+
+'<div class="card-title">تعیین مقدار سیمان</div>' +
+
+'<div class="eq-row" style="margin:15px 0;">' +
+'<span>C = </span>' +
+'<span class="eq-frac">' +
+'<span class="num" id="ceq-wf">0</span>' +
+'<span class="den" id="ceq-wc">0</span>' +
+'</span>' +
+'<span> = </span>' +
+'<span class="val-box" id="ceq-c">0</span>' +
+'<span> kg/m³</span>' +
+'</div>' +
+
+'</div>' +
+
+'<div id="cement-warn" class="cement-warning" hidden>' +
+
+'<div class="cement-new">' +
+'<div class="eq-row" style="margin:8px 0;color:#a64b20;">' +
+'<span>C_new = </span>' +
+'<span class="eq-frac">' +
+'<span class="num" id="ceq-c-new-num">0</span>' +
+'<span class="den" id="ceq-c-new-den">0</span>' +
+'</span>' +
+'<span> = </span>' +
+'<b id="ceq-c-new">0 kg/m³</b>' +
+'</div>' +
+'</div>' +
+
+'<div class="cement-alert-text">' +
+'هشدار: سیمان (<b id="ceq-c-raw">0</b>) از حد پیش‌فرض (350) بیشتر است.' +
+'</div>' +
+
+'<div class="cement-correction">' +
+
+'<div class="cement-input">' +
+'<input type="number" step="any" id="ceq-kw" value="1.5" data-u="1">' +
+'<span>ضریب اصلاح آب (kg/10kg)</span>' +
+'</div>' +
+
+'<div class="cement-extra">' +
+'<span>سیمان اضافی: <b id="ceq-add-c">0</b> kg</span>' +
+'<span>آب اضافی: <b id="ceq-add-w">0</b> kg</span>' +
+'</div>' +
+
+'</div>' +
+
+'<div class="cement-choice">' +
+'<select id="ceq-opt" data-u="1">' +
+'<option value="1">نادیده گرفتن و ادامه</option>' +
+'<option value="2">اصلاح بافت دانه‌بندی</option>' +
+'<option value="3">اصلاح نسبت آب به سیمان</option>' +
+'</select>' +
+'</div>' +
 
 '<div class="cement-hint" id="ceq-hint"></div>' +
 
