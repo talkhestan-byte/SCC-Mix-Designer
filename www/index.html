@@ -15,10 +15,10 @@ header button{background:none;border:0;color:#fff;font-size:22px}
 section{display:none;padding:8px}
 section.on{display:block}
 h3{margin:6px 2px;font-size:15px;color:#1f4e79}
-.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:4px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:4px}
 .r{display:flex;align-items:center;gap:6px;background:#fff;padding:6px;border-radius:6px}
 .r label{flex:1;font-size:13px}
-.r input,.r select{width:130px;padding:5px;font-size:13px;border:1px solid #ccc;border-radius:4px}
+.r input,.r select{width:180px;padding:5px;font-size:13px;border:1px solid #ccc;border-radius:4px}
 .r input[readonly]{background:#eef2f7;color:#1f4e79;font-weight:bold}
 .r input:disabled,.r select:disabled{background:#f0f0f0;color:#999}
 .t{font-size:12px;padding:4px 7px;border:1px solid #1f4e79;background:#fff;color:#1f4e79;border-radius:5px;cursor:pointer}
@@ -131,35 +131,36 @@ function fcmFromWc(wc, gr, sh, pl){
   return _fc[k];
 }
 
-var T = {
-1:['جدول ۶-۱ رده جریان اسلامپ',['رده','جریان (mm)'],[['SF0','450-550'],['SF1','550-650'],['SF2','650-750'],['SF3','750-850']]],
-2:['جدول ۶-۲ بافت دانه‌بندی',['بافت','n'],[['خیلی درشت','0.6-0.67'],['درشت','0.5-0.6'],['متوسط','0.4-0.5'],['ریز','0.3-0.4'],['خیلی ریز','0.2-0.3'],['فوق‌العاده ریز','0.1-0.2']]],
-3:['جدول ۶-۳ تراکم میلگرد',['تراکم','بازه'],[['خیلی کم','<50'],['کم','50-75'],['متوسط','75-100'],['زیاد','100-150'],['خیلی زیاد','150-200'],['فوق‌العاده زیاد','>200']]],
-4:['جدول ۶-۴ ضخامت قطعه',['طبقه','بازه'],[['خیلی نازک','<150'],['نازک','150-300'],['نسبتاً نازک','300-600'],['نیمه ضخیم','600-900'],['ضخیم','900-1800'],['بسیار ضخیم','>1800']]],
-5:['جدول ۶-۵ توان n',['ردیف','کاربرد','n پایینی','n بالایی'],[[1,'جریان 500-550',.4,.3],[2,'جریان 560-650',.35,.25],[3,'جریان >660',.3,.2],[4,'میلگرد زیاد/نازک',.25,.15],[5,'ترمیم سطوح',.2,.1]]],
-6:['جدول ۶-۶ رده شکل Rs-a',['رده','توضیح'],[[1,'گرد، هم‌بُعد'],[2,'نیمه‌گرد'],[3,'نیمه‌گوشه‌دار'],[4,'گوشه‌دار'],[5,'تخت/کشیده']]],
-7:['جدول ۶-۷ راهنمای ترکیب خمیر',['اجزا','پارامتر','عملکرد'],[['آب','آب به سیمان','خواص اولیه'],['آب','آب به مواد سیمانی','خواص درازمدت'],['آب','آب به پودر','کارایی'],['پودر','سیمان','مقاومت و دوام'],['پودر','مواد جایگزین','بهبود کارایی']]],
-8:['جدول ۶-۸ تأثیر اجزا بر کارایی',['توضیح'],[['این جدول فلش‌دار است.']]],
-9:['جدول ۶-۹ آب آزاد اولیه (kg/m³)',['D (mm)','25 MPa','35','45','55'],[[19,177,172,168,164],[12.5,185,180,175,170]]],
-10:['جدول ۶-۱۰ مواد پودری',['نوع','درصد وزنی','kg/m³'],[['فقط پودری','16-19','500-600'],['فقط VMA','9.5-16','300-500'],['ترکیبی','≥13','≥410']]],
-11:['جدول ۶-۱۱ ضریب k',['ماده','حداکثر جایگزینی %','k'],[['پوزولان طبیعی',25,'0.2-0.4'],['دوده‌سیلیس',10,'2-4'],['سرباره',50,'0.4-0.8'],['خاکستر بادی',25,'0.2-0.4']]],
-12:['جدول ۶-۱۲ هوای ناخواسته %',['D (mm)','هوا %'],[[9.5,'1.5-3'],[12.5,'1.25-2.5'],[19,'1-2'],[25,'0.75-1.5'],[38,'0.5-1']]],
-13:['جدول ۶-۱۳ راهنمای اصلاح',['مشخصه','سنگدانه','حجم خمیر','ترکیب خمیر'],[['پُرکردن','اصلاح دانه‌بندی','حداقل خمیر','افزایش فوق‌روان‌کننده'],['عبور','کاهش ذرات درشت','افزایش خمیر','کاهش گرانروی'],['پایداری','دانه‌بندی پیوسته','افزایش خمیر','استفاده از VMA']]],
-s1:['جدول ۳-۱ انحراف معیار (MPa)',['رتبه','16','20','25','30و35','40+'],[['الف',2.5,3,3.5,4,4.5],['ب',3.5,4,4.5,5,5.5],['ج',4.5,5,5.5,6,6.5]]],
-s2:['جدول ۳-۲ رتبه کارگاه',['شرایط','الف','ب','ج'],[['توزین سیمان','وزنی','وزنی','حجمی'],['توزین سنگدانه','وزنی','حجمی','حجمی'],['کنترل دانه‌بندی','کنترل شده','کنترل شده','بدون کنترل'],['نظارت','عالی','خوب','ضعیف']]],
-s3:['جدول ۳-۳ حاشیه ایمنی',['fc','16-','20','25','30و35','40-50'],[['SM',7.5,8.5,9.5,10.5,11]]],
-s4:['جدول ۳-۴ مقاومت سنین',['نوع سیمان','28','42','56','90'],[['پرتلند 1',1,1.05,1.1,1.2],['پرتلند 2',1,1.08,1.13,1.24]]],
-d11:['جدول ۱۱-۴ چگالی سیمان‌ها',['نوع','چگالی'],[['پرتلند 1','3.05-3.10'],['پرتلند 2','3.10-3.15'],['خاکستر بادی','2.2-2.4']]]
-};
+/* ============ جداول: دیگر HTML نیست، همه تصویر t1..t13 از پوشه tables ============ */
+var T_IMG = {};   /* فقط برای نگاشت کلید دکمه به شماره تصویر */
+
 function openTable(k){
-  var t = T[k];
-  if (!t) return;
-  var html = '<b>'+t[0]+'</b><table class="gt" style="width:100%;margin-top:8px">';
-  html += '<tr>' + t[1].map(function(x){ return '<th>'+x+'</th>'; }).join('') + '</tr>';
-  t[2].forEach(function(r){
-    html += '<tr>' + r.map(function(c){ return '<td>'+c+'</td>'; }).join('') + '</tr>';
-  });
-  html += '</table>';
+  /* اگر کلید عددی است، مستقیم به tables/tN.png برو */
+  var num = null;
+  if (typeof k === 'number') num = k;
+  else if (typeof k === 'string') {
+    if (/^\d+$/.test(k)) num = parseInt(k, 10);
+    else if (/^s[1-4]$/.test(k)) {
+      /* برای جداول ۳-x هم اگر تصویری موجود نبود، پیام بده */
+      num = null;
+    } else if (/^d\d+$/.test(k)) {
+      num = null;
+    }
+  }
+
+  var html = '';
+  if (num !== null) {
+    html = '<div style="text-align:center">'
+         + '<b style="color:#1f4e79">جدول ۶-' + num + '</b><br>'
+         + '<img src="tables/t' + num + '.png" style="width:100%;margin-top:8px;border:1px solid #ccc;border-radius:6px" '
+         + 'onerror="this.parentNode.innerHTML=\'<div style=padding:20px;color:#b71c1c;font-size:14px>تصویر tables/t' + num + '.png پیدا نشد.</div>\'">'
+         + '</div>';
+  } else {
+    /* برای s1..s4 و d11 و ... پیام اطلاع‌رسانی */
+    html = '<div style="padding:20px;text-align:center;color:#b71c1c;font-size:14px">'
+         + 'برای این جدول تصویری در پوشه tables تعریف نشده است.'
+         + '</div>';
+  }
   $('mb').innerHTML = html;
   $('md').hidden = false;
 }
@@ -169,7 +170,7 @@ var PG = [
 '<div class="g2">' +
 R('مقاومت مشخصه fc (MPa)', I('fc', 35)) +
 R('رده سیمان', S('cg', [325, 425, 525], 1)) +
-R('چگالی سیمان (g/cm³)', I('rc_cement', 3.15, 'step="0.01"'), 11) +
+R('چگالی سیمان (g/cm³)', I('rc_cement', 3.15, 'step="0.01"')) +
 R('روان‌کننده / فوق‌روان‌کننده', S('pl', ['دارد', 'ندارد'])) +
 R('درصد روان‌کننده (%)', I('spd', 1)) +
 R('چگالی روان‌کننده (kg/L)', I('spr', 1.08)) +
@@ -643,7 +644,7 @@ function drawAgg(){
         done = false;
         for (var k2=0; k2<pts.length; k2++) {
           if (done) break;
-          g.beginPath(); g.arc(pts[k2].x, pts[k2].y, 1.5, 0, Math.PI*2); g.fill();
+          g.beginPath(); g.arc(pts[k2].x, pts[k2].y, 1, 0, Math.PI*2); g.fill();
           if (pts[k2].val >= 99.99) done = true;
         }
       }
@@ -717,7 +718,6 @@ function drawWC(){
     if (lastX !== null) labelData.push({ x: lastX, y: lastY, col: cols[k], label: labels[k] });
   });
 
-  /* لیبل دقیقاً از انتهای منحنی شروع شود */
   labelData.forEach(function(ld){
     g.fillStyle = ld.col;
     g.font = 'bold 10px Tahoma,sans-serif';
@@ -727,7 +727,6 @@ function drawWC(){
   });
   g.textBaseline = 'alphabetic';
 
-  /* خط‌چین‌ها - رنگ‌های متفاوت */
   var gr = $('cg') ? $('cg').value : '425';
   var guideColors = ['#000', '#b71c1c'];
   guideLines.forEach(function(gl, i){
@@ -744,7 +743,7 @@ function drawWC(){
     g.stroke();
     g.setLineDash([]);
     g.fillStyle = col;
-    g.beginPath(); g.arc(X(px), Y(py), 2.5, 0, Math.PI*2); g.fill();
+    g.beginPath(); g.arc(X(px), Y(py), 1.5, 0, Math.PI*2); g.fill();
     g.font = 'bold 10px Tahoma,sans-serif'; g.textAlign = 'center';
     g.fillText(py.toFixed(1), L + 12, Y(py) - 6);
     g.fillText(px.toFixed(3), X(px) + 15, Y(10) - 6);
@@ -789,6 +788,55 @@ function handleCeqOpt(){
   } else if (opt === '3') {
     goTo(2);
   }
+}
+
+/* ============ اشتراک‌گذاری: نسخه پایدار ============ */
+function doShare(){
+  var t = 'طرح مخلوط بتن خودتراکم (SCC)\n\n';
+  ['o2','o3','o5','o7'].forEach(function(id){
+    var el = $(id);
+    if (el) t += el.innerText + '\n\n';
+  });
+
+  function fallbackCopy(text){
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.top = '-1000px';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (ok) { toast('متن کپی شد'); }
+      else { toast('کپی ناموفق'); }
+    } catch(e) { toast('کپی پشتیبانی نمی‌شود'); }
+  }
+
+  if (navigator.share) {
+    navigator.share({ title: 'طرح SCC', text: t })
+      .catch(function(err){
+        if (err && err.name === 'AbortError') return;
+        fallbackCopy(t);
+      });
+    return;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(t)
+      .then(function(){ toast('متن کپی شد'); })
+      .catch(function(){ fallbackCopy(t); });
+    return;
+  }
+  fallbackCopy(t);
+}
+
+function toast(msg){
+  var t = $('ts');
+  if (!t) return;
+  t.textContent = msg;
+  t.hidden = false;
+  clearTimeout(toast._tm);
+  toast._tm = setTimeout(function(){ t.hidden = true; }, 1800);
 }
 
 function bindAll(){
@@ -846,14 +894,14 @@ function bindAll(){
   $('mSave').addEventListener('click', function(){
     var o = {};
     document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(e){ if (e.id) o[e.id] = e.value; });
-    try { localStorage.setItem('scc_v14', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
+    try { localStorage.setItem('scc_v15', JSON.stringify(o)); toast('ذخیره شد'); } catch(err) { toast('ذخیره ناموفق'); }
     $('menu').hidden = true;
   });
   $('mLoad').addEventListener('click', function(){
     var s;
-    try { s = localStorage.getItem('scc_v14'); } catch(err){}
+    try { s = localStorage.getItem('scc_v15'); } catch(err){}
     $('menu').hidden = true;
-    if (!s) { alert('طرحی ذخیره نشده'); return; }
+    if (!s) { toast('طرحی ذخیره نشده'); return; }
     var o = JSON.parse(s);
     if (o.na && $('na')) $('na').value = o.na;
     if (o.ty && $('ty')) $('ty').value = o.ty;
@@ -861,16 +909,10 @@ function bindAll(){
     bd();
     Object.keys(o).forEach(function(k){ var el = $(k); if (el) { el.value = o[k]; if (AU.indexOf(k) >= 0) el.dataset.m = '1'; } });
     calc();
-    alert('بازیابی شد');
+    toast('بازیابی شد');
   });
   $('mPrint').addEventListener('click', function(){ $('menu').hidden = true; window.print(); });
-  $('mShare').addEventListener('click', function(){
-    $('menu').hidden = true;
-    var t = 'طرح SCC\n';
-    ['o2','o3','o5','o7'].forEach(function(id){ if ($(id)) t += $(id).innerText + '\n\n'; });
-    if (navigator.share) navigator.share({title:'طرح SCC', text:t}).catch(function(){});
-    else if (navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ alert('کپی شد'); });
-  });
+  $('mShare').addEventListener('click', function(){ $('menu').hidden = true; doShare(); });
 }
 
 function init(){
