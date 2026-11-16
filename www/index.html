@@ -6,6 +6,10 @@
 <title>طرح مخلوط بتن خودتراکم</title>
 <style>
 *{box-sizing:border-box}
+html,body{
+  font-feature-settings: "lnum" 1, "tnum" 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
 body{margin:0;font:14px Tahoma,system-ui,sans-serif;background:#f4f5f7;color:#222;padding:0 0 60px}
 header{position:sticky;top:0;z-index:5;background:#1f4e79;color:#fff;padding:env(safe-area-inset-top,0) 10px 0;display:flex;align-items:center;gap:10px;height:calc(46px + env(safe-area-inset-top,0px))}
 header button{background:none;border:0;color:#fff;font-size:22px}
@@ -18,15 +22,28 @@ h3{margin:6px 2px;font-size:15px;color:#1f4e79}
 .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:4px}
 .r{display:flex;align-items:center;gap:6px;background:#fff;padding:6px;border-radius:6px}
 .r label{flex:1;font-size:13px}
-.r input,.r select{width:180px;padding:5px;font-size:13px;border:1px solid #ccc;border-radius:4px;font-family:Arial,sans-serif}
+.r input,.r select{
+  width:180px;padding:5px;font-size:13px;border:1px solid #ccc;border-radius:4px;
+  font-family: Arial, Helvetica, sans-serif;
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: plaintext;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+}
 .r input[readonly]{background:#eef2f7;color:#1f4e79;font-weight:bold}
 .r input:disabled,.r select:disabled{background:#f0f0f0;color:#999}
 .t{font-size:12px;padding:4px 7px;border:1px solid #1f4e79;background:#fff;color:#1f4e79;border-radius:5px;cursor:pointer}
-.o{background:#e8f1fb;padding:8px;border-radius:6px;margin:6px 0;direction:ltr;text-align:left;line-height:1.7;font-size:13px;font-family:Arial,sans-serif}
+.o{background:#e8f1fb;padding:8px;border-radius:6px;margin:6px 0;direction:ltr;text-align:left;line-height:1.7;font-size:13px;font-family:Arial,sans-serif;unicode-bidi:plaintext;font-variant-numeric:lining-nums tabular-nums}
 .w{overflow-x:auto;background:#fff;border-radius:6px}
 .gt{border-collapse:collapse;font-size:12px;font-family:Arial,sans-serif}
 .gt td,.gt th{border:1px solid #ccc;padding:2px;text-align:center;white-space:nowrap}
-.gt input{width:42px;padding:2px;font-size:12px;font-family:Arial,sans-serif}
+.gt input{
+  width:42px;padding:2px;font-size:12px;font-family:Arial,sans-serif;
+  direction: ltr; text-align: center; unicode-bidi: plaintext;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+}
 .gt select{font-size:11px;padding:1px}
 .gt td:first-child,.gt th:first-child{position:sticky;right:0;background:#dde8f5}
 .gt .out-red{color:#e00000 !important;font-weight:bold}
@@ -51,40 +68,23 @@ nav button:disabled{background:#9bb3cc;cursor:not-allowed}
 .eq-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 6px}
 .eq-frac .num{border-bottom:1.5px solid #000;padding:0 6px;line-height:1.2;text-align:center;font-family:Arial,sans-serif}
 .eq-frac .den{padding:0 6px;line-height:1.2;text-align:center;font-family:Arial,sans-serif}
-.val-box{background:#eef3f9;padding:5px 15px;border-radius:6px;font-weight:bold;font-size:18px;color:#1f4e79;min-width:80px;text-align:center;font-family:Arial,sans-serif}
+.val-box{background:#eef3f9;padding:5px 15px;border-radius:6px;font-weight:bold;font-size:18px;color:#1f4e79;min-width:80px;text-align:center;font-family:Arial,sans-serif;direction:ltr;unicode-bidi:plaintext}
 .alert-box{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;padding:15px;text-align:right;direction:rtl}
 .alert-title{color:#b71c1c;font-size:14px;margin-bottom:15px;font-weight:bold}
 .input-group{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:15px}
-.input-group input{width:120px;padding:8px;border:1px solid #ccc;border-radius:6px;text-align:center;font-size:16px;font-family:Arial,sans-serif}
+.input-group input{width:120px;padding:8px;border:1px solid #ccc;border-radius:6px;text-align:center;font-size:16px;font-family:Arial,sans-serif;direction:ltr;unicode-bidi:plaintext;font-variant-numeric:lining-nums tabular-nums}
 .summary-text{text-align:center;font-size:14px;color:#333;margin-bottom:15px}
-.summary-text span{color:#b71c1c;font-weight:bold;font-family:Arial,sans-serif}
+.summary-text span{color:#b71c1c;font-weight:bold;font-family:Arial,sans-serif;direction:ltr;unicode-bidi:plaintext;font-variant-numeric:lining-nums tabular-nums}
 select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;padding:10px;font-size:14px;color:#00796b;font-weight:bold;width:100%;max-width:340px;outline:none}
 .res-table{width:100%;border-collapse:collapse;font-size:13px;text-align:center}
 .res-table th,.res-table td{border:1px solid #d1d9e6;padding:8px}
 .res-table th{background:#eef3f9;color:#1f4e79;font-weight:bold}
+.res-table td{font-family:Arial,sans-serif;direction:ltr;unicode-bidi:plaintext;font-variant-numeric:lining-nums tabular-nums}
 .res-box{display:flex;gap:10px;justify-content:center;margin-top:15px}
-.res-box div{background:#f4f7fb;border-radius:8px;padding:10px;flex:1;text-align:center;font-weight:bold;color:#1f4e79;border:1px solid #e2e8f0;font-family:Arial,sans-serif}
-.res-box span{display:block;font-size:11px;color:#555;font-weight:normal;margin-bottom:5px;font-family:Tahoma,sans-serif}
+.res-box div{background:#f4f7fb;border-radius:8px;padding:10px;flex:1;text-align:center;font-weight:bold;color:#1f4e79;border:1px solid #e2e8f0;font-family:Arial,sans-serif;direction:ltr;unicode-bidi:plaintext}
+.res-box span{display:block;font-size:11px;color:#555;font-weight:normal;margin-bottom:5px;font-family:Tahoma,sans-serif;direction:rtl;unicode-bidi:normal}
 .res-box-final{background:#e1f0fa !important;border-color:#b3d4ed !important;color:#0073e6 !important;font-size:15px;padding:12px !important;margin-top:10px}
-
-/* ====== راه‌حل سوم: اجبار اعداد به لاتین ====== */
-body, section, .r, .g2, .o, .gt, .val-box, .res-table, .res-box, .math-card, .card, .summary-text, .input-group {
-  font-variant-numeric: lining-nums;
-}
-.r input, .r select, .gt input, .gt select, .gt td, .gt th,
-.val-box, .o, .res-table td, .res-box div, .math-card .num,
-.math-card .den, .eq-frac .num, .eq-frac .den, #res-Ad, #res-Wt, #res-G,
-#eq-assd, #ceq-c, #ceq-c-new, #fcmE, #wcR, #fcmWc, #pn {
-  direction: ltr;
-  text-align: right;
-  unicode-bidi: plaintext;
-  font-family: Arial, Helvetica, sans-serif;
-}
-.r input, .r select, .gt input, .gt select { text-align: left; }
-#pn, .summary-text, .res-box span, .math-title {
-  unicode-bidi: plaintext;
-}
-
+#pn{direction:ltr;unicode-bidi:plaintext;font-family:Arial,sans-serif;font-variant-numeric:lining-nums tabular-nums}
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
 </style>
 </head>
@@ -115,7 +115,6 @@ var pg = 0;
 function $(id){ return document.getElementById(id); }
 function v(id){ var el = $(id); return el ? (parseFloat(el.value) || 0) : 0; }
 
-/* ====== راه‌حل سوم: تبدیل ارقام فارسی/عربی به لاتین ====== */
 var FA = '۰۱۲۳۴۵۶۷۸۹';
 var AR = '٠١٢٣٤٥٦٧٨٩';
 function toLatin(s){
@@ -171,22 +170,27 @@ function fcmFromWc(wc, gr, sh, pl){
   return _fc[k];
 }
 
+/* ====== سه جدول ۳-x ====== */
 function openTable(k){
   var num = null;
-  if (typeof k === 'number') num = k;
+  var file = null;
+  if (typeof k === 'number') { num = k; file = 't' + num; }
   else if (typeof k === 'string') {
-    if (/^\d+$/.test(k)) num = parseInt(k, 10);
-    else num = null;
+    if (/^\d+$/.test(k)) { num = parseInt(k, 10); file = 't' + num; }
+    else if (/^s[1-4]$/.test(k)) { file = k; num = null; }
+    else if (/^d\d+$/.test(k)) { file = k; num = null; }
   }
+
   var html = '';
-  if (num !== null) {
+  if (file) {
+    var label = (num !== null) ? ('جدول ۶-' + toLatin(num)) : ('جدول ' + toLatin(file.toUpperCase()));
     html = '<div style="text-align:center">'
-         + '<b style="color:#1f4e79">جدول ۶-' + num + '</b><br>'
-         + '<img src="tables/t' + num + '.png" style="width:100%;margin-top:8px;border:1px solid #ccc;border-radius:6px" '
-         + 'onerror="this.parentNode.innerHTML=\'<div style=padding:20px;color:#b71c1c;font-size:14px>تصویر tables/t' + num + '.png پیدا نشد.</div>\'">'
+         + '<b style="color:#1f4e79">' + label + '</b><br>'
+         + '<img src="tables/' + file + '.png" style="width:100%;margin-top:8px;border:1px solid #ccc;border-radius:6px" '
+         + 'onerror="this.parentNode.innerHTML=\'<div style=padding:20px;color:#b71c1c;font-size:14px>تصویر tables/' + file + '.png پیدا نشد.</div>\'">'
          + '</div>';
   } else {
-    html = '<div style="padding:20px;text-align:center;color:#b71c1c;font-size:14px">برای این جدول تصویری در پوشه tables تعریف نشده است.</div>';
+    html = '<div style="padding:20px;text-align:center;color:#b71c1c;font-size:14px">برای این جدول تصویری تعریف نشده است.</div>';
   }
   $('mb').innerHTML = html;
   $('md').hidden = false;
@@ -408,19 +412,32 @@ function calc(){
     return t + '<b>fcm = ' + f(fcm) + ' MPa</b>';
   }
 
+  /* ================= حالت دستی ================= */
   if (m === 0) {
     var tbl = [[2.5,3,3.5,4,4.5],[3.5,4,4.5,5,5.5],[4.5,5,5.5,6,6.5]];
     var s = tbl[$('rk').selectedIndex][ci];
     if ($('sv')) $('sv').textContent = toLatin(s);
-    out = 'رتبه ' + $('rk').value + ': s = ' + f(s) + '<br>' + fmCalc(s);
-  } else if (m === 1) {
+    fcm = fc + s;
+    if (fcm > fc + SM) {
+      out = 'fcm = fc + s = ' + f(fc) + ' + ' + f(s) + ' = <b>' + f(fcm) + ' MPa</b>'
+          + '<br>⚠ بیش از fc+SM؛ سقف: ' + f(fc+SM)
+          + '<br><b>fcm = ' + f(fc+SM) + ' MPa</b>';
+      fcm = fc + SM;
+    } else {
+      out = 'fcm = fc + s = ' + f(fc) + ' + ' + f(s) + ' = <b>' + f(fcm) + ' MPa</b>';
+    }
+  }
+  /* ================= حالت خودکار ================= */
+  else if (m === 1) {
     var arr = $('dt').value.split(/[\s,;،]+/).map(parseFloat).filter(isFinite);
     var kk = arr.length, mu = kk ? arr.reduce(function(x,y){return x+y;},0)/kk : 0;
     var sd = kk > 1 ? Math.sqrt(arr.reduce(function(x,y){return x+(y-mu)*(y-mu);},0)/(kk-1)) : 0;
     var Rf = kk < 30 ? .75 + Math.sqrt(2/(kk||1)) : 1;
     var s2 = Math.max(2.5, sd*Rf);
     out = 's = ' + f(sd,2) + ' ؛ R = ' + f(Rf,3) + '<br>s اصلاح = ' + f(s2,2) + '<br>' + fmCalc(s2);
-  } else {
+  }
+  /* ================= کارگاه بدون اطلاعات ================= */
+  else {
     fcm = fc + SM;
     out = 'fcm = fc + SM = <b>' + f(fcm) + ' MPa</b>';
   }
@@ -451,7 +468,7 @@ function calc(){
     var x = 0;
     for (var j=1; j<=n; j++) x += (rs[j]||0)*v('g'+i+'_'+j);
     x /= sum || 1;
-    
+
     var mCell = $('m'+i);
     if (mCell) {
       mCell.textContent = f(x);
@@ -942,12 +959,12 @@ function bindAll(){
   $('mSave').addEventListener('click', function(){
     var o = {};
     document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(e){ if (e.id) o[e.id] = e.value; });
-    try { localStorage.setItem('scc_v17', JSON.stringify(o)); toast('ذخیره شد'); } catch(err) { toast('ذخیره ناموفق'); }
+    try { localStorage.setItem('scc_v18', JSON.stringify(o)); toast('ذخیره شد'); } catch(err) { toast('ذخیره ناموفق'); }
     $('menu').hidden = true;
   });
   $('mLoad').addEventListener('click', function(){
     var s;
-    try { s = localStorage.getItem('scc_v17'); } catch(err){}
+    try { s = localStorage.getItem('scc_v18'); } catch(err){}
     $('menu').hidden = true;
     if (!s) { toast('طرحی ذخیره نشده'); return; }
     var o = JSON.parse(s);
