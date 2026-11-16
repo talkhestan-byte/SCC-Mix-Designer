@@ -134,8 +134,6 @@ function toLatin(s){
 
 function f(x, d){ d = (d === undefined) ? 1 : d; return isFinite(x) ? toLatin((+x).toFixed(d)) : '-'; }
 function R(l, h, t){ return '<div class="r"><label>'+l+'</label>'+h+(t ? ' <button type="button" class="t" data-tb="'+t+'">جدول</button>' : '')+'</div>'; }
-
-/* ==== راه‌حل جدید: ورودی‌ها type=text با inputmode=decimal ==== */
 function I(id, val, extra){
   val = val === undefined ? '' : val;
   extra = extra || '';
@@ -176,7 +174,6 @@ function fcmFromWc(wc, gr, sh, pl){
   return _fc[k];
 }
 
-/* ====== openTable: s1..s4, d11, t1..t13 ====== */
 function openTable(k){
   var file = null;
   var label = '';
@@ -247,6 +244,7 @@ R('مقاومت متناظر (MPa)', '<input id="fcmE" type="text" inputmode="de
 '<canvas id="cw" height="360"></canvas>' +
 '<div class="o" id="o5"></div>',
 
+/* ===== صفحه ۵: عیناً نسخه اصلی، فقط ceq-kw به type=number برگشت ===== */
 '<h3>۵) تعیین مقدار سیمان</h3>' +
 '<div class="card">' +
 '<div class="card-title">تعیین مقدار سیمان</div>' +
@@ -258,7 +256,7 @@ R('مقاومت متناظر (MPa)', '<input id="fcmE" type="text" inputmode="de
 '<div class="eq-row" style="margin:10px 0; justify-content:center;"><span>C_new = </span>' +
 '<span class="eq-frac"><span class="num" id="ceq-c-new-num">0</span><span class="den" id="ceq-c-new-den">0</span></span>' +
 '<span> = </span><span style="color:#b71c1c;font-weight:bold;font-size:20px;" id="ceq-c-new">0 kg/m³</span></div>' +
-'<div class="input-group"><input type="text" inputmode="decimal" id="ceq-kw" value="1.5" data-u="1"><span>ضریب اصلاح آب (kg/10kg)</span></div>' +
+'<div class="input-group"><input type="number" id="ceq-kw" value="1.5" step="any" data-u="1"><span>ضریب اصلاح آب (kg/10kg)</span></div>' +
 '<div class="summary-text">سیمان اضافی: <span id="ceq-add-c">0</span> kg &nbsp;|&nbsp; آب اضافی: <span id="ceq-add-w">0</span> kg</div>' +
 '<div style="text-align:center;margin-top:15px;">' +
 '<select class="styled-select" id="ceq-opt" data-u="1">' +
@@ -906,12 +904,9 @@ function toast(msg){
   toast._tm = setTimeout(function(){ t.hidden = true; }, 1800);
 }
 
-/* ============================================================
-   راه‌حل جدید: تبدیل ارقام فارسی/عربی در input به لاتین
-   هنگام تایپ (input event)
-   ============================================================ */
 function fixInputDigits(el){
   if (!el || !el.value) return;
+  if (el.type === 'number') return;
   var before = el.value;
   var after = toLatin(before);
   if (before !== after) {
@@ -979,12 +974,12 @@ function bindAll(){
   $('mSave').addEventListener('click', function(){
     var o = {};
     document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(e){ if (e.id) o[e.id] = e.value; });
-    try { localStorage.setItem('scc_v19', JSON.stringify(o)); toast('ذخیره شد'); } catch(err) { toast('ذخیره ناموفق'); }
+    try { localStorage.setItem('scc_v20', JSON.stringify(o)); toast('ذخیره شد'); } catch(err) { toast('ذخیره ناموفق'); }
     $('menu').hidden = true;
   });
   $('mLoad').addEventListener('click', function(){
     var s;
-    try { s = localStorage.getItem('scc_v19'); } catch(err){}
+    try { s = localStorage.getItem('scc_v20'); } catch(err){}
     $('menu').hidden = true;
     if (!s) { toast('طرحی ذخیره نشده'); return; }
     var o = JSON.parse(s);
