@@ -18,17 +18,19 @@ h3{margin:6px 2px;font-size:15px;color:#1f4e79}
 .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:4px}
 .r{display:flex;align-items:center;gap:6px;background:#fff;padding:6px;border-radius:6px}
 .r label{flex:1;font-size:13px}
-.r input,.r select{width:180px;padding:5px;font-size:13px;border:1px solid #ccc;border-radius:4px}
+.r input,.r select{width:180px;padding:5px;font-size:13px;border:1px solid #ccc;border-radius:4px;font-family:Arial,sans-serif}
 .r input[readonly]{background:#eef2f7;color:#1f4e79;font-weight:bold}
 .r input:disabled,.r select:disabled{background:#f0f0f0;color:#999}
 .t{font-size:12px;padding:4px 7px;border:1px solid #1f4e79;background:#fff;color:#1f4e79;border-radius:5px;cursor:pointer}
-.o{background:#e8f1fb;padding:8px;border-radius:6px;margin:6px 0;direction:ltr;text-align:left;line-height:1.7;font-size:13px}
+.o{background:#e8f1fb;padding:8px;border-radius:6px;margin:6px 0;direction:ltr;text-align:left;line-height:1.7;font-size:13px;font-family:Arial,sans-serif}
 .w{overflow-x:auto;background:#fff;border-radius:6px}
-.gt{border-collapse:collapse;font-size:12px}
+.gt{border-collapse:collapse;font-size:12px;font-family:Arial,sans-serif}
 .gt td,.gt th{border:1px solid #ccc;padding:2px;text-align:center;white-space:nowrap}
-.gt input{width:42px;padding:2px;font-size:12px}
+.gt input{width:42px;padding:2px;font-size:12px;font-family:Arial,sans-serif}
 .gt select{font-size:11px;padding:1px}
 .gt td:first-child,.gt th:first-child{position:sticky;right:0;background:#dde8f5}
+.gt .out-red{color:#e00000 !important;font-weight:bold}
+.gt .in-green{color:#138a13 !important;font-weight:bold}
 canvas{width:100%;background:#fff;border-radius:6px;display:block}
 nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;background:#fff;border-top:1px solid #ccc;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));z-index:10}
 nav button{padding:8px 16px;font-size:14px;border:0;background:#1f4e79;color:#fff;border-radius:6px;cursor:pointer}
@@ -41,28 +43,28 @@ nav button:disabled{background:#9bb3cc;cursor:not-allowed}
 .math-title{font-size:13px;color:#1f4e79;margin-bottom:8px;font-weight:bold;text-align:right}
 .sm-eq-row{display:flex;align-items:center;justify-content:center;direction:ltr;font-family:"Times New Roman",Times,serif;font-size:11px;flex-wrap:nowrap;white-space:nowrap;overflow-x:auto}
 .sm-eq-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 2px}
-.sm-eq-frac .num{border-bottom:1px solid #000;padding:0 2px;line-height:1.1;text-align:center}
-.sm-eq-frac .den{padding:0 2px;line-height:1.1;text-align:center}
+.sm-eq-frac .num{border-bottom:1px solid #000;padding:0 2px;line-height:1.1;text-align:center;font-family:Arial,sans-serif}
+.sm-eq-frac .den{padding:0 2px;line-height:1.1;text-align:center;font-family:Arial,sans-serif}
 .card{background:#fff;border:1px solid #d1d9e6;border-radius:12px;padding:20px;margin-bottom:15px;box-shadow:0 2px 6px rgba(0,0,0,0.05)}
 .card-title{font-size:16px;color:#1f4e79;margin-bottom:15px;font-weight:bold;text-align:right;border-bottom:1px solid #eee;padding-bottom:10px}
 .eq-row{display:flex;align-items:center;justify-content:center;direction:ltr;font-family:"Times New Roman",Times,serif;font-size:18px;flex-wrap:wrap;margin:15px 0}
 .eq-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 6px}
-.eq-frac .num{border-bottom:1.5px solid #000;padding:0 6px;line-height:1.2;text-align:center}
-.eq-frac .den{padding:0 6px;line-height:1.2;text-align:center}
-.val-box{background:#eef3f9;padding:5px 15px;border-radius:6px;font-weight:bold;font-size:18px;color:#1f4e79;min-width:80px;text-align:center}
+.eq-frac .num{border-bottom:1.5px solid #000;padding:0 6px;line-height:1.2;text-align:center;font-family:Arial,sans-serif}
+.eq-frac .den{padding:0 6px;line-height:1.2;text-align:center;font-family:Arial,sans-serif}
+.val-box{background:#eef3f9;padding:5px 15px;border-radius:6px;font-weight:bold;font-size:18px;color:#1f4e79;min-width:80px;text-align:center;font-family:Arial,sans-serif}
 .alert-box{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;padding:15px;text-align:right;direction:rtl}
 .alert-title{color:#b71c1c;font-size:14px;margin-bottom:15px;font-weight:bold}
 .input-group{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:15px}
-.input-group input{width:120px;padding:8px;border:1px solid #ccc;border-radius:6px;text-align:center;font-size:16px}
+.input-group input{width:120px;padding:8px;border:1px solid #ccc;border-radius:6px;text-align:center;font-size:16px;font-family:Arial,sans-serif}
 .summary-text{text-align:center;font-size:14px;color:#333;margin-bottom:15px}
-.summary-text span{color:#b71c1c;font-weight:bold}
+.summary-text span{color:#b71c1c;font-weight:bold;font-family:Arial,sans-serif}
 select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;padding:10px;font-size:14px;color:#00796b;font-weight:bold;width:100%;max-width:340px;outline:none}
 .res-table{width:100%;border-collapse:collapse;font-size:13px;text-align:center}
 .res-table th,.res-table td{border:1px solid #d1d9e6;padding:8px}
 .res-table th{background:#eef3f9;color:#1f4e79;font-weight:bold}
 .res-box{display:flex;gap:10px;justify-content:center;margin-top:15px}
-.res-box div{background:#f4f7fb;border-radius:8px;padding:10px;flex:1;text-align:center;font-weight:bold;color:#1f4e79;border:1px solid #e2e8f0}
-.res-box span{display:block;font-size:11px;color:#555;font-weight:normal;margin-bottom:5px}
+.res-box div{background:#f4f7fb;border-radius:8px;padding:10px;flex:1;text-align:center;font-weight:bold;color:#1f4e79;border:1px solid #e2e8f0;font-family:Arial,sans-serif}
+.res-box span{display:block;font-size:11px;color:#555;font-weight:normal;margin-bottom:5px;font-family:Tahoma,sans-serif}
 .res-box-final{background:#e1f0fa !important;border-color:#b3d4ed !important;color:#0073e6 !important;font-size:15px;padding:12px !important;margin-top:10px}
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
 </style>
@@ -131,23 +133,13 @@ function fcmFromWc(wc, gr, sh, pl){
   return _fc[k];
 }
 
-/* ============ جداول: دیگر HTML نیست، همه تصویر t1..t13 از پوشه tables ============ */
-var T_IMG = {};   /* فقط برای نگاشت کلید دکمه به شماره تصویر */
-
 function openTable(k){
-  /* اگر کلید عددی است، مستقیم به tables/tN.png برو */
   var num = null;
   if (typeof k === 'number') num = k;
   else if (typeof k === 'string') {
     if (/^\d+$/.test(k)) num = parseInt(k, 10);
-    else if (/^s[1-4]$/.test(k)) {
-      /* برای جداول ۳-x هم اگر تصویری موجود نبود، پیام بده */
-      num = null;
-    } else if (/^d\d+$/.test(k)) {
-      num = null;
-    }
+    else num = null;
   }
-
   var html = '';
   if (num !== null) {
     html = '<div style="text-align:center">'
@@ -156,10 +148,7 @@ function openTable(k){
          + 'onerror="this.parentNode.innerHTML=\'<div style=padding:20px;color:#b71c1c;font-size:14px>تصویر tables/t' + num + '.png پیدا نشد.</div>\'">'
          + '</div>';
   } else {
-    /* برای s1..s4 و d11 و ... پیام اطلاع‌رسانی */
-    html = '<div style="padding:20px;text-align:center;color:#b71c1c;font-size:14px">'
-         + 'برای این جدول تصویری در پوشه tables تعریف نشده است.'
-         + '</div>';
+    html = '<div style="padding:20px;text-align:center;color:#b71c1c;font-size:14px">برای این جدول تصویری در پوشه tables تعریف نشده است.</div>';
   }
   $('mb').innerHTML = html;
   $('md').hidden = false;
@@ -184,7 +173,7 @@ R('نوع SCC', S('ty', ['فقط پودری', 'فقط VMA', 'ترکیبی'])) +
 '</div>' +
 '<h3 style="margin-top:20px">۲) محاسبه مقاومت هدف</h3>' +
 '<div class="g2">' +
-R('روش', S('sm', ['۱) دستی (جدول رتبه کارگاه)', '۲) خودکار (از نتایج نمونه‌ها)', '۳) کارگاه بدون اطلاعات'])) +
+R('روش', S('sm', ['دستی (جدول رتبه کارگاه)', 'خودکار (از نتایج نمونه‌ها)', 'کارگاه بدون اطلاعات'])) +
 '<div id="g1">' + R('رتبه کارگاه', S('rk', ['الف', 'ب', 'ج']), 's2') + R('s از جدول ۳-۱ (MPa)', '<b id="sv"></b>', 's1') + '</div>' +
 '<div id="g2" class="r" style="display:block"><label>مقاومت نمونه‌ها (MPa)</label><textarea id="dt" style="width:100%" data-u="1"></textarea></div>' +
 '<div id="g3">' + R('حاشیه ایمنی SM (MPa)', '<b id="smv"></b>', 's3') + '</div>' +
@@ -226,16 +215,16 @@ R('مقاومت متناظر (MPa)', '<input id="fcmE" readonly value="">') +
 '<div class="summary-text">سیمان اضافی: <span id="ceq-add-c">0</span> kg &nbsp;|&nbsp; آب اضافی: <span id="ceq-add-w">0</span> kg</div>' +
 '<div style="text-align:center;margin-top:15px;">' +
 '<select class="styled-select" id="ceq-opt" data-u="1">' +
-'<option value="1">1. نادیده گرفتن و ادامه</option>' +
-'<option value="2">2. اصلاح بافت دانه‌بندی</option>' +
-'<option value="3">3. اصلاح نسبت آب به سیمان</option>' +
+'<option value="1">نادیده گرفتن و ادامه</option>' +
+'<option value="2">اصلاح بافت دانه‌بندی</option>' +
+'<option value="3">اصلاح نسبت آب به سیمان</option>' +
 '</select></div>' +
 '<div style="text-align:center;margin-top:12px;font-size:12px;color:#555;" id="ceq-hint"></div>' +
 '</div>',
 
 '<h3>۶) فرمول حجم مطلق و نتایج</h3>' +
 '<div class="g2" style="margin-bottom:8px">' +
-R('درصد هوای ناخواسته Va (%)', I('va', '1.5'), 12) +
+R('هوای ناخواسته (%)', I('va', '1.5'), 12) +
 '</div>' +
 '<div class="math-card"><div class="math-title">محاسبه حجم مطلق سنگدانه‌ها (Assd)</div>' +
 '<div class="sm-eq-row"><span>Assd = 1 - (</span>' +
@@ -337,7 +326,7 @@ function bd(){
   SVs.forEach(function(sv, i){
     h += '<tr><td>'+sv[0]+'</td>';
     for (var j=1; j<=n; j++) h += cell('g'+i+'_'+j, '');
-    h += '<td id="m'+i+'"></td><td id="a'+i+'"></td><td id="b'+i+'"></td></tr>';
+    h += '<td id="m'+i+'" style="font-family:Arial,sans-serif"></td><td id="a'+i+'" style="font-family:Arial,sans-serif"></td><td id="b'+i+'" style="font-family:Arial,sans-serif"></td></tr>';
   });
   $('gw').innerHTML = h + '</table>';
 }
@@ -422,7 +411,23 @@ function calc(){
     var x = 0;
     for (var j=1; j<=n; j++) x += (rs[j]||0)*v('g'+i+'_'+j);
     x /= sum || 1;
-    if ($('m'+i)) $('m'+i).textContent = f(x);
+    
+    // رنگ آمیزی ستون مخلوط بر اساس n پایین و بالا
+    var mCell = $('m'+i);
+    if (mCell) {
+      mCell.textContent = f(x);
+      var valNL = PW(sv[1], D, v('nl'));
+      var valNU = PW(sv[1], D, v('nu'));
+      var minVal = Math.min(valNL, valNU);
+      var maxVal = Math.max(valNL, valNU);
+      mCell.className = '';
+      if (x >= minVal && x <= maxVal) {
+        mCell.classList.add('in-green');
+      } else {
+        mCell.classList.add('out-red');
+      }
+    }
+
     if ($('a'+i)) $('a'+i).textContent = f(PW(sv[1], D, v('nl')));
     if ($('b'+i)) $('b'+i).textContent = f(PW(sv[1], D, v('nu')));
     return isFinite(x) ? x : 0;
@@ -564,7 +569,6 @@ function calc(){
   if ($('cw')) setTimeout(drawWC, 0);
 }
 
-/* ================= نمودار سنگدانه ================= */
 function drawAgg(){
   try {
     var c = $('cv');
@@ -658,7 +662,6 @@ function drawAgg(){
   }
 }
 
-/* ================= نمودار w/c ================= */
 function drawWC(){
   var c = $('cw');
   if (!c) return;
@@ -790,7 +793,16 @@ function handleCeqOpt(){
   }
 }
 
-/* ============ اشتراک‌گذاری: نسخه پایدار ============ */
+/* ============ نسخه پایدار اشتراک‌گذاری و چاپ ============ */
+
+function doPrint(){
+  // چاپ: مخفی کردن منو قبل از اجرای پرینت
+  $('menu').hidden = true;
+  setTimeout(function(){
+    try { window.print(); } catch(e) { alert('چاپ در این مرورگر پشتیبانی نمی‌شود.'); }
+  }, 50);
+}
+
 function doShare(){
   var t = 'طرح مخلوط بتن خودتراکم (SCC)\n\n';
   ['o2','o3','o5','o7'].forEach(function(id){
@@ -805,11 +817,11 @@ function doShare(){
       ta.style.position = 'fixed';
       ta.style.top = '-1000px';
       document.body.appendChild(ta);
+      ta.focus();
       ta.select();
       var ok = document.execCommand('copy');
       document.body.removeChild(ta);
-      if (ok) { toast('متن کپی شد'); }
-      else { toast('کپی ناموفق'); }
+      toast(ok ? 'متن کپی شد' : 'کپی ناموفق بود');
     } catch(e) { toast('کپی پشتیبانی نمی‌شود'); }
   }
 
@@ -817,7 +829,7 @@ function doShare(){
     navigator.share({ title: 'طرح SCC', text: t })
       .catch(function(err){
         if (err && err.name === 'AbortError') return;
-        fallbackCopy(t);
+        fallbackCopy(t); // اگر بستن پنجره اشتراک‌گذاری نبود، کپی می‌کنیم
       });
     return;
   }
@@ -894,12 +906,12 @@ function bindAll(){
   $('mSave').addEventListener('click', function(){
     var o = {};
     document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(e){ if (e.id) o[e.id] = e.value; });
-    try { localStorage.setItem('scc_v15', JSON.stringify(o)); toast('ذخیره شد'); } catch(err) { toast('ذخیره ناموفق'); }
+    try { localStorage.setItem('scc_v16', JSON.stringify(o)); toast('ذخیره شد'); } catch(err) { toast('ذخیره ناموفق'); }
     $('menu').hidden = true;
   });
   $('mLoad').addEventListener('click', function(){
     var s;
-    try { s = localStorage.getItem('scc_v15'); } catch(err){}
+    try { s = localStorage.getItem('scc_v16'); } catch(err){}
     $('menu').hidden = true;
     if (!s) { toast('طرحی ذخیره نشده'); return; }
     var o = JSON.parse(s);
@@ -911,7 +923,7 @@ function bindAll(){
     calc();
     toast('بازیابی شد');
   });
-  $('mPrint').addEventListener('click', function(){ $('menu').hidden = true; window.print(); });
+  $('mPrint').addEventListener('click', doPrint);
   $('mShare').addEventListener('click', function(){ $('menu').hidden = true; doShare(); });
 }
 
