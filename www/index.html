@@ -1255,6 +1255,8 @@ function handleCeqOpt(){
     goTo(2);
   }
 }
+
+/* ===== اشتراک‌گذاری و چاپ ===== */
 function getReportText(){
   var t = 'طرح مخلوط بتن خودتراکم (SCC)\n\n';
   ['o2','o3','o5','o7'].forEach(function(id){
@@ -1279,6 +1281,20 @@ function fallbackCopy(text){
   } catch(e) { toast('کپی پشتیبانی نمی‌شود'); }
 }
 
+function showSendBox(t){
+  var q = encodeURIComponent(t);
+  var a = 'display:block;padding:14px;margin:8px 0;border:1px solid #1f4e79;border-radius:8px;text-align:center;color:#1f4e79;text-decoration:none;font-size:16px';
+  $('mb').innerHTML =
+    '<div style="text-align:center"><b style="color:#1f4e79">ارسال گزارش</b>' +
+    '<a style="'+a+'" href="https://wa.me/?text='+q+'">واتساپ</a>' +
+    '<a style="'+a+'" href="https://t.me/share/url?url=%20&text='+q+'">تلگرام</a>' +
+    '<a style="'+a+'" href="mailto:?subject='+encodeURIComponent('طرح SCC')+'&body='+q+'">ایمیل</a>' +
+    '<a style="'+a+'" href="sms:?body='+q+'">پیامک</a>' +
+    '<button type="button" id="cpBtn" style="'+a+';background:#fff;width:100%">کپی متن</button></div>';
+  $('md').hidden = false;
+  $('cpBtn').onclick = function(){ $('md').hidden = true; fallbackCopy(t); };
+}
+
 function doShare(){
   var t = getReportText();
   var cap = window.Capacitor;
@@ -1287,7 +1303,7 @@ function doShare(){
     sh.share({ title: 'طرح SCC', text: t, dialogTitle: 'اشتراک‌گذاری طرح' })
       .catch(function(err){
         if (err && /cancel/i.test(String(err.message || err))) return;
-        fallbackCopy(t);
+        showSendBox(t);
       });
     return;
   }
@@ -1295,27 +1311,23 @@ function doShare(){
     navigator.share({ title: 'طرح SCC', text: t })
       .catch(function(err){
         if (err && err.name === 'AbortError') return;
-        fallbackCopy(t);
+        showSendBox(t);
       });
     return;
   }
-  fallbackCopy(t);
+  showSendBox(t);
 }
 
 function doPrint(){
   $('menu').hidden = true;
   var cap = window.Capacitor;
   var native = cap && cap.isNativePlatform && cap.isNativePlatform();
-  if (native) {
-    /* WebView اندروید چاپ ندارد؛ گزارش از طریق منوی اشتراک‌گذاری ارسال می‌شود */
-    toast('گزارش را از منوی اشتراک‌گذاری ذخیره یا چاپ کنید');
-    setTimeout(doShare, 600);
-    return;
-  }
+  if (native) { doShare(); return; }
   setTimeout(function(){
     try { window.print(); } catch(e) { toast('چاپ پشتیبانی نمی‌شود'); }
   }, 50);
 }
+
 function toast(msg){
   var t = $('ts');
   if (!t) return;
