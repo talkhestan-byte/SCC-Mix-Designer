@@ -86,7 +86,7 @@ select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;
 .res-box-final{background:#e1f0fa !important;border-color:#b3d4ed !important;color:#0073e6 !important;font-size:15px;padding:12px !important;margin-top:10px}
 #pn{direction:ltr;unicode-bidi:plaintext;font-family:Arial,sans-serif;font-variant-numeric:lining-nums tabular-nums}
 
-/* ===== طراحی اصلاح‌شده صفحه ۵ ===== */
+/* ===== طراحی صفحه ۵ ===== */
 .cement-page {
   background: #fff;
   border: 1px solid #e1e5eb;
@@ -279,6 +279,7 @@ select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;
     font-size: 16px;
   }
 }
+
 /* ===== اصلاحات صفحه ۵: ارقام فقط انگلیسی + ظاهر مطابق عکس ===== */
 @font-face{
   font-family:'LatinDigits';
@@ -300,7 +301,6 @@ select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;
 }
 .cement-page .cement-main .eq-row > span:first-child{font-weight:bold}
 
-/* باکس C_new با اعداد مونو‌اسپیس */
 .cement-page .cement-new,
 .cement-page .cement-new b,
 .cement-page .cement-new .num,
@@ -310,12 +310,10 @@ select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;
 }
 .cement-page .cement-new .eq-frac .num{border-bottom-color:#a64b20}
 
-/* متن هشدار: فقط «هشدار: سیمان» بولد */
 .cement-page .cement-alert-text b{
   font-family:inherit;direction:rtl;unicode-bidi:normal;
 }
 
-/* ردیف ضریب اصلاح: برچسب راست، کادر ورودی چپ و کشیده */
 .cement-page .cement-input{
   display:flex;flex-wrap:nowrap;
   align-items:center;justify-content:space-between;
@@ -328,7 +326,6 @@ select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;
   font-family:Arial,Helvetica,sans-serif;direction:ltr;
 }
 
-/* لیست کشویی: کوچک‌تر و مثل عکس */
 .cement-page .cement-choice{justify-content:center;margin-top:22px}
 .cement-page .cement-choice select{
   width:auto;min-width:150px;max-width:220px;min-height:44px;
@@ -337,6 +334,70 @@ select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;
   border:1.5px solid #e5d77d;border-radius:12px;
   background:#fff;color:#79502b;
 }
+
+/* ===== مرتب‌سازی کلی ظاهر ===== */
+body{font-size:15px}
+section{padding:10px}
+h3{font-size:17px;margin:10px 2px 8px}
+
+/* ردیف‌های ورودی: برچسب | کادر | دکمه جدول (سه ستون ثابت) */
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:8px}
+#extra-input{display:contents}
+.r{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 140px 54px;
+  align-items:center;
+  gap:8px;
+  min-height:48px;
+  padding:6px 10px;
+}
+.r label{font-size:14px;line-height:1.5}
+.r input,.r select{
+  width:100%;height:38px;
+  padding:4px 8px;font-size:15px;
+  grid-column:2;
+}
+.r .t{
+  grid-column:3;width:100%;
+  padding:8px 4px;font-size:13px;white-space:nowrap;
+}
+.r b{grid-column:2;text-align:center;font-size:15px}
+#dt{min-height:70px;font-size:15px;padding:6px;margin-top:6px}
+
+/* خروجی‌ها */
+.o{font-size:14px;line-height:1.9;padding:10px}
+
+/* جدول دانه‌بندی: اعداد و شماره الک‌ها درشت‌تر */
+.gt{font-size:14px}
+.gt th{font-size:13px;padding:6px 4px}
+.gt td{padding:4px 3px}
+.gt td:first-child,.gt th:first-child{
+  font-size:15px;font-weight:bold;min-width:56px;padding:4px 6px;
+}
+.gt input{width:58px;height:34px;font-size:14px;padding:2px}
+.gt select{font-size:13px;padding:4px 2px;height:34px}
+.gt td[id^="m"],.gt td[id^="a"],.gt td[id^="b"]{font-size:14px;min-width:50px}
+
+/* کارت‌های محاسبه (صفحه ۶) */
+.sm-eq-row{font-size:14px}
+.sm-eq-frac .num,.sm-eq-frac .den{padding:0 4px}
+.math-title{font-size:14px}
+.res-table{font-size:14px}
+.res-table th,.res-table td{padding:8px 4px}
+.res-box div{font-size:15px}
+.res-box span{font-size:12px}
+
+/* دکمه‌ها */
+.t{font-size:13px}
+nav button{min-height:42px;font-size:15px;padding:8px 18px}
+#pn{font-size:15px}
+#menu button{padding:12px 20px;font-size:15px}
+
+/* موبایل باریک */
+@media(max-width:380px){
+  .r{grid-template-columns:minmax(0,1fr) 120px 50px}
+}
+
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
 </style>
 </head>
@@ -999,7 +1060,7 @@ function drawAgg(){
     g.textAlign='center'; g.font='bold 11px Tahoma,sans-serif';
     g.fillText('درصد عبوری (%)',0,0); g.restore();
 
-    g.textAlign='center'; g.font='11px Tahoma,sans-serif';
+    g.textAlign='center'; g.font='bold 13px Tahoma,sans-serif';
     SVs.forEach(function(s){
       var xx = X(s[1]);
       g.strokeStyle = '#ececec'; g.lineWidth = 1;
