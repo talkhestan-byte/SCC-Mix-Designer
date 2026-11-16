@@ -113,7 +113,17 @@ var pg = 0;
 'use strict';
 
 function $(id){ return document.getElementById(id); }
-function v(id){ var el = $(id); return el ? (parseFloat(el.value) || 0) : 0; }
+function v(id){
+  var el = $(id);
+  if (!el) return 0;
+  var raw = String(el.value || '').replace(/[۰-۹]/g, function(c){
+    return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(c));
+  }).replace(/[٠-٩]/g, function(c){
+    return String('٠١٢٣٤٥٦٧٨٩'.indexOf(c));
+  });
+  var num = parseFloat(raw);
+  return isFinite(num) ? num : 0;
+}
 
 var FA = '۰۱۲۳۴۵۶۷۸۹';
 var AR = '٠١٢٣٤٥٦٧٨٩';
