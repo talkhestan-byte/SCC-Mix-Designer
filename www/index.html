@@ -184,6 +184,30 @@ function fcmFromWc(wc, gr, sh, pl){
   return _fc[k];
 }
 
+/* ====== داده‌های پشتیبان جداول ۳-۱ تا ۳-۳ ====== */
+var T_S_HTML = {
+  s1: '<b>جدول ۳-۱ انحراف معیار s (MPa)</b>' +
+      '<table class="gt" style="width:100%;margin-top:8px">' +
+      '<tr><th>رتبه</th><th>16</th><th>20</th><th>25</th><th>30 و 35</th><th>40 و بیشتر</th></tr>' +
+      '<tr><td>الف</td><td>2.5</td><td>3</td><td>3.5</td><td>4</td><td>4.5</td></tr>' +
+      '<tr><td>ب</td><td>3.5</td><td>4</td><td>4.5</td><td>5</td><td>5.5</td></tr>' +
+      '<tr><td>ج</td><td>4.5</td><td>5</td><td>5.5</td><td>6</td><td>6.5</td></tr>' +
+      '</table>',
+  s2: '<b>جدول ۳-۲ رتبه‌بندی کارگاه</b>' +
+      '<table class="gt" style="width:100%;margin-top:8px">' +
+      '<tr><th>شرایط</th><th>الف</th><th>ب</th><th>ج</th></tr>' +
+      '<tr><td>توزین سیمان</td><td>وزنی</td><td>وزنی</td><td>حجمی</td></tr>' +
+      '<tr><td>توزین سنگدانه</td><td>وزنی</td><td>حجمی</td><td>حجمی</td></tr>' +
+      '<tr><td>کنترل دانه‌بندی</td><td>کنترل شده</td><td>کنترل شده</td><td>بدون کنترل</td></tr>' +
+      '<tr><td>نظارت</td><td>عالی</td><td>خوب</td><td>ضعیف</td></tr>' +
+      '</table>',
+  s3: '<b>جدول ۳-۳ حاشیهٔ ایمنی SM (MPa)</b>' +
+      '<table class="gt" style="width:100%;margin-top:8px">' +
+      '<tr><th>fc</th><th>16 و کمتر</th><th>20</th><th>25</th><th>30 و 35</th><th>40 تا 50</th></tr>' +
+      '<tr><td>SM</td><td>7.5</td><td>8.5</td><td>9.5</td><td>10.5</td><td>11</td></tr>' +
+      '</table>'
+};
+
 function openTable(k){
   var file = null;
   var label = '';
@@ -194,19 +218,25 @@ function openTable(k){
     else if (/^d\d+$/.test(k)) { file = k; label = 'جدول ' + k.toUpperCase(); }
   }
 
+  /* ابتدا تلاش برای نمایش تصویر — اگر خطا داد، HTML جایگزین */
+  var fallback = (k === 's1' || k === 's2' || k === 's3') ? T_S_HTML[k] : null;
+
   var html = '';
   if (file) {
     html = '<div style="text-align:center">'
          + '<b style="color:#1f4e79">' + label + '</b><br>'
          + '<img src="tables/' + file + '.png" style="width:100%;margin-top:8px;border:1px solid #ccc;border-radius:6px" '
-         + 'onerror="this.parentNode.innerHTML=\'<div style=padding:20px;color:#b71c1c;font-size:14px>تصویر tables/' + file + '.png پیدا نشد.</div>\'">'
+         + 'onerror="' + (fallback
+            ? "this.parentNode.innerHTML=" + JSON.stringify('<div style=\"text-align:center;padding:8px\">' + fallback + '</div>')
+            : "this.parentNode.innerHTML='<div style=padding:20px;color:#b71c1c;font-size:14px>تصویر tables/" + file + ".png پیدا نشد.</div>'"
+           ) + '">'
          + '</div>';
   } else {
     html = '<div style="padding:20px;text-align:center;color:#b71c1c;font-size:14px">برای این جدول تصویری تعریف نشده است.</div>';
   }
   $('mb').innerHTML = html;
   $('md').hidden = false;
-}
+    }
 
 var PG = [
 '<h3>۱) اطلاعات اولیه و مقاومت هدف</h3>' +
@@ -266,7 +296,7 @@ R('مقاومت متناظر (MPa)', '<input id="fcmE" type="text" inputmode="de
 '<div class="eq-row" style="margin:10px 0; justify-content:center;"><span>C_new = </span>' +
 '<span class="eq-frac"><span class="num" id="ceq-c-new-num">0</span><span class="den" id="ceq-c-new-den">0</span></span>' +
 '<span> = </span><span style="color:#b71c1c;font-weight:bold;font-size:20px;" id="ceq-c-new">0 kg/m³</span></div>' +
-'<div class="input-group"><input type="number" id="ceq-kw" value="1.5" step="any" data-u="1"><span>ضریب اصلاح آب (kg/10kg)</span></div>' +
+'<div class="input-group"><input type="number" step="any" id="ceq-kw" value="1.5" data-u="1"><span>ضریب اصلاح آب (kg/10kg)</span></div>' +
 '<div class="summary-text">سیمان اضافی: <span id="ceq-add-c">0</span> kg &nbsp;|&nbsp; آب اضافی: <span id="ceq-add-w">0</span> kg</div>' +
 '<div style="text-align:center;margin-top:15px;">' +
 '<select class="styled-select" id="ceq-opt" data-u="1">' +
