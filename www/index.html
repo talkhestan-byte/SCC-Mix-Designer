@@ -1488,125 +1488,29 @@ function reportToCanvas(R){
   return c;
 }
 
-function ensureRp(){
-  if (!$('rpStyle')) {
-    var st = document.createElement('style');
-    st.id = 'rpStyle';
-    st.textContent = RP_CSS + RP_PAGE;
-    document.head.appendChild(st);
-  }
-  if (!$('rp')) {
-    var d = document.createElement('div');
-    d.id = 'rp';
-    d.hidden = true;
-    d.onclick = function(e){
-      var b = e.target.closest ? e.target.closest('[data-r]') : null;
-      if (!b) return;
-      var a = b.getAttribute('data-r');
-      if (a === 'close') d.hidden = true;
-      else if (a === 'print') printReport();
-      else if (a === 'share') showSheet();
-    };
-    document.body.appendChild(d);
-  }
-}
-
-function openReport(name){
-  ensureRp();
-  RP = collectReport(name);
-  $('rp').innerHTML =
-    '<div class="rp-bar"><button type="button" data-r="close">✕ بستن</button>' +
-    '<button type="button" data-r="print">چاپ / ذخیره</button>' +
-    '<button type="button" data-r="share">ارسال</button></div>' +
-    '<div class="rp-doc">' + reportBody(RP) + '</div>';
-  $('rp').hidden = false;
-  $('rp').scrollTop = 0;
-}
-
 function isNative(){
   var cap = window.Capacitor;
   return !!(cap && cap.isNativePlatform && cap.isNativePlatform());
 }
 
-function printReport(){
-  if (isNative()) { toast('برای ذخیره، یکی از گزینه‌ها را انتخاب کنید'); showSheet(); return; }
-  try { window.print(); } catch(e) { showSheet(); }
+function plugins(){
+  var cap = window.Capacitor;
+  return (cap && cap.Plugins) ? cap.Plugins : {};
 }
 
-function askName(mode){
-  rpMode = mode;
-  $('menu').hidden = true;
-  var last = '';
-  try { last = localStorage.getItem('scc_name') || ''; } catch(e){}
-  var inp = 'width:100%;height:44px;padding:6px 10px;font-size:16px;border:1px solid #1f4e79;border-radius:8px;margin:12px 0';
-  var bt = 'flex:1;min-height:44px;font-size:15px;border-radius:8px;border:1px solid #1f4e79;';
-  $('mb').innerHTML =
-    '<div style="text-align:center"><b style="color:#1f4e79;font-size:16px">' + (mode === 'share' ? 'نام طرح برای ارسال' : 'نام طرح برای چاپ') + '</b>' +
-    '<input id="rpName" type="text" placeholder="مثلاً: پروژه برج ..." value="' + esc(last) + '" style="' + inp + '">' +
-    '<div style="display:flex;gap:8px"><button type="button" data-a="nameok" style="' + bt + 'background:#1f4e79;color:#fff">ادامه و نمایش گزارش</button>' +
-    '<button type="button" data-a="close" style="' + bt + 'background:#fff;color:#1f4e79">انصراف</button></div></div>';
-  $('md').hidden = false;
-  bindSheet();
-  setTimeout(function(){ var i = $('rpName'); if (i) i.focus(); }, 50);
-  $('rpName').onkeydown = function(e){ if (e.key === 'Enter') doSheetAction('nameok'); };
-}
-
-function showSheet(){
-  var b = 'display:block;width:100%;padding:13px;margin:6px 0;border:1px solid #1f4e79;border-radius:8px;text-align:center;color:#1f4e79;background:#fff;font-size:15px;text-decoration:none;';
-  var s = 'flex:1;padding:12px 4px;border:1px solid #1f4e79;border-radius:8px;text-align:center;color:#1f4e79;background:#fff;font-size:14px;text-decoration:none;';
-  var q = encodeURIComponent(RP ? reportText(RP) : '');
-  $('mb').innerHTML =
-    '<div style="text-align:center"><b style="color:#1f4e79;font-size:16px">ارسال و ذخیره گزارش</b>' +
-    '<button type="button" data-a="shareimg" style="' + b + 'background:#1f4e79;color:#fff">ارسال تصویر گزارش (به همه برنامه‌ها)</button>' +
-    '<button type="button" data-a="sharehtml" style="' + b + '">ارسال فایل گزارش (HTML)</button>' +
-    '<button type="button" data-a="sharetext" style="' + b + '">ارسال به‌صورت متن</button>' +
-    '<button type="button" data-a="saveimg" style="' + b + '">ذخیره تصویر گزارش در گوشی</button>' +
-    '<button type="button" data-a="savehtml" style="' + b + '">ذخیره فایل گزارش (HTML)</button>' +
-    '<button type="button" data-a="copy" style="' + b + '">کپی متن گزارش</button>' +
-    '<div style="display:flex;gap:6px;margin:6px 0">' +
-    '<a style="' + s + '" href="https://wa.me/?text=' + q + '">واتساپ</a>' +
-    '<a style="' + s + '" href="https://t.me/share/url?url=%20&text=' + q + '">تلگرام</a>' +
-    '<a style="' + s + '" href="mailto:?subject=' + encodeURIComponent('طرح SCC') + '&body=' + q + '">ایمیل</a>' +
-    '<a style="' + s + '" href="sms:?body=' + q + '">پیامک</a></div>' +
-    '<button type="button" data-a="close" style="' + b + 'border-color:#999;color:#555">بستن</button></div>';
-  $('md').hidden = false;
-  bindSheet();
-}
-
-function bindSheet(){
-  $('mb').onclick = function(e){
-    var el = e.target.closest ? e.target.closest('[data-a]') : null;
-    if (el) doSheetAction(el.getAttribute('data-a'));
-  };
-}
-
-function doSheetAction(a){
-  if (a === 'close') { $('md').hidden = true; return; }
-  if (a === 'nameok') {
-    var nm = ($('rpName') ? $('rpName').value : '').trim();
-    try { localStorage.setItem('scc_name', nm); } catch(e){}
-    $('md').hidden = true;
-    openReport(nm);
-    if (rpMode === 'share') showSheet();
-    return;
-  }
-  if (!RP) return;
-  if (a === 'shareimg') shareFile('png');
-  else if (a === 'sharehtml') shareFile('html');
-  else if (a === 'sharetext') shareText();
-  else if (a === 'saveimg') saveFile('png');
-  else if (a === 'savehtml') saveFile('html');
-  else if (a === 'copy') { $('md').hidden = true; fallbackCopy(reportText(RP)); }
-}
-
-function makeFile(kind, cb){
-  var stamp = String(Date.now());
-  if (kind === 'png') {
-    reportToCanvas(RP).toBlob(function(b){ cb(b, 'SCC-report-' + stamp + '.png'); }, 'image/png');
-  } else {
-    var h = '<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>طرح SCC</title><style>body{margin:0;padding:12px;background:#fff}' + RP_CSS + '</style></head><body><div class="rp-doc">' + reportBody(RP) + '</div></body></html>';
-    cb(new Blob([h], { type: 'text/html' }), 'SCC-report-' + stamp + '.html');
-  }
+function fallbackCopy(text){
+  try {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    var ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast(ok ? 'متن گزارش کپی شد؛ در برنامه دلخواه جایگذاری کنید' : 'کپی ناموفق بود');
+  } catch(e) { toast('کپی پشتیبانی نمی‌شود'); }
 }
 
 function blobToB64(blob, cb){
@@ -1615,42 +1519,9 @@ function blobToB64(blob, cb){
   fr.readAsDataURL(blob);
 }
 
-function plugins(){
-  var cap = window.Capacitor;
-  return (cap && cap.Plugins) ? cap.Plugins : {};
-}
-
-function shareFile(kind){
-  makeFile(kind, function(blob, fn){
-    var P = plugins();
-    if (P.Filesystem && P.Share) {
-      blobToB64(blob, function(b64){
-        P.Filesystem.writeFile({ path: fn, data: b64, directory: 'CACHE' })
-          .then(function(r){
-            return P.Share.share({ title: 'طرح SCC', text: 'گزارش طرح مخلوط بتن خودتراکم', url: r.uri, dialogTitle: 'ارسال گزارش' });
-          })
-          .catch(function(err){
-            if (err && /cancel/i.test(String(err.message || err))) return;
-            toast('ارسال ناموفق بود');
-          });
-      });
-      return;
-    }
-    try {
-      var file = new File([blob], fn, { type: blob.type });
-      if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
-        navigator.share({ files: [file], title: 'طرح SCC' }).catch(function(err){
-          if (err && err.name === 'AbortError') return;
-          toast('ارسال ناموفق بود');
-        });
-        return;
-      }
-    } catch(e){}
-    toast('ارسال فایل در این نسخه ممکن نیست؛ از «ذخیره» یا «ارسال متن» استفاده کنید');
-  });
-}
-
-function shareText(){
+/* ارسال متن گزارش (آخرین راه) */
+function shareTextOnly(){
+  if (!RP) return;
   var t = reportText(RP), P = plugins();
   if (P.Share && P.Share.share) {
     P.Share.share({ title: 'طرح SCC', text: t, dialogTitle: 'ارسال گزارش' }).catch(function(err){
@@ -1669,44 +1540,110 @@ function shareText(){
   fallbackCopy(t);
 }
 
-function saveFile(kind){
-  makeFile(kind, function(blob, fn){
+/* ارسال تصویر گزارش (با نمودارها) */
+function shareReport(){
+  if (!RP) return;
+  reportToCanvas(RP).toBlob(function(blob){
+    var fn = 'SCC-report-' + Date.now() + '.png';
     var P = plugins();
-    function dl(){
-      try {
-        var u = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = u; a.download = fn;
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        setTimeout(function(){ URL.revokeObjectURL(u); }, 3000);
-        toast('فایل دانلود شد');
-      } catch(e) { toast('ذخیره ناموفق بود'); }
-    }
-    if (P.Filesystem) {
+    if (P.Filesystem && P.Share) {
       blobToB64(blob, function(b64){
-        P.Filesystem.writeFile({ path: 'SCC/' + fn, data: b64, directory: 'DOCUMENTS', recursive: true })
-          .then(function(){ toast('ذخیره شد: Documents/SCC'); })
-          .catch(dl);
+        P.Filesystem.writeFile({ path: fn, data: b64, directory: 'CACHE' })
+          .then(function(r){
+            return P.Share.share({ title: 'طرح SCC', text: 'گزارش طرح مخلوط بتن خودتراکم', url: r.uri, dialogTitle: 'ارسال گزارش' });
+          })
+          .catch(function(err){
+            if (err && /cancel/i.test(String(err.message || err))) return;
+            shareTextOnly();
+          });
       });
       return;
     }
-    dl();
-  });
+    try {
+      var file = new File([blob], fn, { type: 'image/png' });
+      if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: 'طرح SCC' }).catch(function(err){
+          if (err && err.name === 'AbortError') return;
+          shareTextOnly();
+        });
+        return;
+      }
+    } catch(e){}
+    shareTextOnly();
+  }, 'image/png');
 }
 
-function fallbackCopy(text){
-  try {
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.top = '-1000px';
-    document.body.appendChild(ta);
-    ta.focus();
-    ta.select();
-    var ok = document.execCommand('copy');
-    document.body.removeChild(ta);
-    toast(ok ? 'متن کپی شد' : 'کپی ناموفق بود');
-  } catch(e) { toast('کپی پشتیبانی نمی‌شود'); }
+/* چاپ: در مرورگر پنجره چاپ/PDF؛ در APK از منوی اشتراک‌گذاری خود اندروید (ذخیره/چاپ) */
+function printReport(){
+  if (isNative()) { shareReport(); return; }
+  try { window.print(); } catch(e) { shareReport(); }
+}
+
+function ensureRp(){
+  if (!$('rpStyle')) {
+    var st = document.createElement('style');
+    st.id = 'rpStyle';
+    st.textContent = RP_CSS + RP_PAGE;
+    document.head.appendChild(st);
+  }
+  if (!$('rp')) {
+    var d = document.createElement('div');
+    d.id = 'rp';
+    d.hidden = true;
+    d.onclick = function(e){
+      var b = e.target.closest ? e.target.closest('[data-r]') : null;
+      if (!b) return;
+      var a = b.getAttribute('data-r');
+      if (a === 'close') d.hidden = true;
+      else if (a === 'print') printReport();
+      else if (a === 'share') shareReport();
+    };
+    document.body.appendChild(d);
+  }
+}
+
+function openReport(name){
+  ensureRp();
+  RP = collectReport(name);
+  $('rp').innerHTML =
+    '<div class="rp-bar"><button type="button" data-r="close">✕ بستن</button>' +
+    '<button type="button" data-r="print">چاپ / ذخیره</button>' +
+    '<button type="button" data-r="share">ارسال</button></div>' +
+    '<div class="rp-doc">' + reportBody(RP) + '</div>';
+  $('rp').hidden = false;
+  $('rp').scrollTop = 0;
+}
+
+function nameAction(a){
+  if (a === 'close') { $('md').hidden = true; return; }
+  if (a === 'nameok') {
+    var nm = ($('rpName') ? $('rpName').value : '').trim();
+    try { localStorage.setItem('scc_name', nm); } catch(e){}
+    $('md').hidden = true;
+    openReport(nm);
+    if (rpMode === 'share') setTimeout(shareReport, 300);
+  }
+}
+
+function askName(mode){
+  rpMode = mode;
+  $('menu').hidden = true;
+  var last = '';
+  try { last = localStorage.getItem('scc_name') || ''; } catch(e){}
+  var inp = 'width:100%;height:44px;padding:6px 10px;font-size:16px;border:1px solid #1f4e79;border-radius:8px;margin:12px 0';
+  var bt = 'flex:1;min-height:44px;font-size:15px;border-radius:8px;border:1px solid #1f4e79;';
+  $('mb').innerHTML =
+    '<div style="text-align:center"><b style="color:#1f4e79;font-size:16px">' + (mode === 'share' ? 'نام طرح برای ارسال' : 'نام طرح برای چاپ') + '</b>' +
+    '<input id="rpName" type="text" placeholder="مثلاً: پروژه برج ..." value="' + esc(last) + '" style="' + inp + '">' +
+    '<div style="display:flex;gap:8px"><button type="button" data-a="nameok" style="' + bt + 'background:#1f4e79;color:#fff">ادامه و نمایش گزارش</button>' +
+    '<button type="button" data-a="close" style="' + bt + 'background:#fff;color:#1f4e79">انصراف</button></div></div>';
+  $('md').hidden = false;
+  $('mb').onclick = function(e){
+    var el = e.target.closest ? e.target.closest('[data-a]') : null;
+    if (el) nameAction(el.getAttribute('data-a'));
+  };
+  setTimeout(function(){ var i = $('rpName'); if (i) i.focus(); }, 50);
+  $('rpName').onkeydown = function(e){ if (e.key === 'Enter') nameAction('nameok'); };
 }
 
 function doPrint(){ askName('print'); }
