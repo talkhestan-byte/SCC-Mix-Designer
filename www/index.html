@@ -279,7 +279,64 @@ select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;
     font-size: 16px;
   }
 }
+/* ===== اصلاحات صفحه ۵: ارقام فقط انگلیسی + ظاهر مطابق عکس ===== */
+@font-face{
+  font-family:'LatinDigits';
+  src:local('Roboto'),local('Arial'),local('Helvetica');
+  unicode-range:U+0030-0039;
+}
+.cement-page,
+.cement-page select,
+.cement-page option,
+.cement-page input{
+  font-family:'LatinDigits',Tahoma,system-ui,sans-serif;
+  font-variant-numeric:lining-nums tabular-nums;
+}
+.cement-page .en{
+  font-family:Arial,Helvetica,sans-serif;
+  direction:ltr;
+  unicode-bidi:isolate;
+  display:inline-block;
+}
+.cement-page .cement-main .eq-row > span:first-child{font-weight:bold}
 
+/* باکس C_new با اعداد مونو‌اسپیس */
+.cement-page .cement-new,
+.cement-page .cement-new b,
+.cement-page .cement-new .num,
+.cement-page .cement-new .den,
+.cement-page .cement-new span{
+  font-family:ui-monospace,"Roboto Mono","Courier New",monospace;
+}
+.cement-page .cement-new .eq-frac .num{border-bottom-color:#a64b20}
+
+/* متن هشدار: فقط «هشدار: سیمان» بولد */
+.cement-page .cement-alert-text b{
+  font-family:inherit;direction:rtl;unicode-bidi:normal;
+}
+
+/* ردیف ضریب اصلاح: برچسب راست، کادر ورودی چپ و کشیده */
+.cement-page .cement-input{
+  display:flex;flex-wrap:nowrap;
+  align-items:center;justify-content:space-between;
+  gap:10px;margin:4px 0 18px;
+}
+.cement-page .cement-input > span{flex:none;white-space:nowrap}
+.cement-page .cement-input input{
+  flex:1;min-width:0;width:auto;height:40px;
+  text-align:center;font-size:17px;
+  font-family:Arial,Helvetica,sans-serif;direction:ltr;
+}
+
+/* لیست کشویی: کوچک‌تر و مثل عکس */
+.cement-page .cement-choice{justify-content:center;margin-top:22px}
+.cement-page .cement-choice select{
+  width:auto;min-width:150px;max-width:220px;min-height:44px;
+  padding:6px 8px;font-size:14px;font-weight:normal;
+  text-align:right;text-align-last:right;direction:rtl;
+  border:1.5px solid #e5d77d;border-radius:12px;
+  background:#fff;color:#79502b;
+}
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
 </style>
 </head>
@@ -524,13 +581,14 @@ R('مقاومت متناظر (MPa)', '<input id="fcmE" type="text" inputmode="de
 '</div>' +
 
 '<div class="cement-alert-text">' +
-'هشدار: سیمان (<b id="ceq-c-raw">0</b>) از حد پیش‌فرض (350) بیشتر است.' +
+'<b>هشدار: سیمان</b> (<span class="en" id="ceq-c-raw">0</span>) از حد پیش‌فرض (<span class="en">350</span>) بیشتر است.' +
 '</div>' +
 
 '<div class="cement-correction">' +
 
 '<div class="cement-input">' +
-'<input type="number" step="any" id="ceq-kw" value="1.5" data-u="1" style="font-family:Arial,sans-serif;direction:ltr;text-align:center;font-variant-numeric:lining-nums;">' +
+'<span>ضریب اصلاح آب (<span class="en">kg/10kg</span>)</span>' +
+'<input type="text" inputmode="decimal" id="ceq-kw" value="1.5" data-u="1">' +
 '<span>ضریب اصلاح آب (kg/10kg)</span>' +
 '</div>' +
 
@@ -829,9 +887,9 @@ function calc(){
     if (ceqOpt === '1') {
       hint.textContent = 'سیمان اضافی در محاسبات لحاظ شده و ادامه می‌دهیم.';
     } else if (ceqOpt === '2') {
-      hint.innerHTML = '⚠ به صفحه <b>۳) دانه‌بندی</b> بروید و منحنی مخلوط را با نوار فولر-تامسون تطبیق دهید.';
+      hint.innerHTML = '⚠ به صفحه <b>3) دانه‌بندی</b> بروید و منحنی مخلوط را با نوار فولر-تامسون تطبیق دهید.';
     } else if (ceqOpt === '3') {
-      hint.innerHTML = '⚠ به صفحه <b>۴) نسبت آب به سیمان</b> بروید و w/c را افزایش دهید.';
+      hint.innerHTML = '⚠ به صفحه <b>4) نسبت آب به سیمان</b> بروید و w/c را افزایش دهید.';
     }
   }
 
