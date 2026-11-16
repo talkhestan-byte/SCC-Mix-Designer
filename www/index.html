@@ -85,107 +85,201 @@ select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;
 .res-box span{display:block;font-size:11px;color:#555;font-weight:normal;margin-bottom:5px;font-family:Tahoma,sans-serif;direction:rtl;unicode-bidi:normal}
 .res-box-final{background:#e1f0fa !important;border-color:#b3d4ed !important;color:#0073e6 !important;font-size:15px;padding:12px !important;margin-top:10px}
 #pn{direction:ltr;unicode-bidi:plaintext;font-family:Arial,sans-serif;font-variant-numeric:lining-nums tabular-nums}
-/* ===== اصلاح اختصاصی صفحه ۵ ===== */
-.cement-page .cement-main{
-  background:#f8fafc;
-  border:1px solid #dce3eb;
-  border-radius:12px;
-  padding:15px;
-  margin-bottom:15px;
+
+/* ===== طراحی اصلاح‌شده صفحه ۵ ===== */
+.cement-page {
+  background: #fff;
+  border: 1px solid #e1e5eb;
+  border-radius: 18px;
+  padding: 20px;
+  margin: 8px 4px 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
 }
 
-.cement-page .cement-warning{
-  background:#fffbed;
-  border:1.5px solid #e2b83e;
-  border-radius:12px;
-  padding:18px;
+.cement-page > h3 {
+  color: #176a9c;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: right;
+  margin: 2px 0 20px;
+  padding-bottom: 16px;
+  border-bottom: 3px solid #dcebf3;
 }
 
-.cement-page .cement-new{
-  background:#fff7ee;
-  border:1px solid #edc18a;
-  border-radius:10px;
-  padding:16px 8px;
-  margin-bottom:18px;
-  color:#a64b20;
+.cement-page .cement-main {
+  background: #f8fafc;
+  border: 1px solid #dce3eb;
+  border-radius: 12px;
+  padding: 12px 8px;
+  margin-bottom: 18px;
+  overflow-x: auto;
 }
 
-.cement-page .cement-alert-text{
-  font-size:15px;
-  line-height:2;
-  color:#79502b;
-  margin:12px 0 18px;
-  text-align:right;
+.cement-page .cement-main .eq-row {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  min-width: max-content;
+  gap: 5px;
+  font-size: 18px;
+  margin: 8px 0;
 }
 
-.cement-page .cement-correction{
-  background:#fff;
-  border:1px solid #e5d77d;
-  border-radius:12px;
-  padding:15px;
-  margin-top:15px;
+.cement-page .cement-main .eq-frac {
+  margin: 0 4px;
 }
 
-.cement-page .cement-input{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin:5px 0 20px;
+.cement-page .cement-main .val-box {
+  background: #e8eef6;
+  padding: 7px 12px;
+  min-width: 80px;
 }
 
-.cement-page .cement-input input{
+.cement-page .cement-warning {
+  background: #fffbed;
+  border: 1.5px solid #d9ad32;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 18px;
+}
+
+.cement-page .cement-new {
+  background: #fff7ee;
+  border: 1px solid #edc18a;
+  border-radius: 10px;
+  padding: 12px 6px;
+  margin-bottom: 14px;
+  color: #a64b20;
+  overflow-x: auto;
+}
+
+.cement-page .cement-new .eq-row {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  min-width: max-content;
+  gap: 5px;
+  font-size: 17px;
+  margin: 4px 0;
+}
+
+.cement-page .cement-new .eq-frac {
+  margin: 0 4px;
+}
+
+.cement-page .cement-new b {
+  font-family: Arial, sans-serif;
+  direction: ltr;
+  unicode-bidi: plaintext;
+  font-size: 17px;
+}
+
+.cement-page .cement-alert-text {
+  font-size: 15px;
+  line-height: 2.2;
+  color: #79502b;
+  margin: 10px 0 16px;
+  text-align: right;
+}
+
+.cement-page .cement-alert-text b,
+.cement-page .cement-extra b {
+  font-family: Arial, sans-serif;
+  direction: ltr;
+  unicode-bidi: plaintext;
+}
+
+.cement-page .cement-correction {
+  background: #fff;
+  border: 1px solid #e5d77d;
+  border-radius: 12px;
+  padding: 15px 12px;
+  margin-top: 12px;
+}
+
+.cement-page .cement-input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 4px 0 18px;
+  color: #79502b;
+  font-size: 15px;
+}
+
+.cement-page .cement-input input {
   width: min(100%, 280px);
-  min-width:220px;
-  height:42px;
-  text-align:center;
-  font-size:18px;
-  border:1px solid #cbd5df;
-  border-radius:8px;
-  direction:ltr;
-  font-family:Arial,sans-serif;
+  min-width: 180px;
+  height: 38px;
+  padding: 5px 10px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #cbd5df;
+  border-radius: 8px;
+  direction: ltr;
+  font-family: Arial, sans-serif;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
-.cement-page .cement-extra{
-  display:flex;
-  justify-content:space-around;
-  flex-wrap:wrap;
-  gap:12px;
-  color:#89552e;
-  font-size:15px;
-  line-height:2;
+.cement-page .cement-extra {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  color: #89552e;
+  font-size: 14px;
+  line-height: 2;
 }
 
-.cement-page .cement-choice{
-  display:flex;
-  justify-content:center;
-  margin-top:22px;
+.cement-page .cement-choice {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
 }
 
-.cement-page .cement-choice select{
-  width:100%;
-  max-width:360px;
-  min-height:60px;
-  padding:12px;
-  font-size:16px;
-  text-align:center;
-  text-align-last:center;
-  border:1.5px solid #e5d77d;
-  border-radius:12px;
-  background:#fff;
-  color:#79502b;
-  font-family:Tahoma,sans-serif;
-  font-weight:bold;
+.cement-page .cement-choice select {
+  width: 100%;
+  max-width: 360px;
+  min-height: 58px;
+  padding: 10px;
+  font-size: 16px;
+  text-align: center;
+  text-align-last: center;
+  border: 1.5px solid #e5d77d;
+  border-radius: 12px;
+  background: #fff;
+  color: #79502b;
+  font-family: Tahoma, sans-serif;
+  font-weight: bold;
+  appearance: auto;
+  -webkit-appearance: menulist;
 }
 
-.cement-page .cement-hint{
-  text-align:center;
-  margin-top:14px;
-  font-size:13px;
-  line-height:2;
-  color:#79502b;
-    }  
+.cement-page .cement-hint {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 2;
+  color: #79502b;
+}
+
+@media(max-width:400px) {
+  .cement-page {
+    padding: 14px 10px;
+  }
+
+  .cement-page .cement-main .eq-row,
+  .cement-page .cement-new .eq-row {
+    font-size: 16px;
+  }
+
+  .cement-page .cement-main .val-box {
+    min-width: 68px;
+    padding: 6px 8px;
+    font-size: 16px;
+  }
+}
+
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
 </style>
 </head>
