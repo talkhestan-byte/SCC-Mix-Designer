@@ -18,7 +18,7 @@ h3{margin:6px 2px;font-size:15px;color:#1f4e79}
 .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:4px}
 .r{display:flex;align-items:center;gap:6px;background:#fff;padding:6px;border-radius:6px}
 .r label{flex:1;font-size:13px}
-.r input,.r select{width:92px;padding:5px;font-size:13px;border:1px solid #ccc;border-radius:4px}
+.r input,.r select{width:130px;padding:5px;font-size:13px;border:1px solid #ccc;border-radius:4px}
 .r input[readonly]{background:#eef2f7;color:#1f4e79;font-weight:bold}
 .r input:disabled,.r select:disabled{background:#f0f0f0;color:#999}
 .t{font-size:12px;padding:4px 7px;border:1px solid #1f4e79;background:#fff;color:#1f4e79;border-radius:5px;cursor:pointer}
@@ -169,6 +169,7 @@ var PG = [
 '<div class="g2">' +
 R('مقاومت مشخصه fc (MPa)', I('fc', 35)) +
 R('رده سیمان', S('cg', [325, 425, 525], 1)) +
+R('چگالی سیمان (g/cm³)', I('rc_cement', 3.15, 'step="0.01"'), 11) +
 R('روان‌کننده / فوق‌روان‌کننده', S('pl', ['دارد', 'ندارد'])) +
 R('درصد روان‌کننده (%)', I('spd', 1)) +
 R('چگالی روان‌کننده (kg/L)', I('spr', 1.08)) +
@@ -288,7 +289,7 @@ function renderTypeInput(){
   }
 }
 
-var AU = ['wcE','va','nl','nu','inc','kf','rcr','rc','spd','spr','ceq-kw','powder_kg','vma_pct','rho_powder','rho_vma'];
+var AU = ['wcE','va','nl','nu','inc','kf','rcr','rc','spd','spr','ceq-kw','powder_kg','vma_pct','rho_powder','rho_vma','rc_cement'];
 var MIX = [];
 var guideLines = [];
 
@@ -444,7 +445,7 @@ function calc(){
   var airMap = {9.5:2.25, 12.5:1.875, 19:1.5, 25:1.125, 38:.75};
   var Va = v('va');
   if (!Va || Va <= 0) Va = airMap[D] || 1.5;
-  var rc = 3.15;
+  var rc = v('rc_cement') || 3.15;
   var Wd = 170;
   var Cm = Wd/wc;
 
@@ -505,7 +506,7 @@ function calc(){
   var Assd = 1 - (vC + vSP + vW + vA + powderVol + vmaVol);
 
   if ($('eq-c')) $('eq-c').textContent = f(finalC,2);
-  if ($('eq-rc')) $('eq-rc').textContent = 3150;
+  if ($('eq-rc')) $('eq-rc').textContent = f(rc*1000, 0);
   if ($('eq-cr')) $('eq-cr').textContent = f(powderKg, 2);
   if ($('eq-rcr')) $('eq-rcr').textContent = (v('rho_powder') || 2650);
   if ($('eq-ma')) $('eq-ma').textContent = f(VMAkg, 2);
@@ -621,7 +622,6 @@ function drawAgg(){
     curve(function(d){ return PW(d, D, nl); }, '#e00', 1.5, [6,3]);
     curve(function(d){ return PW(d, D, nu); }, '#e00', 1.5, [6,3]);
 
-    /* منحنی مخلوط: MIX[i] با SVs[i] متناظر است */
     if (MIX.length === SVs.length) {
       var pts = [];
       for (var i=0; i<SVs.length; i++) {
@@ -643,7 +643,7 @@ function drawAgg(){
         done = false;
         for (var k2=0; k2<pts.length; k2++) {
           if (done) break;
-          g.beginPath(); g.arc(pts[k2].x, pts[k2].y, 3.5, 0, Math.PI*2); g.fill();
+          g.beginPath(); g.arc(pts[k2].x, pts[k2].y, 1.5, 0, Math.PI*2); g.fill();
           if (pts[k2].val >= 99.99) done = true;
         }
       }
@@ -717,35 +717,34 @@ function drawWC(){
     if (lastX !== null) labelData.push({ x: lastX, y: lastY, col: cols[k], label: labels[k] });
   });
 
-  /* لیبل‌ها: پایین‌ترین (راست‌ترین) نقطهٔ هر منحنی، ۴px پایین‌تر و ۴px به چپ */
+  /* لیبل دقیقاً از انتهای منحنی شروع شود */
   labelData.forEach(function(ld){
     g.fillStyle = ld.col;
     g.font = 'bold 10px Tahoma,sans-serif';
-    g.textAlign = 'right';
-    g.textBaseline = 'top';
-    var labelX = ld.x - 4;
-    var labelY = ld.y + 4;
-    if (labelX > w - 4) labelX = w - 4;
-    if (labelY > h - 14) labelY = h - 14;
-    g.fillText(ld.label, labelX, labelY);
+    g.textAlign = 'left';
+    g.textBaseline = 'middle';
+    g.fillText(ld.label, ld.x + 3, ld.y);
   });
   g.textBaseline = 'alphabetic';
 
+  /* خط‌چین‌ها - رنگ‌های متفاوت */
   var gr = $('cg') ? $('cg').value : '425';
-  guideLines.forEach(function(gl){
+  var guideColors = ['#000', '#b71c1c'];
+  guideLines.forEach(function(gl, i){
     if (!(gl.x >= XMIN && gl.x <= XMAX)) return;
     var px = gl.x;
     var py = fcmFromWc(px, gr, 0, pl);
     if (!isFinite(py)) return;
-    g.setLineDash([5,4]); g.strokeStyle = '#000'; g.lineWidth = 1.5;
+    var col = guideColors[i % 2];
+    g.setLineDash([5,4]); g.strokeStyle = col; g.lineWidth = 1.5;
     g.beginPath();
     g.moveTo(L, Y(py));
     g.lineTo(X(px), Y(py));
     g.lineTo(X(px), Y(10));
     g.stroke();
     g.setLineDash([]);
-    g.fillStyle = '#000';
-    g.beginPath(); g.arc(X(px), Y(py), 4, 0, Math.PI*2); g.fill();
+    g.fillStyle = col;
+    g.beginPath(); g.arc(X(px), Y(py), 2.5, 0, Math.PI*2); g.fill();
     g.font = 'bold 10px Tahoma,sans-serif'; g.textAlign = 'center';
     g.fillText(py.toFixed(1), L + 12, Y(py) - 6);
     g.fillText(px.toFixed(3), X(px) + 15, Y(10) - 6);
@@ -847,12 +846,12 @@ function bindAll(){
   $('mSave').addEventListener('click', function(){
     var o = {};
     document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(e){ if (e.id) o[e.id] = e.value; });
-    try { localStorage.setItem('scc_v13', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
+    try { localStorage.setItem('scc_v14', JSON.stringify(o)); alert('ذخیره شد'); } catch(err) { alert('ذخیره ناموفق'); }
     $('menu').hidden = true;
   });
   $('mLoad').addEventListener('click', function(){
     var s;
-    try { s = localStorage.getItem('scc_v13'); } catch(err){}
+    try { s = localStorage.getItem('scc_v14'); } catch(err){}
     $('menu').hidden = true;
     if (!s) { alert('طرحی ذخیره نشده'); return; }
     var o = JSON.parse(s);
