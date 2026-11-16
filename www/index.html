@@ -1255,36 +1255,42 @@ function handleCeqOpt(){
     goTo(2);
   }
 }
-
-function doPrint(){
-  $('menu').hidden = true;
-  setTimeout(function(){
-    try { window.print(); } catch(e) { alert('چاپ در این مرورگر پشتیبانی نمی‌شود.'); }
-  }, 50);
-}
-
-function doShare(){
+function getReportText(){
   var t = 'طرح مخلوط بتن خودتراکم (SCC)\n\n';
   ['o2','o3','o5','o7'].forEach(function(id){
     var el = $(id);
-    if (el) t += el.innerText + '\n\n';
+    if (el) t += (el.textContent || '') + '\n\n';
   });
+  return t;
+}
 
-  function fallbackCopy(text){
-    try {
-      var ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.top = '-1000px';
-      document.body.appendChild(ta);
-      ta.focus();
-      ta.select();
-      var ok = document.execCommand('copy');
-      document.body.removeChild(ta);
-      toast(ok ? 'متن کپی شد' : 'کپی ناموفق بود');
-    } catch(e) { toast('کپی پشتیبانی نمی‌شود'); }
+function fallbackCopy(text){
+  try {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    var ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast(ok ? 'متن کپی شد' : 'کپی ناموفق بود');
+  } catch(e) { toast('کپی پشتیبانی نمی‌شود'); }
+}
+
+function doShare(){
+  var t = getReportText();
+  var cap = window.Capacitor;
+  var sh = cap && cap.Plugins && cap.Plugins.Share;
+  if (sh && sh.share) {
+    sh.share({ title: 'طرح SCC', text: t, dialogTitle: 'اشتراک‌گذاری طرح' })
+      .catch(function(err){
+        if (err && /cancel/i.test(String(err.message || err))) return;
+        fallbackCopy(t);
+      });
+    return;
   }
-
   if (navigator.share) {
     navigator.share({ title: 'طرح SCC', text: t })
       .catch(function(err){
@@ -1293,15 +1299,23 @@ function doShare(){
       });
     return;
   }
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(t)
-      .then(function(){ toast('متن کپی شد'); })
-      .catch(function(){ fallbackCopy(t); });
-    return;
-  }
   fallbackCopy(t);
 }
 
+function doPrint(){
+  $('menu').hidden = true;
+  var cap = window.Capacitor;
+  var native = cap && cap.isNativePlatform && cap.isNativePlatform();
+  if (native) {
+    /* WebView اندروید چاپ ندارد؛ گزارش از طریق منوی اشتراک‌گذاری ارسال می‌شود */
+    toast('گزارش را از منوی اشتراک‌گذاری ذخیره یا چاپ کنید');
+    setTimeout(doShare, 600);
+    return;
+  }
+  setTimeout(function(){
+    try { window.print(); } catch(e) { toast('چاپ پشتیبانی نمی‌شود'); }
+  }, 50);
+}
 function toast(msg){
   var t = $('ts');
   if (!t) return;
