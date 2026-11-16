@@ -66,6 +66,25 @@ select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;
 .res-box div{background:#f4f7fb;border-radius:8px;padding:10px;flex:1;text-align:center;font-weight:bold;color:#1f4e79;border:1px solid #e2e8f0;font-family:Arial,sans-serif}
 .res-box span{display:block;font-size:11px;color:#555;font-weight:normal;margin-bottom:5px;font-family:Tahoma,sans-serif}
 .res-box-final{background:#e1f0fa !important;border-color:#b3d4ed !important;color:#0073e6 !important;font-size:15px;padding:12px !important;margin-top:10px}
+
+/* ====== راه‌حل سوم: اجبار اعداد به لاتین ====== */
+body, section, .r, .g2, .o, .gt, .val-box, .res-table, .res-box, .math-card, .card, .summary-text, .input-group {
+  font-variant-numeric: lining-nums;
+}
+.r input, .r select, .gt input, .gt select, .gt td, .gt th,
+.val-box, .o, .res-table td, .res-box div, .math-card .num,
+.math-card .den, .eq-frac .num, .eq-frac .den, #res-Ad, #res-Wt, #res-G,
+#eq-assd, #ceq-c, #ceq-c-new, #fcmE, #wcR, #fcmWc, #pn {
+  direction: ltr;
+  text-align: right;
+  unicode-bidi: plaintext;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.r input, .r select, .gt input, .gt select { text-align: left; }
+#pn, .summary-text, .res-box span, .math-title {
+  unicode-bidi: plaintext;
+}
+
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
 </style>
 </head>
@@ -95,7 +114,26 @@ var pg = 0;
 
 function $(id){ return document.getElementById(id); }
 function v(id){ var el = $(id); return el ? (parseFloat(el.value) || 0) : 0; }
-function f(x, d){ d = (d === undefined) ? 1 : d; return isFinite(x) ? (+x).toFixed(d) : '-'; }
+
+/* ====== راه‌حل سوم: تبدیل ارقام فارسی/عربی به لاتین ====== */
+var FA = '۰۱۲۳۴۵۶۷۸۹';
+var AR = '٠١٢٣٤٥٦٧٨٩';
+function toLatin(s){
+  if (s === null || s === undefined) return '';
+  s = String(s);
+  var out = '';
+  for (var i = 0; i < s.length; i++) {
+    var c = s[i];
+    var k = FA.indexOf(c);
+    if (k >= 0) { out += k; continue; }
+    k = AR.indexOf(c);
+    if (k >= 0) { out += k; continue; }
+    out += c;
+  }
+  return out;
+}
+
+function f(x, d){ d = (d === undefined) ? 1 : d; return isFinite(x) ? toLatin((+x).toFixed(d)) : '-'; }
 function R(l, h, t){ return '<div class="r"><label>'+l+'</label>'+h+(t ? ' <button type="button" class="t" data-tb="'+t+'">جدول</button>' : '')+'</div>'; }
 function I(id, val, extra){ val = val === undefined ? '' : val; extra = extra || ''; return '<input id="'+id+'" type="number" step="any" value="'+val+'" data-u="1" '+extra+'>'; }
 function S(id, o, sel){ sel = sel || 0; return '<select id="'+id+'" data-u="1">' + o.map(function(x,i){ return '<option'+(i==sel?' selected':'')+'>'+x+'</option>'; }).join('') + '</select>'; }
@@ -326,7 +364,9 @@ function bd(){
   SVs.forEach(function(sv, i){
     h += '<tr><td>'+sv[0]+'</td>';
     for (var j=1; j<=n; j++) h += cell('g'+i+'_'+j, '');
-    h += '<td id="m'+i+'" style="font-family:Arial,sans-serif"></td><td id="a'+i+'" style="font-family:Arial,sans-serif"></td><td id="b'+i+'" style="font-family:Arial,sans-serif"></td></tr>';
+    h += '<td id="m'+i+'" style="direction:ltr;text-align:center;font-family:Arial,sans-serif"></td>' +
+         '<td id="a'+i+'" style="direction:ltr;text-align:center;font-family:Arial,sans-serif"></td>' +
+         '<td id="b'+i+'" style="direction:ltr;text-align:center;font-family:Arial,sans-serif"></td></tr>';
   });
   $('gw').innerHTML = h + '</table>';
 }
@@ -354,7 +394,7 @@ function calc(){
   var ci = fc<=16?0:fc<=20?1:fc<=25?2:fc<=35?3:4;
   var SM = [7.5,8.5,9.5,10.5,11][ci];
   var out = '', fcm = 0;
-  if ($('smv')) $('smv').textContent = SM;
+  if ($('smv')) $('smv').textContent = toLatin(SM);
 
   function fmCalc(s){
     var k = fc<=20?3:4;
@@ -371,8 +411,8 @@ function calc(){
   if (m === 0) {
     var tbl = [[2.5,3,3.5,4,4.5],[3.5,4,4.5,5,5.5],[4.5,5,5.5,6,6.5]];
     var s = tbl[$('rk').selectedIndex][ci];
-    if ($('sv')) $('sv').textContent = s;
-    out = 'رتبه ' + $('rk').value + ': s = ' + s + '<br>' + fmCalc(s);
+    if ($('sv')) $('sv').textContent = toLatin(s);
+    out = 'رتبه ' + $('rk').value + ': s = ' + f(s) + '<br>' + fmCalc(s);
   } else if (m === 1) {
     var arr = $('dt').value.split(/[\s,;،]+/).map(parseFloat).filter(isFinite);
     var kk = arr.length, mu = kk ? arr.reduce(function(x,y){return x+y;},0)/kk : 0;
@@ -412,7 +452,6 @@ function calc(){
     for (var j=1; j<=n; j++) x += (rs[j]||0)*v('g'+i+'_'+j);
     x /= sum || 1;
     
-    // رنگ آمیزی ستون مخلوط بر اساس n پایین و بالا
     var mCell = $('m'+i);
     if (mCell) {
       mCell.textContent = f(x);
@@ -591,7 +630,7 @@ function drawAgg(){
     for (var p=0; p<=100; p+=20) {
       g.strokeStyle = '#e0e0e0'; g.lineWidth = 1;
       g.beginPath(); g.moveTo(42,Y(p)); g.lineTo(w-10,Y(p)); g.stroke();
-      g.fillStyle = '#333'; g.fillText(p, 38, Y(p)+4);
+      g.fillStyle = '#333'; g.fillText(toLatin(p), 38, Y(p)+4);
     }
     g.save(); g.translate(14,h/2); g.rotate(-Math.PI/2);
     g.textAlign='center'; g.font='bold 11px Tahoma,sans-serif';
@@ -655,8 +694,8 @@ function drawAgg(){
     }
 
     g.fillStyle = '#e00'; g.font = '10px Tahoma,sans-serif'; g.textAlign = 'left';
-    g.fillText('n = ' + nl, 50, 20);
-    g.fillText('n = ' + nu, 50, 34);
+    g.fillText('n = ' + toLatin(nl), 50, 20);
+    g.fillText('n = ' + toLatin(nu), 50, 34);
   } catch (err) {
     console.error('[drawAgg] ERROR:', err);
   }
@@ -683,13 +722,13 @@ function drawWC(){
   for (var q=10; q<=70; q+=10) {
     g.strokeStyle='#e5e5e5'; g.lineWidth=1;
     g.beginPath(); g.moveTo(L,Y(q)); g.lineTo(w-14,Y(q)); g.stroke();
-    g.fillStyle='#333'; g.fillText(q, 40, Y(q)+4);
+    g.fillStyle='#333'; g.fillText(toLatin(q), 40, Y(q)+4);
   }
   g.textAlign='center';
   for (var q2=XMIN; q2<=XMAX+0.001; q2+=0.05) {
     g.strokeStyle='#e5e5e5'; g.lineWidth=1;
     g.beginPath(); g.moveTo(X(q2),Y(10)); g.lineTo(X(q2),Y(70)); g.stroke();
-    g.fillStyle='#333'; g.fillText(q2.toFixed(2), X(q2), h-14);
+    g.fillStyle='#333'; g.fillText(toLatin(q2.toFixed(2)), X(q2), h-14);
   }
   g.save(); g.translate(14,h/2); g.rotate(-Math.PI/2);
   g.textAlign='center'; g.font='bold 11px Tahoma,sans-serif';
@@ -748,8 +787,8 @@ function drawWC(){
     g.fillStyle = col;
     g.beginPath(); g.arc(X(px), Y(py), 1.5, 0, Math.PI*2); g.fill();
     g.font = 'bold 10px Tahoma,sans-serif'; g.textAlign = 'center';
-    g.fillText(py.toFixed(1), L + 12, Y(py) - 6);
-    g.fillText(px.toFixed(3), X(px) + 15, Y(10) - 6);
+    g.fillText(toLatin(py.toFixed(1)), L + 12, Y(py) - 6);
+    g.fillText(toLatin(px.toFixed(3)), X(px) + 15, Y(10) - 6);
   });
 }
 
@@ -765,7 +804,7 @@ function goTo(i){
     }
   }
   var pn = $('pn');
-  if (pn) pn.textContent = (i+1) + ' / ' + PG.length;
+  if (pn) pn.textContent = toLatin(i+1) + ' / ' + toLatin(PG.length);
   $('menu').hidden = true;
   $('btnPrev').disabled = (i===0);
   $('btnNext').disabled = (i===PG.length-1);
@@ -793,10 +832,7 @@ function handleCeqOpt(){
   }
 }
 
-/* ============ نسخه پایدار اشتراک‌گذاری و چاپ ============ */
-
 function doPrint(){
-  // چاپ: مخفی کردن منو قبل از اجرای پرینت
   $('menu').hidden = true;
   setTimeout(function(){
     try { window.print(); } catch(e) { alert('چاپ در این مرورگر پشتیبانی نمی‌شود.'); }
@@ -829,7 +865,7 @@ function doShare(){
     navigator.share({ title: 'طرح SCC', text: t })
       .catch(function(err){
         if (err && err.name === 'AbortError') return;
-        fallbackCopy(t); // اگر بستن پنجره اشتراک‌گذاری نبود، کپی می‌کنیم
+        fallbackCopy(t);
       });
     return;
   }
@@ -906,12 +942,12 @@ function bindAll(){
   $('mSave').addEventListener('click', function(){
     var o = {};
     document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(e){ if (e.id) o[e.id] = e.value; });
-    try { localStorage.setItem('scc_v16', JSON.stringify(o)); toast('ذخیره شد'); } catch(err) { toast('ذخیره ناموفق'); }
+    try { localStorage.setItem('scc_v17', JSON.stringify(o)); toast('ذخیره شد'); } catch(err) { toast('ذخیره ناموفق'); }
     $('menu').hidden = true;
   });
   $('mLoad').addEventListener('click', function(){
     var s;
-    try { s = localStorage.getItem('scc_v16'); } catch(err){}
+    try { s = localStorage.getItem('scc_v17'); } catch(err){}
     $('menu').hidden = true;
     if (!s) { toast('طرحی ذخیره نشده'); return; }
     var o = JSON.parse(s);
