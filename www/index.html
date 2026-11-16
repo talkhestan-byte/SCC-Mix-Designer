@@ -85,6 +85,107 @@ select.styled-select{background:#fff;border:2px solid #80cbc4;border-radius:8px;
 .res-box span{display:block;font-size:11px;color:#555;font-weight:normal;margin-bottom:5px;font-family:Tahoma,sans-serif;direction:rtl;unicode-bidi:normal}
 .res-box-final{background:#e1f0fa !important;border-color:#b3d4ed !important;color:#0073e6 !important;font-size:15px;padding:12px !important;margin-top:10px}
 #pn{direction:ltr;unicode-bidi:plaintext;font-family:Arial,sans-serif;font-variant-numeric:lining-nums tabular-nums}
+/* ===== اصلاح اختصاصی صفحه ۵ ===== */
+.cement-page .cement-main{
+  background:#f8fafc;
+  border:1px solid #dce3eb;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:15px;
+}
+
+.cement-page .cement-warning{
+  background:#fffbed;
+  border:1.5px solid #e2b83e;
+  border-radius:12px;
+  padding:18px;
+}
+
+.cement-page .cement-new{
+  background:#fff7ee;
+  border:1px solid #edc18a;
+  border-radius:10px;
+  padding:16px 8px;
+  margin-bottom:18px;
+  color:#a64b20;
+}
+
+.cement-page .cement-alert-text{
+  font-size:15px;
+  line-height:2;
+  color:#79502b;
+  margin:12px 0 18px;
+  text-align:right;
+}
+
+.cement-page .cement-correction{
+  background:#fff;
+  border:1px solid #e5d77d;
+  border-radius:12px;
+  padding:15px;
+  margin-top:15px;
+}
+
+.cement-page .cement-input{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:5px 0 20px;
+}
+
+.cement-page .cement-input input{
+  width: min(100%, 280px);
+  min-width:220px;
+  height:42px;
+  text-align:center;
+  font-size:18px;
+  border:1px solid #cbd5df;
+  border-radius:8px;
+  direction:ltr;
+  font-family:Arial,sans-serif;
+}
+
+.cement-page .cement-extra{
+  display:flex;
+  justify-content:space-around;
+  flex-wrap:wrap;
+  gap:12px;
+  color:#89552e;
+  font-size:15px;
+  line-height:2;
+}
+
+.cement-page .cement-choice{
+  display:flex;
+  justify-content:center;
+  margin-top:22px;
+}
+
+.cement-page .cement-choice select{
+  width:100%;
+  max-width:360px;
+  min-height:60px;
+  padding:12px;
+  font-size:16px;
+  text-align:center;
+  text-align-last:center;
+  border:1.5px solid #e5d77d;
+  border-radius:12px;
+  background:#fff;
+  color:#79502b;
+  font-family:Tahoma,sans-serif;
+  font-weight:bold;
+}
+
+.cement-page .cement-hint{
+  text-align:center;
+  margin-top:14px;
+  font-size:13px;
+  line-height:2;
+  color:#79502b;
+    }  
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
 </style>
 </head>
@@ -284,27 +385,72 @@ R('مقاومت متناظر (MPa)', '<input id="fcmE" type="text" inputmode="de
 '<canvas id="cw" height="360"></canvas>' +
 '<div class="o" id="o5"></div>',
 
-/* ===== صفحه ۵: عیناً نسخه اصلی، فقط ceq-kw به type=number برگشت ===== */
+/* ===== صفحه ۵: تعیین مقدار سیمان ===== */
+'<div class="cement-page">' +
+
 '<h3>۵) تعیین مقدار سیمان</h3>' +
-'<div class="card">' +
+
+'<div class="cement-main">' +
+
 '<div class="card-title">تعیین مقدار سیمان</div>' +
-'<div class="eq-row"><span>C = </span>' +
-'<span class="eq-frac"><span class="num" id="ceq-wf">0</span><span class="den" id="ceq-wc">0</span></span>' +
-'<span> = </span><span class="val-box" id="ceq-c">0</span><span> kg/m³</span></div></div>' +
-'<div id="cement-warn" class="alert-box" hidden>' +
-'<div class="alert-title">هشدار: سیمان (<span id="ceq-c-raw">0</span>) از حد پیش‌فرض (350) بیشتر است.</div>' +
-'<div class="eq-row" style="margin:10px 0; justify-content:center;"><span>C_new = </span>' +
-'<span class="eq-frac"><span class="num" id="ceq-c-new-num">0</span><span class="den" id="ceq-c-new-den">0</span></span>' +
-'<span> = </span><span style="color:#b71c1c;font-weight:bold;font-size:20px;" id="ceq-c-new">0 kg/m³</span></div>' +
-'<div class="input-group"><input type="number" step="any" id="ceq-kw" value="1.5" data-u="1"><span>ضریب اصلاح آب (kg/10kg)</span></div>' +
-'<div class="summary-text">سیمان اضافی: <span id="ceq-add-c">0</span> kg &nbsp;|&nbsp; آب اضافی: <span id="ceq-add-w">0</span> kg</div>' +
-'<div style="text-align:center;margin-top:15px;">' +
-'<select class="styled-select" id="ceq-opt" data-u="1">' +
+
+'<div class="eq-row" style="margin:15px 0;">' +
+'<span>C = </span>' +
+'<span class="eq-frac">' +
+'<span class="num" id="ceq-wf">0</span>' +
+'<span class="den" id="ceq-wc">0</span>' +
+'</span>' +
+'<span> = </span>' +
+'<span class="val-box" id="ceq-c">0</span>' +
+'<span> kg/m³</span>' +
+'</div>' +
+
+'</div>' +
+
+'<div id="cement-warn" class="cement-warning" hidden>' +
+
+'<div class="cement-new">' +
+'<div class="eq-row" style="margin:8px 0;color:#a64b20;">' +
+'<span>C_new = </span>' +
+'<span class="eq-frac">' +
+'<span class="num" id="ceq-c-new-num">0</span>' +
+'<span class="den" id="ceq-c-new-den">0</span>' +
+'</span>' +
+'<span> = </span>' +
+'<b id="ceq-c-new">0 kg/m³</b>' +
+'</div>' +
+'</div>' +
+
+'<div class="cement-alert-text">' +
+'هشدار: سیمان (<b id="ceq-c-raw">0</b>) از حد پیش‌فرض (350) بیشتر است.' +
+'</div>' +
+
+'<div class="cement-correction">' +
+
+'<div class="cement-input">' +
+'<input type="number" step="any" id="ceq-kw" value="1.5" data-u="1">' +
+'<span>ضریب اصلاح آب (kg/10kg)</span>' +
+'</div>' +
+
+'<div class="cement-extra">' +
+'<span>سیمان اضافی: <b id="ceq-add-c">0</b> kg</span>' +
+'<span>آب اضافی: <b id="ceq-add-w">0</b> kg</span>' +
+'</div>' +
+
+'</div>' +
+
+'<div class="cement-choice">' +
+'<select id="ceq-opt" data-u="1">' +
 '<option value="1">نادیده گرفتن و ادامه</option>' +
 '<option value="2">اصلاح بافت دانه‌بندی</option>' +
 '<option value="3">اصلاح نسبت آب به سیمان</option>' +
-'</select></div>' +
-'<div style="text-align:center;margin-top:12px;font-size:12px;color:#555;" id="ceq-hint"></div>' +
+'</select>' +
+'</div>' +
+
+'<div class="cement-hint" id="ceq-hint"></div>' +
+
+'</div>' +
+
 '</div>',
 
 '<h3>۶) فرمول حجم مطلق و نتایج</h3>' +
@@ -568,7 +714,7 @@ function calc(){
     if ($('ceq-c-new-num')) $('ceq-c-new-num').textContent = f(newW,2);
     if ($('ceq-c-new-den')) $('ceq-c-new-den').textContent = f(wc,3);
     if ($('ceq-c-new')) $('ceq-c-new').textContent = f(finalC,2) + ' kg/m³';
-    if ($('ceq-add-c')) $('ceq-add-c').textContent = f(finalC-Cm,2);
+    if ($('ceq-add-c')) $('ceq-add-c').textContent = f(Cm-350,2);
     if ($('ceq-add-w')) $('ceq-add-w').textContent = f(addW,2);
   } else {
     if ($('cement-warn')) $('cement-warn').hidden = true;
