@@ -407,6 +407,7 @@ nav button{min-height:42px;font-size:15px;padding:8px 18px}
 .r2 input{width:100%;height:40px;padding:4px 8px;font-size:16px;border:1px solid #ccc;border-radius:4px;font-family:Arial,Helvetica,sans-serif;direction:ltr;text-align:center;font-variant-numeric:lining-nums tabular-nums}
 .r2 input[readonly]{background:#eef2f7;color:#1f4e79;font-weight:bold}
 
+.jr{padding:6px 8px;margin-bottom:6px}.jr .math-title{margin-bottom:4px}.jr .r{padding:3px 6px;gap:4px}.jr .r label{font-size:12px}.jr .r input{width:80px;padding:4px}.jr-in{display:flex;flex-direction:column;gap:3px}
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
 </style>
 </head>
@@ -493,6 +494,17 @@ function wcOf(y, g, sh, pl){
   return (lo + hi) / 2;
 }
 
+var AGv = 0;
+function fcmMix(wc, gr, pl){
+  var lo = 10, hi = 70;
+  for (var i = 0; i < 50; i++) {
+    var mid = (lo + hi) / 2;
+    var wr = wcOf(mid, gr, 1, pl), wcr = wcOf(mid, gr, 0, pl);
+    var w0 = wr + (wcr - wr) * AGv / 100;
+    if (w0 > wc) lo = mid; else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
 var _fc = {};
 function fcmFromWc(wc, gr, sh, pl){
   var k = wc.toFixed(3) + '_' + gr + '_' + sh + '_' + pl;
@@ -588,9 +600,8 @@ R('نوع SCC', S('ty', ['فقط پودری', 'فقط VMA', 'ترکیبی'])) +
 '</div>' +
 '<h3 style="margin-top:20px">۲) محاسبه مقاومت هدف</h3>' +
 '<div class="g2">' +
-'<div class="r r-wide"><label>روش</label>' + S('sm', ['دستی (جدول رتبه کارگاه)', 'خودکار (از نتایج نمونه‌ها)', 'کارگاه بدون اطلاعات']) + '</div>' +
+'<div class="r r-wide"><label>روش</label>' + S('sm', ['دستی (جدول رتبه کارگاه)', 'محاسبه خودکار (دو فرمول)', 'کارگاه بدون اطلاعات']) + '</div>' +
 '<div id="g1">' + R('رتبه کارگاه', S('rk', ['الف', 'ب', 'ج']), 's2') + R('s از جدول ۳-۱ (MPa)', '<b id="sv"></b>', 's1') + '</div>' +
-'<div id="g2" class="r" style="display:block"><label>مقاومت نمونه‌ها (MPa)</label><textarea id="dt" style="width:100%" data-u="1"></textarea></div>' +
 '<div id="g3">' + R('حاشیه ایمنی SM (MPa)', '<b id="smv"></b>', 's3') + '</div>' +
 '</div>' +
 '<div class="o" id="o2"></div>',
@@ -726,18 +737,17 @@ R('هوای ناخواسته (%)', I('va', '1.5'), 12) +
 
 /* ===== صفحه آخر: آزمون‌های تازه (اسلامپ فلو، T50 و J-Ring) ===== */
 '<h3>۷) کنترل بتن تازه: اسلامپ فلو، T50 و J-Ring</h3>' +
-'<div class="math-card"><div class="math-title">آزمون اسلامپ فلو</div>' +
-'<div class="g2">' +
+'<div class="math-card jr"><div class="math-title">آزمون اسلامپ فلو</div>' +
+'<div class="jr-in">' +
 R('اسلامپ فلو (mm)', I('sfv', '')) +
 R('زمان T50 (s)', I('t50', '')) +
-R('قطر نهایی پخش‌شدگی (mm)', I('dfin', '')) +
 '</div></div>' +
-'<div class="math-card"><div class="math-title">آزمون J-Ring</div>' +
+'<div class="math-card jr"><div class="math-title">آزمون J-Ring</div>' +
 '<div style="display:flex;gap:8px;align-items:center">' +
-'<div style="flex:1;display:flex;flex-direction:column;gap:4px">' +
-R('a: کمترین ارتفاع در مرکز (mm)', I('ja', '')) +
-R('b: کمترین ارتفاع بیرون رینگ (mm)', I('jb', '')) +
-R('c: قطر میانگین پخش‌شدگی (mm)', I('jc', '')) +
+'<div class="jr-in" style="flex:1;min-width:0">' +
+R('a: ارتفاع مرکز (mm)', I('ja', '')) +
+R('b: ارتفاع بیرون رینگ (mm)', I('jb', '')) +
+R('c: میانگین پخش‌شدگی (mm)', I('jc', '')) +
 '</div>' +
 '<div style="flex:none;width:3cm;height:3cm;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #ccc;border-radius:6px;overflow:hidden">' +
 '<img id="jrImg" src="J-Ring.gif" alt="J-Ring" style="width:3cm;height:3cm;object-fit:contain" onerror="window.jrErr(this)">' +
@@ -841,7 +851,7 @@ window.jrErr = function(img){
 function jrCalc(){
   var box = $('oj');
   if (!box) return;
-  var S = v('sfv'), T = v('t50'), Df = v('dfin'), a = v('ja'), b = v('jb'), c = v('jc');
+  var S = v('sfv'), T = v('t50'), a = v('ja'), b = v('jb'), c = v('jc');
   var sfI = $('sf') ? $('sf').selectedIndex : 2;
   var rbI = $('rb') ? $('rb').selectedIndex : 2;
   var D = v('D');
@@ -857,7 +867,7 @@ function jrCalc(){
     if (grp === 'p' && lv > wPass) wPass = lv;
     if (grp === 's' && lv > wSeg) wSeg = lv;
   }
-  var haveSF = S > 0 && T > 0 && Df > 0, haveJ = a > 0 && b > 0 && c > 0;
+  var haveSF = S > 0 && T > 0, haveJ = a > 0 && b > 0 && c > 0;
   if (!haveSF && !haveJ) { box.innerHTML = 'مقادیر آزمون‌ها را وارد کنید تا تحلیل نمایش داده شود.'; return; }
 
   if (haveSF) {
@@ -874,32 +884,29 @@ function jrCalc(){
       add(2, 'اسلامپ فلو ' + f(S,0) + ' mm بیش از حد رده ' + cls + ' (' + f(rng[1],0) + ') است؛ خطر جداشدگی.', 's');
       rem.push('روانی زیاد است: فوق‌روان‌کننده یا آب آزاد را کم کنید و در صورت لزوم VMA یا پودر ریز اضافه کنید.');
     }
-    if (S > 850 || Df > 850) { add(2, 'پخش‌شدگی بیش از ۸۵۰ mm است؛ ریسک جداشدگی و خونریزی بالاست.', 's'); rem.push('پخش‌شدگی بیش از ۸۵۰ mm پذیرفتنی نیست؛ روانی را کاهش دهید.'); }
+    if (S > 850) { add(2, 'پخش‌شدگی بیش از ۸۵۰ mm است؛ ریسک جداشدگی و خونریزی بالاست.', 's'); rem.push('پخش‌شدگی بیش از ۸۵۰ mm پذیرفتنی نیست؛ روانی را کاهش دهید.'); }
     if (T < 2) {
       if (S > 750) { add(1, 'T50 = ' + f(T,1) + ' s (رده VS1) همراه با پخش‌شدگی زیاد: احتمال کم‌بودن چسبندگی و جداشدگی.', 's'); rem.push('چسبندگی کم است: VMA یا پودر ریز را افزایش دهید.'); }
       else add(0, 'T50 = ' + f(T,1) + ' s (رده VS1، ≤ ۲ ثانیه) مناسب است.', 's');
     } else if (T <= 5) add(0, 'T50 = ' + f(T,1) + ' s (رده VS2، بیش از ۲ ثانیه) و در محدوده قابل قبول است؛ چسبندگی مناسب.', 's');
     else if (T <= 8) { add(1, 'T50 = ' + f(T,1) + ' s زیاد است؛ مخلوط خمیری و دیرجریان.', 'p'); rem.push('T50 زیاد است: مقدار VMA/پودر را کم یا فوق‌روان‌کننده را اصلاح کنید.'); }
     else { add(2, 'T50 = ' + f(T,1) + ' s بسیار زیاد است؛ مخلوط برای عبور از میلگرد مناسب نیست.', 'p'); rem.push('T50 بسیار زیاد است: VMA/پودر را کاهش و روانی را افزایش دهید.'); }
-    var dd = Math.abs(Df - S);
-    if (dd > 50) { add(1, 'اختلاف قطر نهایی (' + f(Df,0) + ') و اسلامپ فلو (' + f(S,0) + ') برابر ' + f(dd,0) + ' mm است؛ اندازه‌گیری‌ها را تکرار کنید و در لبه پخش‌شدگی به هاله خمیر یا انباشت سنگدانه توجه کنید.', 's'); }
-    else add(0, 'قطر نهایی با اسلامپ فلو همخوان است (اختلاف ' + f(dd,0) + ' mm).', 's');
   } else {
-    L.push('برای تحلیل اسلامپ فلو، سه مقدار اسلامپ فلو، T50 و قطر نهایی را وارد کنید.');
+    L.push('برای تحلیل اسلامپ فلو، دو مقدار اسلامپ فلو و T50 را وارد کنید.');
   }
 
   if (haveJ) {
-    var base = S > 0 ? S : Df;
+    var base = S > 0 ? S : c;
     var bs = Math.max(0, base - c);
     if (S > 0 && c > S) L.push('توجه: c از اسلامپ فلو بیشتر است؛ اندازه‌گیری را بررسی کنید.');
     var lv1 = bs <= 10 ? 0 : bs <= 25 ? 1 : 2;
     if (lv1 === 1 && strict) lv1 = 2;
     add(lv1, 'اختلاف اسلامپ فلو و J-Ring = ' + f(bs,0) + ' mm ' + (bs <= 10 ? '(≤ ۱۰: بدون انسداد، عبور خوب)' : bs <= 25 ? '(۱۰ تا ۲۵: انسداد کم تا متوسط)' : '(> ۲۵: انسداد؛ عبور نامناسب)') + '.', 'p');
-    var dh = Math.max(0, a - b);
-    if (a < b) L.push('توجه: ارتفاع مرکز کمتر از بیرون رینگ است؛ اختلاف ارتفاع صفر در نظر گرفته شد.');
+    var dh = Math.max(0, b - a);
+    if (b < a) L.push('توجه: ارتفاع بیرون رینگ (b) کمتر از ارتفاع مرکز (a) است؛ اندازه‌گیری را بررسی کنید. اختلاف صفر در نظر گرفته شد.');
     var lv2 = dh <= 6 ? 0 : dh <= 12 ? 1 : 2;
     if (lv2 === 1 && strict) lv2 = 2;
-    add(lv2, 'اختلاف ارتفاع (a − b) = ' + f(dh,0) + ' mm ' + (dh <= 6 ? '(≤ ۶: انسداد دیده نمی‌شود)' : dh <= 12 ? '(۶ تا ۱۲: انسداد کم تا قابل توجه)' : '(> ۱۲: انسداد قابل توجه تا شدید)') + '.', 'p');
+    add(lv2, 'اختلاف ارتفاع (b − a) = ' + f(dh,0) + ' mm ' + (dh <= 6 ? '(≤ ۶: انسداد دیده نمی‌شود)' : dh <= 12 ? '(۶ تا ۱۲: انسداد کم تا قابل توجه)' : '(> ۱۲: انسداد قابل توجه تا شدید)') + '.', 'p');
     if (lv1 > 0 || lv2 > 0) {
       rem.push('انسداد: حجم خمیر و روانی را بالا ببرید، درصد شن درشت یا حداکثر اندازه سنگدانه را کم کنید و دانه‌بندی را به منحنی توان نزدیک‌تر کنید.');
     }
@@ -931,8 +938,7 @@ function calc(){
 
   var m = $('sm').selectedIndex;
   var n = +$('na').value, D = v('D');
-  if ($('g1')) $('g1').style.display = m===0 ? 'block' : 'none';
-  if ($('g2')) $('g2').style.display = m===1 ? 'block' : 'none';
+  if ($('g1')) $('g1').style.display = m<=1 ? 'block' : 'none';
   if ($('g3')) $('g3').style.display = m===2 ? 'block' : 'none';
 
   var fc = v('fc');
@@ -946,13 +952,18 @@ function calc(){
     var a = fc + 1.34*s + 1.5;
     var b = fc + 2.33*s - k;
     fcm = Math.max(a,b);
-    var t = 'fcm = fc+1.34s+1.5 = ' + f(a) + '<br>';
-    t += 'fcm = fc+2.33s-' + k + ' = ' + f(b) + '<br>';
-    t += 'max = ' + f(fcm) + '<br>';
+    var t = 'فرمول ۱: fcm = fc + 1.34s + 1.5 = ' + f(fc) + ' + 1.34×' + f(s,2) + ' + 1.5 = ' + f(a) + '<br>';
+    t += 'فرمول ۲: fcm = fc + 2.33s − ' + k + ' = ' + f(fc) + ' + 2.33×' + f(s,2) + ' − ' + k + ' = ' + f(b) + '<br>';
+    t += 'بزرگترین: ' + f(fcm) + '<br>';
     if (fcm > fc+SM) { fcm = fc+SM; t += '⚠ بیش از fc+SM؛ سقف: ' + f(fc+SM) + '<br>'; }
     return t + '<b>fcm = ' + f(fcm) + ' MPa</b>';
   }
 
+  var stbl = [[2.5,3,3.5,4,4.5],[3.5,4,4.5,5,5.5],[4.5,5,5.5,6,6.5]];
+  if (m <= 1 && $('rk')) {
+    var sTab = stbl[$('rk').selectedIndex][ci];
+    if ($('sv')) $('sv').textContent = toLatin(sTab);
+  }
   if (m === 0) {
     var tbl = [[2.5,3,3.5,4,4.5],[3.5,4,4.5,5,5.5],[4.5,5,5.5,6,6.5]];
     var s = tbl[$('rk').selectedIndex][ci];
@@ -968,12 +979,7 @@ function calc(){
     }
   }
   else if (m === 1) {
-    var arr = $('dt').value.split(/[\s,;،]+/).map(parseFloat).filter(isFinite);
-    var kk = arr.length, mu = kk ? arr.reduce(function(x,y){return x+y;},0)/kk : 0;
-    var sd = kk > 1 ? Math.sqrt(arr.reduce(function(x,y){return x+(y-mu)*(y-mu);},0)/(kk-1)) : 0;
-    var Rf = kk < 30 ? .75 + Math.sqrt(2/(kk||1)) : 1;
-    var s2 = Math.max(2.5, sd*Rf);
-    out = 's = ' + f(sd,2) + ' ؛ R = ' + f(Rf,3) + '<br>s اصلاح = ' + f(s2,2) + '<br>' + fmCalc(s2);
+    out = 's = ' + f(sTab,2) + ' (جدول ۳-۱، رتبه ' + $('rk').value + ')<br>' + fmCalc(sTab);
   }
   else {
     fcm = fc + SM;
@@ -1033,12 +1039,13 @@ function calc(){
   var g = $('cg').value, pl = $('pl').selectedIndex===0;
   var wR = wcOf(fcm28, g, 1, pl), wC = wcOf(fcm28, g, 0, pl);
   var wc0 = wR + (wC-wR)*aG/100;
+  AGv = aG;
 
   A('wcR', wc0, 3);
   if (!$('wcE').dataset.m) $('wcE').value = f(wc0,3);
   var wc = v('wcE') || wc0 || 0.45;
 
-  var fcmWc = fcmFromWc(wc, g, 0, pl);
+  var fcmWc = fcmMix(wc, g, pl);
   if ($('fcmE')) $('fcmE').value = f(fcmWc,1);
   if ($('o5')) $('o5').innerHTML = '<b>w/c = ' + f(wc,3) + '</b> ؛ fcm = ' + f(fcmWc,1) + ' MPa';
 
@@ -1326,11 +1333,13 @@ function drawWC(){
   g.textBaseline = 'alphabetic';
 
   var gr = $('cg') ? $('cg').value : '425';
+  var gx0 = v('wcR'), gxe = v('wcE');
+  guideLines = (gxe > 0 && Math.abs(gxe - gx0) > 0.0005) ? [{x: gx0}, {x: gxe}] : [{x: gx0}];
   var guideColors = ['#000', '#b71c1c'];
   guideLines.forEach(function(gl, i){
     if (!(gl.x >= XMIN && gl.x <= XMAX)) return;
     var px = gl.x;
-    var py = fcmFromWc(px, gr, 0, pl);
+    var py = fcmMix(px, gr, pl);
     if (!isFinite(py)) return;
     var col = guideColors[i % 2];
     g.setLineDash([5,4]); g.strokeStyle = col; g.lineWidth = 1.5;
@@ -1508,7 +1517,7 @@ function reportBody(R){
   h += '<h2>جدول دانه‌بندی مخلوط</h2><table class="rp-tbl rp-g"><tr><th>الک</th><th>مخلوط (%)</th><th>حد پایین</th><th>حد بالا</th></tr>' +
     R.grad.map(function(r){ return '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td><td>' + esc(r[2]) + '</td><td>' + esc(r[3]) + '</td></tr>'; }).join('') + '</table>' + lns(R.fm);
   h += '<h2>نتایج نهایی (مقدار سیمان و اجزای مخلوط)</h2>' + tbl(R.res) + lns(R.mix);
-  if (R.jr && R.jr.length) h += '<h2>کنترل بتن تازه (اسلامپ فلو، T50 و J-Ring)</h2>' + tbl([['اسلامپ فلو (mm)', gv('sfv')], ['T50 (s)', gv('t50')], ['قطر نهایی (mm)', gv('dfin')], ['a (mm)', gv('ja')], ['b (mm)', gv('jb')], ['c (mm)', gv('jc')]]) + lns(R.jr);
+  if (R.jr && R.jr.length) h += '<h2>کنترل بتن تازه (اسلامپ فلو، T50 و J-Ring)</h2>' + tbl([['اسلامپ فلو (mm)', gv('sfv')], ['T50 (s)', gv('t50')], ['a (mm)', gv('ja')], ['b (mm)', gv('jb')], ['c (mm)', gv('jc')]]) + lns(R.jr);
   return h;
 }
 
