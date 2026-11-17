@@ -407,7 +407,14 @@ nav button{min-height:42px;font-size:15px;padding:8px 18px}
 .r2 input{width:100%;height:40px;padding:4px 8px;font-size:16px;border:1px solid #ccc;border-radius:4px;font-family:Arial,Helvetica,sans-serif;direction:ltr;text-align:center;font-variant-numeric:lining-nums tabular-nums}
 .r2 input[readonly]{background:#eef2f7;color:#1f4e79;font-weight:bold}
 
-.jr{padding:6px 8px;margin-bottom:6px}.jr .math-title{margin-bottom:4px}.jr .r{padding:3px 6px;gap:4px}.jr .r label{font-size:12px}.jr .r input{width:80px;padding:4px}.jr-in{display:flex;flex-direction:column;gap:3px}
+.jr{padding:6px 8px;margin-bottom:6px}.jr .math-title{margin-bottom:6px}
+.jr-in{display:flex;flex-direction:column;gap:4px}
+.jr-in .r{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 6px;margin:0;min-height:34px;box-sizing:border-box}
+.jr-in .r label{flex:1;min-width:0;font-size:12px;line-height:1.3;margin:0}
+.jr-in .r input{flex:none;width:76px;height:28px;box-sizing:border-box;padding:2px 4px;margin:0;text-align:center}
+.jr-two{display:flex;gap:6px}.jr-two .r{flex:1;min-width:0}
+.jr-img{flex:none;width:3cm;height:3cm;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #ccc;border-radius:6px;overflow:hidden}
+.jr-img img{width:3cm;height:3cm;object-fit:contain}
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
 </style>
 </head>
@@ -736,21 +743,27 @@ R('هوای ناخواسته (%)', I('va', '1.5'), 12) +
 '<div class="o" id="o7"></div>',
 
 /* ===== صفحه آخر: آزمون‌های تازه (اسلامپ فلو، T50 و J-Ring) ===== */
-'<h3>۷) کنترل بتن تازه: اسلامپ فلو، T50 و J-Ring</h3>' +
+'<h3>۷) کنترل بتن تازه: اسلامپ فلو، T50، J-Ring و L-Box</h3>' +
 '<div class="math-card jr"><div class="math-title">آزمون اسلامپ فلو</div>' +
 '<div class="jr-in">' +
 R('اسلامپ فلو (mm)', I('sfv', '')) +
 R('زمان T50 (s)', I('t50', '')) +
 '</div></div>' +
+'<div class="math-card jr"><div class="math-title">تصاویر آزمون‌ها</div>' +
+'<div style="display:flex;gap:10px;justify-content:center;direction:ltr">' +
+'<div class="jr-img"><img src="J-Ring.gif" alt="J-Ring" data-b="J-Ring|j-ring|jring|JRing|J_Ring|J-ring" onerror="window.jrErr(this)"></div>' +
+'<div class="jr-img"><img src="L-Box.png" alt="L-Box" data-b="L-Box|l-box|lbox|LBox|L_Box|L-box" onerror="window.jrErr(this)"></div>' +
+'</div></div>' +
 '<div class="math-card jr"><div class="math-title">آزمون J-Ring</div>' +
-'<div style="display:flex;gap:8px;align-items:center">' +
-'<div class="jr-in" style="flex:1;min-width:0">' +
-R('a: ارتفاع مرکز (mm)', I('ja', '')) +
-R('b: ارتفاع بیرون رینگ (mm)', I('jb', '')) +
-R('c: میانگین پخش‌شدگی (mm)', I('jc', '')) +
-'</div>' +
-'<div style="flex:none;width:3cm;height:3cm;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #ccc;border-radius:6px;overflow:hidden">' +
-'<img id="jrImg" src="J-Ring.gif" alt="J-Ring" style="width:3cm;height:3cm;object-fit:contain" onerror="window.jrErr(this)">' +
+'<div class="jr-in">' +
+R('a: کمترین ارتفاع مرکز (mm)', I('ja', '')) +
+R('b: کمترین ارتفاع بیرون رینگ (mm)', I('jb', '')) +
+R('c: قطر میانگین پخش‌شدگی (mm)', I('jc', '')) +
+'</div></div>' +
+'<div class="math-card jr"><div class="math-title">آزمون L-Box</div>' +
+'<div class="jr-in"><div class="jr-two">' +
+R('H1 (mm)', I('lh1', '')) +
+R('H2 (mm)', I('lh2', '')) +
 '</div></div></div>' +
 '<div class="o" id="oj" style="direction:rtl;text-align:right"></div>'
 ];
@@ -842,85 +855,103 @@ function PW(d, D, n){
 }
 
 window.jrErr = function(img){
-  var names = ['J-Ring.gif','j-ring.gif','jring.gif','JRing.gif','J-ring.gif','J_Ring.gif','j_ring.gif','J-Ring.GIF'];
+  var bases = (img.getAttribute('data-b') || '').split('|');
+  var exts = ['gif','png','jpg','jpeg','webp','GIF','PNG','JPG','JPEG'];
+  var c = [];
+  bases.forEach(function(b){ exts.forEach(function(e){ c.push(b + '.' + e); }); });
   var i = +(img.getAttribute('data-i') || 0);
-  if (i < names.length) { img.setAttribute('data-i', i + 1); img.src = names[i]; }
-  else { img.onerror = null; img.removeAttribute('src'); img.alt = 'J-Ring'; img.style.cssText = 'font-size:12px;color:#888'; }
+  if (i < c.length) { img.setAttribute('data-i', i + 1); img.src = c[i]; }
+  else { img.onerror = null; img.removeAttribute('src'); img.style.display = 'none'; img.parentNode.appendChild(document.createTextNode(img.alt)); img.parentNode.style.fontSize = '12px'; img.parentNode.style.color = '#888'; }
 };
 
 function jrCalc(){
   var box = $('oj');
   if (!box) return;
-  var S = v('sfv'), T = v('t50'), a = v('ja'), b = v('jb'), c = v('jc');
+  var S = v('sfv'), T = v('t50'), a = v('ja'), b = v('jb'), c = v('jc'), H1 = v('lh1'), H2 = v('lh2');
   var sfI = $('sf') ? $('sf').selectedIndex : 2;
   var rbI = $('rb') ? $('rb').selectedIndex : 2;
-  var D = v('D');
   var cls = ['SF0','SF1','SF2','SF3'][sfI];
-  var rng = [[0,550],[550,655],[655,755],[755,850]][sfI];
-  var rbTxt = $('rb') ? $('rb').value : '';
-  var strict = rbI >= 4;
-  var L = [], rem = [];
+  var rngT = [[450,550],[550,650],[660,750],[760,850]][sfI];
+  var rng = [[450,555],[550,655],[655,755],[755,850]][sfI];
+  var heavy = rbI >= 3;
+  var RC = 'آیین‌نامه بتن ایران (نشریه ۱۲۰)';
+  var L = [], rem = [], curRef = '';
   var worst = 0, wPass = 0, wSeg = 0;
   function add(lv, t, grp){
-    L.push((lv === 0 ? '✔ ' : lv === 1 ? '⚠ ' : '✘ ') + t);
+    L.push((lv === 0 ? '✔ ' : lv === 1 ? '⚠ ' : '✘ ') + t + (curRef ? ' <small style="color:#888">[' + curRef + ']</small>' : ''));
     if (lv > worst) worst = lv;
     if (grp === 'p' && lv > wPass) wPass = lv;
     if (grp === 's' && lv > wSeg) wSeg = lv;
   }
-  var haveSF = S > 0 && T > 0, haveJ = a > 0 && b > 0 && c > 0;
-  if (!haveSF && !haveJ) { box.innerHTML = 'مقادیر آزمون‌ها را وارد کنید تا تحلیل نمایش داده شود.'; return; }
+  var haveSF = S > 0 && T > 0, haveJ = a > 0 && b > 0 && c > 0, haveL = H1 > 0 && H2 > 0;
+  if (!haveSF && !haveJ && !haveL) { box.innerHTML = 'مقادیر آزمون‌ها را وارد کنید تا تحلیل نمایش داده شود.'; return; }
 
   if (haveSF) {
-    if (sfI === 0) {
-      if (S < 550) add(0, 'اسلامپ فلو ' + f(S,0) + ' mm با رده انتخابی ' + cls + ' (کمتر از ۵۵۰) سازگار است؛ اما برای بتن خودتراکم کافی نیست.', 's');
-      else add(2, 'اسلامپ فلو ' + f(S,0) + ' mm با رده انتخابی ' + cls + ' سازگار نیست.', 's');
-      if (S < 550) rem.push('برای خودتراکم بودن، رده SF1 یا بالاتر انتخاب و فوق‌روان‌کننده/خمیر را افزایش دهید.');
-    } else if (S >= rng[0] && S < rng[1]) {
-      add(0, 'اسلامپ فلو ' + f(S,0) + ' mm در محدوده رده ' + cls + ' (' + f(rng[0],0) + ' تا ' + f(rng[1],0) + ') است.', 's');
+    curRef = RC + '، جدول ۸-۱ و ۸-۲';
+    var lo = rngT[0], hi = rngT[1];
+    if (S >= rng[0] && S < rng[1]) {
+      add(0, 'اسلامپ فلو ' + f(S,0) + ' mm در محدوده رده ' + cls + ' (' + lo + ' تا ' + hi + ' mm) است.', 's');
     } else if (S < rng[0]) {
-      add(2, 'اسلامپ فلو ' + f(S,0) + ' mm کمتر از حد رده ' + cls + ' (' + f(rng[0],0) + ') است؛ روانی کافی نیست.', 'p');
+      if (S >= lo * 0.93) { add(1, 'اسلامپ فلو ' + f(S,0) + ' mm کمی کمتر از رده ' + cls + ' (حداقل ' + lo + ') است، ولی در رواداری ±۷٪ یک آزمون قرار دارد؛ آزمون را تکرار و میانگین بگیرید.', 'p'); }
+      else { add(2, 'اسلامپ فلو ' + f(S,0) + ' mm کمتر از حد رده ' + cls + ' (' + lo + ') است؛ روانی کافی نیست.', 'p'); }
       rem.push('روانی کم است: درصد فوق‌روان‌کننده را اندکی افزایش دهید؛ در صورت نیاز حجم خمیر (پودر) را بالا ببرید.');
     } else {
-      add(2, 'اسلامپ فلو ' + f(S,0) + ' mm بیش از حد رده ' + cls + ' (' + f(rng[1],0) + ') است؛ خطر جداشدگی.', 's');
+      if (S <= hi * 1.07) { add(1, 'اسلامپ فلو ' + f(S,0) + ' mm کمی بیشتر از رده ' + cls + ' (حداکثر ' + hi + ') است، ولی در رواداری ±۷٪ یک آزمون قرار دارد؛ آزمون را تکرار کنید.', 's'); }
+      else { add(2, 'اسلامپ فلو ' + f(S,0) + ' mm بیش از حد رده ' + cls + ' (' + hi + ') است؛ خطر جداشدگی.', 's'); }
       rem.push('روانی زیاد است: فوق‌روان‌کننده یا آب آزاد را کم کنید و در صورت لزوم VMA یا پودر ریز اضافه کنید.');
     }
-    if (S > 850) { add(2, 'پخش‌شدگی بیش از ۸۵۰ mm است؛ ریسک جداشدگی و خونریزی بالاست.', 's'); rem.push('پخش‌شدگی بیش از ۸۵۰ mm پذیرفتنی نیست؛ روانی را کاهش دهید.'); }
+    curRef = RC + '، بند ۸-۳';
+    if (S > 680) { add(1, 'اسلامپ فلو بیش از ۶۸۰ mm است؛ طبق آیین‌نامه با افزایش جریان از ۶۸ cm تمایل به جداشدگی بیشتر می‌شود (برای بیشتر کاربردها ۵۰۰ تا ۸۵۰ و معمولاً ۶۰۰ تا ۶۸۰ mm رایج است).', 's'); rem.push('برای اطمینان از پایداری، شاخص VSI (جدا شدگی بصری) و آزمون ستون جداشدگی (حداکثر ۱۵٪) را انجام دهید.'); }
+    curRef = RC + '، جدول ۸-۱ و بند ۸-۳';
     if (T < 2) {
-      if (S > 750) { add(1, 'T50 = ' + f(T,1) + ' s (رده VS1) همراه با پخش‌شدگی زیاد: احتمال کم‌بودن چسبندگی و جداشدگی.', 's'); rem.push('چسبندگی کم است: VMA یا پودر ریز را افزایش دهید.'); }
-      else add(0, 'T50 = ' + f(T,1) + ' s (رده VS1، ≤ ۲ ثانیه) مناسب است.', 's');
-    } else if (T <= 5) add(0, 'T50 = ' + f(T,1) + ' s (رده VS2، بیش از ۲ ثانیه) و در محدوده قابل قبول است؛ چسبندگی مناسب.', 's');
-    else if (T <= 8) { add(1, 'T50 = ' + f(T,1) + ' s زیاد است؛ مخلوط خمیری و دیرجریان.', 'p'); rem.push('T50 زیاد است: مقدار VMA/پودر را کم یا فوق‌روان‌کننده را اصلاح کنید.'); }
-    else { add(2, 'T50 = ' + f(T,1) + ' s بسیار زیاد است؛ مخلوط برای عبور از میلگرد مناسب نیست.', 'p'); rem.push('T50 بسیار زیاد است: VMA/پودر را کاهش و روانی را افزایش دهید.'); }
+      var tl = 'T50 = ' + f(T,1) + ' s (رده VS1، کمتر از ۲ ثانیه)';
+      if (S > 680) { add(1, tl + ' همراه با جریان زیاد: آیین‌نامه هشدار می‌دهد T50 خیلی کم ممکن است پایداری را کم کند.', 's'); rem.push('T50 کم است: گرانروی را با VMA یا پودر ریز بیشتر کنید.'); }
+      else add(0, tl + ' مناسب است (T50 کم یعنی جایدهی راحت‌تر؛ فقط پایداری را کنترل کنید).', 's');
+    } else if (T <= 7) {
+      if (heavy && T > 3) { add(1, 'T50 = ' + f(T,1) + ' s (رده VS2) در بازه معمول ۲ تا ۷ s است، اما برای مقاطع پرمیلگرد T50 بیش از ۳ ثانیه توصیه نمی‌شود.', 'p'); rem.push('برای مقطع پرمیلگرد گرانروی را کم کنید (کاهش VMA/پودر یا بهینه‌سازی فوق‌روان‌کننده) تا T50 به ۳ s یا کمتر برسد.'); }
+      else add(0, 'T50 = ' + f(T,1) + ' s (رده VS2) و در بازه معمول ۲ تا ۷ ثانیه است.', 's');
+    } else {
+      add(2, 'T50 = ' + f(T,1) + ' s بیشتر از بازه معمول ۲ تا ۷ ثانیه است؛ مخلوط خمیری و دیرجریان.', 'p');
+      rem.push('T50 زیاد است: مقدار VMA/پودر را کم یا فوق‌روان‌کننده را اصلاح کنید.');
+    }
   } else {
     L.push('برای تحلیل اسلامپ فلو، دو مقدار اسلامپ فلو و T50 را وارد کنید.');
   }
 
   if (haveJ) {
+    curRef = RC + '، جدول ۸-۱ (J1/J2) و گام نهم طرح';
     var base = S > 0 ? S : c;
     var bs = Math.max(0, base - c);
     if (S > 0 && c > S) L.push('توجه: c از اسلامپ فلو بیشتر است؛ اندازه‌گیری را بررسی کنید.');
-    var lv1 = bs <= 10 ? 0 : bs <= 25 ? 1 : 2;
-    if (lv1 === 1 && strict) lv1 = 2;
-    add(lv1, 'اختلاف اسلامپ فلو و J-Ring = ' + f(bs,0) + ' mm ' + (bs <= 10 ? '(≤ ۱۰: بدون انسداد، عبور خوب)' : bs <= 25 ? '(۱۰ تا ۲۵: انسداد کم تا متوسط)' : '(> ۲۵: انسداد؛ عبور نامناسب)') + '.', 'p');
+    var lv1 = bs <= 25 ? 0 : bs <= 50 ? 1 : 2;
+    add(lv1, 'اختلاف اسلامپ فلو و J-Ring = ' + f(bs,0) + ' mm ' + (bs <= 25 ? '(≤ ۲۵: رده J1، برای طول حرکت کمتر از ۵ متر)' : bs <= 50 ? '(۲۵ تا ۵۰: فقط رده J2، برای طول حرکت ۵ تا ۱۰ متر؛ برای طول کمتر از ۵ متر پذیرفتنی نیست)' : '(&gt; ۵۰: انسداد؛ مردود)') + '.', 'p');
+    curRef = 'ASTM C1621؛ در آیین‌نامه عددی ندارد';
     var dh = Math.max(0, b - a);
     if (b < a) L.push('توجه: ارتفاع بیرون رینگ (b) کمتر از ارتفاع مرکز (a) است؛ اندازه‌گیری را بررسی کنید. اختلاف صفر در نظر گرفته شد.');
     var lv2 = dh <= 6 ? 0 : dh <= 12 ? 1 : 2;
-    if (lv2 === 1 && strict) lv2 = 2;
-    add(lv2, 'اختلاف ارتفاع (b − a) = ' + f(dh,0) + ' mm ' + (dh <= 6 ? '(≤ ۶: انسداد دیده نمی‌شود)' : dh <= 12 ? '(۶ تا ۱۲: انسداد کم تا قابل توجه)' : '(> ۱۲: انسداد قابل توجه تا شدید)') + '.', 'p');
+    add(lv2, 'اختلاف ارتفاع (b − a) = ' + f(dh,0) + ' mm ' + (dh <= 6 ? '(≤ ۶: انسداد دیده نمی‌شود)' : dh <= 12 ? '(۶ تا ۱۲: انسداد کم تا قابل توجه)' : '(&gt; ۱۲: انسداد قابل توجه تا شدید)') + '؛ آیین‌نامه حداکثر تغییر ارتفاع را بر اساس حجم و فاصله میلگردها در مشخصات پروژه می‌داند.', 'p');
     if (lv1 > 0 || lv2 > 0) {
-      rem.push('انسداد: حجم خمیر و روانی را بالا ببرید، درصد شن درشت یا حداکثر اندازه سنگدانه را کم کنید و دانه‌بندی را به منحنی توان نزدیک‌تر کنید.');
+      rem.push('انسداد: طبق آیین‌نامه بیشینه اندازه سنگدانه را کم و حجم خمیر را ۱۰ تا ۲۰ لیتر زیاد کنید.');
     }
-    if (strict) L.push('تراکم میلگرد «' + rbTxt + '» است؛ معیار انسداد سخت‌گیرانه‌تر اعمال شد.');
-    if (strict && D > 19) { add(1, 'با تراکم میلگرد زیاد، D = ' + f(D,1) + ' mm بزرگ است؛ کاهش اندازه سنگدانه توصیه می‌شود.', 'p'); }
   } else {
     L.push('برای تحلیل J-Ring، سه مقدار a و b و c را وارد کنید.');
   }
 
+  if (haveL) {
+    curRef = RC + '، جدول ۸-۱ (PL1/PL2)';
+    if (H2 > H1) L.push('توجه: H2 از H1 بیشتر است؛ اندازه‌گیری را بررسی کنید.');
+    var pl = Math.min(1, H2 / H1);
+    add(pl >= 0.8 ? 0 : 2, 'نسبت عبور L-Box = H2/H1 = ' + f(H2,0) + '/' + f(H1,0) + ' = ' + f(pl,2) + ' ' + (pl >= 0.8 ? '(≥ ۰٫۸۰: رده PL1 با ۲ میلگرد یا PL2 با ۳ میلگرد، بسته به تعداد میلگرد آزمون)' : '(&lt; ۰٫۸۰: ردهٔ PL1 و PL2 برآورده نمی‌شود)') + '.', 'p');
+    if (pl < 0.8) rem.push('عبور ضعیف در L-Box: حجم خمیر و روانی را بالا ببرید و بیشینه اندازه یا درصد سنگدانه درشت را کم کنید.');
+  } else {
+    L.push('برای تحلیل L-Box، دو مقدار H1 و H2 را وارد کنید.');
+  }
+
   var vt = ['قابل قبول', 'مشروط (نیازمند اصلاح یا تکرار آزمون)', 'مردود'];
-  var out = L.join('<br>');
-  if (haveSF || haveJ) {
+  var out = '<b>به استناد:</b> آیین‌نامه بتن ایران (نشریه ۱۲۰، دستورالعمل بتن خودتراکم، فصل ۸: جدول‌های ۸-۱ و ۸-۲ و بند ۸-۳؛ گام نهم طرح مخلوط) و استانداردهای ملی ۱۱۲۷۰ (اسلامپ فلو و T50)، ۱۱۲۷۱ (حلقه J) و ۳۲۰۳-۱۰ (جعبه L). برای مواردی که آیین‌نامه عدد نداده، از ASTM C1621 استفاده شده است. مرجع هر بند در انتهای آن آمده است.<hr>' + L.join('<br>');
+  if (haveSF || haveJ || haveL) {
     out += '<hr>';
-    if (haveJ) out += '<b>قابلیت عبور از میلگرد: ' + vt[wPass] + '</b><br>';
+    if (haveJ || haveL) out += '<b>قابلیت عبور از میلگرد: ' + vt[wPass] + '</b><br>';
     if (haveSF) out += '<b>مقاومت در برابر جداشدگی: ' + vt[wSeg] + '</b><br>';
     out += '<b>نتیجه کلی: ' + vt[worst] + '</b>';
     if (rem.length) out += '<hr>' + rem.filter(function(x,i,ar){ return ar.indexOf(x) === i; }).map(function(x){ return '• ' + x; }).join('<br>');
@@ -1517,7 +1548,7 @@ function reportBody(R){
   h += '<h2>جدول دانه‌بندی مخلوط</h2><table class="rp-tbl rp-g"><tr><th>الک</th><th>مخلوط (%)</th><th>حد پایین</th><th>حد بالا</th></tr>' +
     R.grad.map(function(r){ return '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td><td>' + esc(r[2]) + '</td><td>' + esc(r[3]) + '</td></tr>'; }).join('') + '</table>' + lns(R.fm);
   h += '<h2>نتایج نهایی (مقدار سیمان و اجزای مخلوط)</h2>' + tbl(R.res) + lns(R.mix);
-  if (R.jr && R.jr.length) h += '<h2>کنترل بتن تازه (اسلامپ فلو، T50 و J-Ring)</h2>' + tbl([['اسلامپ فلو (mm)', gv('sfv')], ['T50 (s)', gv('t50')], ['a (mm)', gv('ja')], ['b (mm)', gv('jb')], ['c (mm)', gv('jc')]]) + lns(R.jr);
+  if (R.jr && R.jr.length) h += '<h2>کنترل بتن تازه (اسلامپ فلو، T50، J-Ring و L-Box)</h2>' + tbl([['اسلامپ فلو (mm)', gv('sfv')], ['T50 (s)', gv('t50')], ['a (mm)', gv('ja')], ['b (mm)', gv('jb')], ['c (mm)', gv('jc')], ['H1 (mm)', gv('lh1')], ['H2 (mm)', gv('lh2')]]) + lns(R.jr);
   return h;
 }
 
