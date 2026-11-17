@@ -530,35 +530,44 @@ var T_S_HTML = {
       '</table>'
 };
 
+var TB_EXT = ['png','jpg','jpeg','webp','PNG','JPG','JPEG'];
+var TB_LABEL = {
+  s1: 'جدول ۳-۱ انحراف معیار s',
+  s2: 'جدول ۳-۲ رتبه‌بندی کارگاه',
+  s3: 'جدول ۳-۳ حاشیهٔ ایمنی SM'
+};
+
 function openTable(k){
-  var file = null;
-  var label = '';
-  if (typeof k === 'number') { file = 't' + k; label = 'جدول ۶-' + toLatin(k); }
-  else if (typeof k === 'string') {
-    if (/^\d+$/.test(k)) { file = 't' + k; label = 'جدول ۶-' + toLatin(k); }
-    else if (/^s[1-4]$/.test(k)) { file = k; label = 'جدول ' + k.toUpperCase(); }
-    else if (/^d\d+$/.test(k)) { file = k; label = 'جدول ' + k.toUpperCase(); }
+  k = String(k);
+  var file = null, label = '';
+  if (/^\d+$/.test(k)) { file = 't' + k; label = 'جدول ۶-' + toLatin(k); }
+  else if (/^(s|d)\d+$/.test(k)) { file = k; label = TB_LABEL[k] || ('جدول ' + k.toUpperCase()); }
+
+  if (!file) {
+    $('mb').innerHTML = '<div style="padding:20px;text-align:center;color:#b71c1c;font-size:14px">برای این جدول تصویری تعریف نشده است.</div>';
+    $('md').hidden = false;
+    return;
   }
 
-  /* ابتدا تلاش برای نمایش تصویر — اگر خطا داد، HTML جایگزین */
-  var fallback = (k === 's1' || k === 's2' || k === 's3') ? T_S_HTML[k] : null;
-
-  var html = '';
-  if (file) {
-    html = '<div style="text-align:center">'
-         + '<b style="color:#1f4e79">' + label + '</b><br>'
-         + '<img src="tables/' + file + '.png" style="width:100%;margin-top:8px;border:1px solid #ccc;border-radius:6px" '
-         + 'onerror="' + (fallback
-            ? "this.parentNode.innerHTML=" + JSON.stringify('<div style=\"text-align:center;padding:8px\">' + fallback + '</div>')
-            : "this.parentNode.innerHTML='<div style=padding:20px;color:#b71c1c;font-size:14px>تصویر tables/" + file + ".png پیدا نشد.</div>'"
-           ) + '">'
-         + '</div>';
-  } else {
-    html = '<div style="padding:20px;text-align:center;color:#b71c1c;font-size:14px">برای این جدول تصویری تعریف نشده است.</div>';
-  }
-  $('mb').innerHTML = html;
+  $('mb').innerHTML = '<div style="text-align:center"><b style="color:#1f4e79">' + label + '</b><div id="tbBody" style="margin-top:8px"></div></div>';
   $('md').hidden = false;
+
+  var body = $('tbBody'), i = 0;
+  var img = new Image();
+  img.style.cssText = 'width:100%;border:1px solid #ccc;border-radius:6px';
+  img.onload = function(){ body.innerHTML = ''; body.appendChild(img); };
+  img.onerror = function(){
+    i++;
+    if (i < TB_EXT.length) {
+      img.src = 'tables/' + file + '.' + TB_EXT[i];
+    } else if (T_S_HTML[k]) {
+      body.innerHTML = '<div style="text-align:center;padding:8px">' + T_S_HTML[k] + '</div>';
+    } else {
+      body.innerHTML = '<div style="padding:20px;color:#b71c1c;font-size:14px">تصویر tables/' + file + ' پیدا نشد.</div>';
     }
+  };
+  img.src = 'tables/' + file + '.' + TB_EXT[0];
+}
 
 var PG = [
 '<h3>۱) اطلاعات اولیه و مقاومت هدف</h3>' +
