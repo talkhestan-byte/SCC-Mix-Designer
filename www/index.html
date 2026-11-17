@@ -1943,9 +1943,16 @@ async function saveProjectFile(){
     var data = collectProjectData();
     var content = JSON.stringify(data, null, 2);
     var cap = window.Capacitor;
-    if (cap && cap.isNativePlatform && cap.isNativePlatform() && typeof cap.registerPlugin === 'function') {
-      var SaveFile = cap.registerPlugin('SaveFile');
-      await SaveFile.saveJson({ fileName: name + '.json', content: content });
+    // افزونه بومی در نسخه HTML مستقل، مستقیماً از پل Native Capacitor فراخوانی می‌شود.
+    // این روش به import یا registerPlugin در سمت JavaScript نیاز ندارد.
+    if (cap) {
+      if (typeof cap.nativePromise !== 'function') {
+        throw new Error('پل ارتباطی اندروید در دسترس نیست؛ APK با نسخه صحیح افزونه ساخته نشده است.');
+      }
+      await cap.nativePromise('SaveFile', 'saveJson', {
+        fileName: name + '.json',
+        content: content
+      });
       toast('فایل طرح با موفقیت ذخیره شد');
       return;
     }
