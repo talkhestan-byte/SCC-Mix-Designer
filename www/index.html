@@ -434,6 +434,7 @@ nav button{min-height:42px;font-size:15px;padding:8px 18px}
 </nav>
 <div id="md" hidden><div id="mb"></div></div>
 <div id="ts" hidden></div>
+<input id="restoreFileInput" type="file" accept=".json,application/json" hidden>
 
 <script>
 var pg = 0;
@@ -1915,6 +1916,77 @@ function fixInputDigits(el){
   }
 }
 
+
+function collectProjectData(){
+  var values = {};
+  document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(el){
+    if (!el.id) return;
+    values[el.id] = { value: el.value, type: el.type || el.tagName.toLowerCase() };
+  });
+  return {
+    format: 'SCC-MIX-PROJECT',
+    version: 1,
+    savedAt: new Date().toISOString(),
+    currentPage: (typeof pg === 'number' && isFinite(pg)) ? pg : 0,
+    values: values
+  };
+}
+
+function saveProjectFile(){
+  $('menu').hidden = true;
+  var defaultName = ($('pname') && $('pname').value.trim()) ? $('pname').value.trim() : 'SCC-Project';
+  var name = window.prompt('نام فایل طرح را وارد کنید:', defaultName);
+  if (name === null) return;
+  name = name.trim().replace(/[\\/:*?"<>|]/g, '_').replace(/\.json$/i, '');
+  if (!name) { toast('نام فایل وارد نشده است'); return; }
+  try {
+    var data = collectProjectData();
+    var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = name + '.json';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 30000);
+    toast('فایل طرح برای ذخیره آماده شد');
+  } catch(err) {
+    console.error('Save project failed:', err);
+    toast('ساخت فایل طرح ناموفق بود');
+  }
+}
+
+function restoreProjectData(data){
+  if (!data || data.format !== 'SCC-MIX-PROJECT' || !data.values || typeof data.values !== 'object') {
+    throw new Error('Invalid SCC project file');
+  }
+  var values = data.values;
+  // ابتدا کنترل‌هایی که ساختار صفحات را تعیین می‌کنند بازیابی می‌شوند.
+  if (values.na && $('na')) $('na').value = values.na.value;
+  if (values.ty && $('ty')) $('ty').value = values.ty.value;
+  renderTypeInput();
+  bd();
+  Object.keys(values).forEach(function(id){
+    var saved = values[id];
+    var el = $(id);
+    if (!el || !saved || !Object.prototype.hasOwnProperty.call(saved, 'value')) return;
+    el.value = saved.value;
+    if (AU.indexOf(id) >= 0) el.dataset.m = '1';
+  });
+  // وضعیت فعال/غیرفعال روان‌کننده نیز مطابق انتخاب ذخیره‌شده تنظیم شود.
+  if ($('pl')) {
+    var enabled = $('pl').selectedIndex === 0;
+    if ($('spd')) $('spd').disabled = !enabled;
+    if ($('spr')) $('spr').disabled = !enabled;
+  }
+  if (typeof calc === 'function') calc();
+  var targetPage = Number(data.currentPage);
+  if (!isFinite(targetPage)) targetPage = 0;
+  goTo(Math.max(0, Math.min(PG.length - 1, targetPage)));
+}
+
 function bindAll(){
   document.addEventListener('input', function(e){
     if (e.target && e.target.tagName === 'INPUT') {
@@ -1970,25 +2042,28 @@ function bindAll(){
   $('btnPrev').addEventListener('click', function(){ goTo(pg - 1); });
 
   $('menuBtn').addEventListener('click', function(){ $('menu').hidden = !$('menu').hidden; });
-  $('mSave').addEventListener('click', function(){
-    var o = {};
-    document.querySelectorAll('#mn input, #mn select, #mn textarea').forEach(function(e){ if (e.id) o[e.id] = e.value; });
-    try { localStorage.setItem('scc_v20', JSON.stringify(o)); toast('ذخیره شد'); } catch(err) { toast('ذخیره ناموفق'); }
-    $('menu').hidden = true;
-  });
+  $('mSave').addEventListener('click', saveProjectFile);
   $('mLoad').addEventListener('click', function(){
-    var s;
-    try { s = localStorage.getItem('scc_v20'); } catch(err){}
     $('menu').hidden = true;
-    if (!s) { toast('طرحی ذخیره نشده'); return; }
-    var o = JSON.parse(s);
-    if (o.na && $('na')) $('na').value = o.na;
-    if (o.ty && $('ty')) $('ty').value = o.ty;
-    renderTypeInput();
-    bd();
-    Object.keys(o).forEach(function(k){ var el = $(k); if (el) { el.value = o[k]; if (AU.indexOf(k) >= 0) el.dataset.m = '1'; } });
-    calc();
-    toast('بازیابی شد');
+    $('restoreFileInput').value = '';
+    $('restoreFileInput').click();
+  });
+  $('restoreFileInput').addEventListener('change', function(e){
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try {
+        var data = JSON.parse(String(reader.result || ''));
+        restoreProjectData(data);
+        toast('طرح با موفقیت بازیابی شد');
+      } catch(err) {
+        console.error('Restore project failed:', err);
+        toast('فایل نامعتبر است یا متعلق به این برنامه نیست');
+      }
+    };
+    reader.onerror = function(){ toast('خواندن فایل ناموفق بود'); };
+    reader.readAsText(file, 'UTF-8');
   });
   $('mPrint').addEventListener('click', function(){
     $('menu').hidden = true;
