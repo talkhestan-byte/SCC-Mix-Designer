@@ -1932,7 +1932,7 @@ function collectProjectData(){
   };
 }
 
-function saveProjectFile(){
+async function saveProjectFile(){
   $('menu').hidden = true;
   var defaultName = ($('pname') && $('pname').value.trim()) ? $('pname').value.trim() : 'SCC-Project';
   var name = window.prompt('نام فایل طرح را وارد کنید:', defaultName);
@@ -1941,20 +1941,25 @@ function saveProjectFile(){
   if (!name) { toast('نام فایل وارد نشده است'); return; }
   try {
     var data = collectProjectData();
-    var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json;charset=utf-8'});
+    var content = JSON.stringify(data, null, 2);
+    var cap = window.Capacitor;
+    if (cap && cap.isNativePlatform && cap.isNativePlatform() && typeof cap.registerPlugin === 'function') {
+      var SaveFile = cap.registerPlugin('SaveFile');
+      await SaveFile.saveJson({ fileName: name + '.json', content: content });
+      toast('فایل طرح با موفقیت ذخیره شد');
+      return;
+    }
+    // اجرای نسخه وب خارج از اپ اندروید
+    var blob = new Blob([content], {type:'application/json;charset=utf-8'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url;
-    a.download = name + '.json';
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    a.href = url; a.download = name + '.json'; a.style.display = 'none';
+    document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(url); }, 30000);
-    toast('فایل طرح برای ذخیره آماده شد');
+    toast('دانلود فایل آغاز شد');
   } catch(err) {
     console.error('Save project failed:', err);
-    toast('ساخت فایل طرح ناموفق بود');
+    toast('ذخیره فایل انجام نشد: ' + (err && err.message ? err.message : 'خطای نامشخص'));
   }
 }
 
