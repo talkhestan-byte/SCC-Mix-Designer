@@ -416,6 +416,49 @@ nav button{min-height:42px;font-size:15px;padding:8px 18px}
 .jr-img{flex:none;width:3cm;height:3cm;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #ccc;border-radius:6px;overflow:hidden}
 .jr-img img{width:3cm;height:3cm;object-fit:contain}
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
+
+/* ===== صفحه اول: دو ورودی در هر ردیف، با حفظ جای افقی برچسب‌ها ===== */
+#p0 .g2{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  align-items:stretch;
+}
+#p0 .g2 .r{
+  min-width:0;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) 30px;
+  gap:5px;
+  padding:6px;
+}
+#p0 .g2 .r label{
+  min-width:0;
+  font-size:12px;
+  line-height:1.4;
+}
+#p0 .g2 .r input,
+#p0 .g2 .r select{
+  min-width:0;
+  height:36px;
+  padding:3px 4px;
+  font-size:13px;
+}
+#p0 .g2 .r .t{
+  min-width:0;
+  padding:5px 2px;
+  font-size:11px;
+}
+#p0 .g2 .r.r-wide{
+  grid-column:1/-1;
+  grid-template-columns:64px minmax(0,1fr);
+}
+#p0 #g1,
+#p0 #g3{display:contents}
+@media(max-width:340px){
+  #p0 .g2{gap:5px}
+  #p0 .g2 .r{gap:3px;padding:5px}
+  #p0 .g2 .r label{font-size:11px}
+  #p0 .g2 .r input,
+  #p0 .g2 .r select{font-size:12px}
+}
 </style>
 </head>
 <body>
