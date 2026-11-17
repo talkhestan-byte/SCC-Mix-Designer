@@ -475,6 +475,9 @@ function toLatin(s){
 
 function f(x, d){ d = (d === undefined) ? 1 : d; return isFinite(x) ? toLatin((+x).toFixed(d)) : '-'; }
 function R(l, h, t){ return '<div class="r"><label>'+l+'</label>'+h+(t ? ' <button type="button" class="t" data-tb="'+t+'">جدول</button>' : '')+'</div>'; }
+function RP(l, id, val){
+  return '<div class="r"><label>'+l+'</label>'+I(id, val)+'<button type="button" class="t" data-powder-note="1">نکته</button></div>';
+}
 function I(id, val, extra){
   val = val === undefined ? '' : val;
   extra = extra || '';
@@ -784,13 +787,13 @@ function renderTypeInput(){
   var oldRhoP = $('rho_powder') ? $('rho_powder').value : '2650';
   var oldRhoV = $('rho_vma') ? $('rho_vma').value : '1000';
   if (t === 'فقط پودری') {
-    box.innerHTML = R('مقدار پودر (kg/m³)', I('powder_kg', oldPowder || 0)) +
+    box.innerHTML = RP('مقدار پودر (kg/m³)', 'powder_kg', oldPowder || 0) +
                     R('وزن مخصوص پودر (kg/m³)', I('rho_powder', oldRhoP || 2650));
   } else if (t === 'فقط VMA') {
     box.innerHTML = R('درصد VMA نسبت به سیمان (%)', I('vma_pct', oldVma || 0.1)) +
                     R('وزن مخصوص VMA (kg/m³)', I('rho_vma', oldRhoV || 1000));
   } else {
-    box.innerHTML = R('مقدار پودر (kg/m³)', I('powder_kg', oldPowder || 0)) +
+    box.innerHTML = RP('مقدار پودر (kg/m³)', 'powder_kg', oldPowder || 0) +
                     R('وزن مخصوص پودر (kg/m³)', I('rho_powder', oldRhoP || 2650)) +
                     R('درصد VMA نسبت به سیمان (%)', I('vma_pct', oldVma || 0.05)) +
                     R('وزن مخصوص VMA (kg/m³)', I('rho_vma', oldRhoV || 1000));
@@ -1999,6 +2002,34 @@ function restoreProjectData(data){
   goTo(Math.max(0, Math.min(PG.length - 1, targetPage)));
 }
 
+function showPowderNote(){
+  $('mb').innerHTML =
+    '<div style="direction:rtl;text-align:right;line-height:2;font-size:14px">' +
+      '<h3 style="margin:0 0 10px;color:#1f4e79">نکات و معیارهای پودر سنگ در بتن خودتراکم</h3>' +
+      '<b>۱) ریزی ذرات</b><br>' +
+      'طبق توصیه بند ت ۱۱-۵-۲-۳ نشریه ۱۲۰، ذرات پودر سنگ بهتر است کوچک‌تر از ' +
+      '<bdi dir="ltr">150 µm (0.150 mm)</bdi> باشند.<br><br>' +
+      '<b>۲) درصد عبوری از الک شماره ۲۰۰</b><br>' +
+      'بیش از ۷۰ درصد پودر باید از الک ' +
+      '<bdi dir="ltr">75 µm (No. 200)</bdi> عبور کند.<br><br>' +
+      '<b>۳) مقدار مصرف پیشنهادی</b><br>' +
+      'برای افزایش گرانروی و پایداری مخلوط، مقدار مناسب پودر سنگ با ریزی کمتر از ' +
+      '<bdi dir="ltr">150 µm</bdi> معمولاً حدود ' +
+      '<bdi dir="ltr">50–150 kg/m³</bdi> بتن پیشنهاد شده است. این مقدار توصیه‌ای است و باید با طرح آزمایشی کنترل شود.<br><br>' +
+      '<b>۴) ذرات درشت‌تر از ۱۵۰ میکرومتر</b><br>' +
+      'اگر پودر سنگ دارای ذرات درشت‌تر باشد، می‌توان مقدار مصرف را افزایش داد؛ اما وزن بخش درشت‌تر باید در سهم سنگدانه‌های مصرفی منظور شود، نه به‌عنوان پودر.<br><br>' +
+      '<b>۵) نقش پودر در بتن خودتراکم</b><br>' +
+      'پودر سنگ، به‌عنوان پرکننده معدنی غیرفعال، می‌تواند به افزایش گرانروی و پایداری و کاهش جداشدگی و آب‌انداختگی کمک کند. در طرح اختلاط می‌توان از پودر سنگ، VMA یا ترکیب هر دو استفاده کرد.<br><br>' +
+      '<b>۶) کنترل کیفیت</b><br>' +
+      'پودر نباید دارای مقادیر زیان‌آور رس و شیل بیش از حدود مجاز باشد. کیفیت و مقدار مصرف باید با آزمایش و بررسی کارایی، پایداری، مقاومت و دوام مخلوط تأیید شود.' +
+      '<div style="margin-top:12px;padding:9px;background:#eef3f9;border-radius:7px;font-size:12px;color:#40566b">' +
+        'مرجع اصلی: آیین‌نامه بتن ایران (آبا)، جلد دوم، نشریه ۱۲۰، فصل یازدهم، بند ت ۱۱-۵-۲-۳، صفحه ۲۶۹ (ویرایش ۱۴۰۰).' +
+        '<br>توجه: بازه ۵۰ تا ۱۵۰ کیلوگرم بر مترمکعب توصیه نشریه است، نه حد قطعی و اجباری.' +
+      '</div>' +
+    '</div>';
+  $('md').hidden = false;
+}
+
 function bindAll(){
   document.addEventListener('input', function(e){
     if (e.target && e.target.tagName === 'INPUT') {
@@ -2043,6 +2074,10 @@ function bindAll(){
     }
   });
   document.addEventListener('click', function(e){
+    if (e.target && e.target.closest && e.target.closest('[data-powder-note]')) {
+      showPowderNote();
+      return;
+    }
     if (e.target && e.target.dataset && e.target.dataset.tb) {
       openTable(e.target.dataset.tb);
     }
