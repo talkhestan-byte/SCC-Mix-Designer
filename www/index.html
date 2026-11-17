@@ -1709,110 +1709,154 @@ function isNative(){
 
 function plugins(){
   var cap = window.Capacitor;
-  return (cap && cap.Plugins) ? cap.Plugins : {};
+  if (!cap) return {};
+  var registry = cap.Plugins || {};
+
+  /* ثبت صریح افزونه‌ها برای Capacitor 6؛ اتکا به Plugins قدیمی کافی نیست. */
+  if (typeof cap.registerPlugin === 'function') {
+    ['Filesystem', 'Share', 'Printer'].forEach(function(name){
+      if (!registry[name]) registry[name] = cap.registerPlugin(name);
+    });
+  }
+  return registry;
 }
 
-function fallbackCopy(text){
+function blobToB64(blob, cb, onError){
   try {
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.top = '-1000px';
-    document.body.appendChild(ta);
-    ta.focus();
-    ta.select();
-    var ok = document.execCommand('copy');
-    document.body.removeChild(ta);
-    toast(ok ? 'متن گزارش کپی شد؛ در برنامه دلخواه جایگذاری کنید' : 'کپی ناموفق بود');
-  } catch(e) { toast('کپی پشتیبانی نمی‌شود'); }
+    var fr = new FileReader();
+    fr.onload = function(){ cb(String(fr.result).split(',')[1]); };
+    fr.onerror = function(){ if (onError) onError(fr.error || new Error('FileReader failed')); };
+    fr.readAsDataURL(blob);
+  } catch(e) { if (onError) onError(e); }
 }
 
-function blobToB64(blob, cb){
-  var fr = new FileReader();
-  fr.onload = function(){ cb(String(fr.result).split(',')[1]); };
-  fr.readAsDataURL(blob);
+/* ساخت سند مستقل برای افزونه چاپ اندروید */
+function reportPrintHtml(R){
+  var css = '@page{size:A4 portrait;margin:12mm}' +
+    '*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}' +
+    'html,body{margin:0;padding:0;background:#fff;color:#222;direction:rtl;font-family:Tahoma,Arial,sans-serif}' +
+    'body{font-size:12px;line-height:1.65}' +
+    RP_CSS +
+    '.rp-doc{margin:0;padding:0;border:0;border-radius:0;box-shadow:none;width:100%;background:#fff}' +
+    '.rp-doc h1,.rp-doc h2{page-break-after:avoid;break-after:avoid}' +
+    '.rp-tbl tr{page-break-inside:avoid;break-inside:avoid}' +
+    '.rp-doc img{display:block;max-width:100%;height:auto;page-break-inside:avoid;break-inside:avoid}' +
+    '.rp-cap{page-break-after:avoid;break-after:avoid}' +
+    'thead{display:table-header-group}tfoot{display:table-footer-group}';
+  return '<!doctype html><html lang="fa" dir="rtl"><head>' +
+    '<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>گزارش طرح مخلوط بتن خودتراکم</title><style>' + css +
+    '</style></head><body><main class="rp-doc">' + reportBody(R) + '</main></body></html>';
 }
 
-/* ارسال متن گزارش (آخرین راه) */
-function shareTextOnly(){
-  if (!RP) return;
-  var t = reportText(RP), P = plugins();
-  if (P.Share && P.Share.share) {
-    P.Share.share({ title: 'طرح SCC', text: t, dialogTitle: 'ارسال گزارش' }).catch(function(err){
-      if (err && /cancel/i.test(String(err.message || err))) return;
-      fallbackCopy(t);
-    });
-    return;
-  }
-  if (navigator.share) {
-    navigator.share({ title: 'طرح SCC', text: t }).catch(function(err){
-      if (err && err.name === 'AbortError') return;
-      fallbackCopy(t);
-    });
-    return;
-  }
-  fallbackCopy(t);
+function isShareCancelled(err){
+  if (!err) return false;
+  var msg = String(err.message || err).toLowerCase();
+  return err.name === 'AbortError' || msg.indexOf('cancel') >= 0 || msg.indexOf('canceled') >= 0 || msg.indexOf('cancelled') >= 0;
 }
 
-/* ارسال تصویر گزارش (با نمودارها) */
+/* ارسال فایل تصویری گزارش از طریق پنل بومی اشتراک‌گذاری اندروید */
 function shareReport(){
   if (!RP) return;
+  var P = plugins();
+  var native = isNative();
+
+  if (native && (!P.Filesystem || !P.Share || typeof P.Share.share !== 'function')) {
+    toast('افزونه اشتراک‌گذاری اندروید نصب نیست؛ باید @capacitor/share به نسخه APK اضافه شود');
+    return;
+  }
+
   try {
     var canvas = reportToCanvas(RP);
     if (!canvas || typeof canvas.toBlob !== 'function') {
-      shareTextOnly();
+      toast('ساخت تصویر گزارش ناموفق بود');
       return;
     }
+
     canvas.toBlob(function(blob){
-      if (!blob) {
-        shareTextOnly();
-        return;
-      }
-
+      if (!blob) { toast('ساخت تصویر گزارش ناموفق بود'); return; }
       var fn = 'SCC-report-' + Date.now() + '.png';
-      var P = plugins();
 
-      if (P.Filesystem && P.Share) {
+      if (native) {
         blobToB64(blob, function(b64){
           P.Filesystem.writeFile({ path: fn, data: b64, directory: 'CACHE' })
-            .then(function(r){
+            .then(function(saved){
+              if (saved && saved.uri) return saved.uri;
+              if (P.Filesystem.getUri) {
+                return P.Filesystem.getUri({ path: fn, directory: 'CACHE' }).then(function(x){ return x.uri; });
+              }
+              throw new Error('File URI unavailable');
+            })
+            .then(function(uri){
+              if (!uri) throw new Error('File URI unavailable');
               return P.Share.share({
-                title: 'طرح SCC',
-                text: 'گزارش طرح مخلوط بتن خودتراکم',
-                url: r.uri,
+                title: 'گزارش طرح مخلوط بتن خودتراکم',
+                text: 'گزارش طرح مخلوط بتن خودتراکم (SCC)',
+                files: [uri],
                 dialogTitle: 'ارسال گزارش'
               });
             })
             .catch(function(err){
-              if (err && /cancel/i.test(String(err.message || err))) return;
-              shareTextOnly();
+              if (isShareCancelled(err)) return;
+              console.error('Share report failed:', err);
+              toast('باز کردن پنل اشتراک‌گذاری ناموفق بود');
             });
+        }, function(err){
+          console.error(err);
+          toast('آماده‌سازی فایل گزارش ناموفق بود');
         });
         return;
       }
 
+      /* نسخه وب: اشتراک‌گذاری فایل در مرورگرهای پشتیبان؛ در غیر این صورت دانلود فایل */
       try {
         var file = new File([blob], fn, { type: 'image/png' });
         if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
-          navigator.share({ files: [file], title: 'طرح SCC' }).catch(function(err){
-            if (err && err.name === 'AbortError') return;
-            shareTextOnly();
-          });
+          navigator.share({ title: 'گزارش طرح مخلوط بتن خودتراکم', files: [file] })
+            .catch(function(err){ if (!isShareCancelled(err)) toast('اشتراک‌گذاری ناموفق بود'); });
           return;
         }
       } catch(e){}
-
-      shareTextOnly();
+      try {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = fn; a.style.display = 'none';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 30000);
+      } catch(e) { toast('ذخیره تصویر گزارش ناموفق بود'); }
     }, 'image/png');
   } catch(e) {
-    shareTextOnly();
+    console.error(e);
+    toast('ساخت گزارش برای ارسال ناموفق بود');
   }
 }
 
-/* چاپ: در مرورگر پنجره چاپ/PDF؛ در APK از منوی اشتراک‌گذاری خود اندروید (ذخیره/چاپ) */
+/* چاپ بومی: Android PrintManager و گزینه Save as PDF */
 function printReport(){
-  if (isNative()) { shareReport(); return; }
-  try { window.print(); } catch(e) { shareReport(); }
+  if (!RP) return;
+  if (isNative()) {
+    var P = plugins();
+    if (!P.Printer || typeof P.Printer.print !== 'function') {
+      toast('افزونه چاپ اندروید در APK در دسترس نیست');
+      return;
+    }
+    try {
+      P.Printer.print({
+        content: reportPrintHtml(RP),
+        name: 'گزارش طرح مخلوط بتن خودتراکم',
+        orientation: 'portrait'
+      }).catch(function(err){
+        console.error('Native print failed:', err);
+        toast('باز کردن پنجره چاپ ناموفق بود');
+      });
+    } catch(e) {
+      console.error(e);
+      toast('باز کردن پنجره چاپ ناموفق بود');
+    }
+    return;
+  }
+  try { window.print(); }
+  catch(e) { toast('چاپ در این مرورگر پشتیبانی نمی‌شود'); }
 }
 
 function ensureRp(){
