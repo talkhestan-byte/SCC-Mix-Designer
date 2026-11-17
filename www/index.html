@@ -475,7 +475,7 @@ function toLatin(s){
 
 function f(x, d){ d = (d === undefined) ? 1 : d; return isFinite(x) ? toLatin((+x).toFixed(d)) : '-'; }
 function R(l, h, t){ return '<div class="r"><label>'+l+'</label>'+h+(t ? ' <button type="button" class="t" data-tb="'+t+'">جدول</button>' : '')+'</div>'; }
-function RP(l, id, val){
+function RPowder(l, id, val){
   return '<div class="r"><label>'+l+'</label>'+I(id, val)+'<button type="button" class="t" data-powder-note="1">نکته</button></div>';
 }
 function I(id, val, extra){
@@ -787,13 +787,13 @@ function renderTypeInput(){
   var oldRhoP = $('rho_powder') ? $('rho_powder').value : '2650';
   var oldRhoV = $('rho_vma') ? $('rho_vma').value : '1000';
   if (t === 'فقط پودری') {
-    box.innerHTML = RP('مقدار پودر (kg/m³)', 'powder_kg', oldPowder || 0) +
+    box.innerHTML = RPowder('مقدار پودر (kg/m³)', 'powder_kg', oldPowder || 0) +
                     R('وزن مخصوص پودر (kg/m³)', I('rho_powder', oldRhoP || 2650));
   } else if (t === 'فقط VMA') {
     box.innerHTML = R('درصد VMA نسبت به سیمان (%)', I('vma_pct', oldVma || 0.1)) +
                     R('وزن مخصوص VMA (kg/m³)', I('rho_vma', oldRhoV || 1000));
   } else {
-    box.innerHTML = RP('مقدار پودر (kg/m³)', 'powder_kg', oldPowder || 0) +
+    box.innerHTML = RPowder('مقدار پودر (kg/m³)', 'powder_kg', oldPowder || 0) +
                     R('وزن مخصوص پودر (kg/m³)', I('rho_powder', oldRhoP || 2650)) +
                     R('درصد VMA نسبت به سیمان (%)', I('vma_pct', oldVma || 0.05)) +
                     R('وزن مخصوص VMA (kg/m³)', I('rho_vma', oldRhoV || 1000));
