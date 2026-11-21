@@ -415,6 +415,8 @@ nav button{min-height:42px;font-size:15px;padding:8px 18px}
 .jr-two{display:flex;gap:6px}.jr-two .r{flex:1;min-width:0}
 .jr-img{flex:none;width:3cm;height:3cm;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #ccc;border-radius:6px;overflow:hidden}
 .jr-img img{width:3cm;height:3cm;object-fit:contain}
+.jr-img4{flex:none;width:4cm;height:4cm;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #ccc;border-radius:6px;overflow:hidden}
+.jr-img4 img{width:4cm;height:4cm;object-fit:contain}
 @media print{header,nav,#menu,.t{display:none!important}section{display:block!important}body{background:#fff}}
 
 /* ===== صفحه اول: چیدمان منظم دو ورودی در هر ردیف ===== */
@@ -850,7 +852,31 @@ R('c: قطر میانگین پخش‌شدگی (mm)', I('jc', '')) +
 R('H1 (mm)', I('lh1', '')) +
 R('H2 (mm)', I('lh2', '')) +
 '</div></div></div>' +
-'<div class="o" id="oj" style="direction:rtl;text-align:right;line-height:1.9"></div>'
+'<div class="o" id="oj" style="direction:rtl;text-align:right;line-height:1.9"></div>',
+
+/* ===== صفحه آخر: پایداری (جداشدگی)، V-Funnel و U-Box ===== */
+'<h3>۸) پایداری، V-Funnel و U-Box</h3>' +
+'<div class="math-card jr"><div class="math-title">آزمون پایداری (جداشدگی الکی)</div>' +
+'<div class="jr-in">' +
+R('جرم نمونه روی الک (g)', I('sgm', '')) +
+R('جرم عبوری از الک ۵ mm (g)', I('sgp', '')) +
+'</div></div>' +
+'<div class="math-card jr"><div class="math-title">تصاویر آزمون‌ها</div>' +
+'<div style="display:flex;gap:10px;justify-content:center;direction:ltr">' +
+'<div class="jr-img4"><img src="Stability.gif" alt="Stability" data-b="Stability|stability|Segregation|segregation|Sieve|sieve|Stable" onerror="window.jrErr(this)"></div>' +
+'<div class="jr-img4"><img src="V-Box.png" alt="V-Funnel / Box" data-b="V-Box|v-box|vbox|VBox|V_Box|Box-V|box-v|U-Box|u-box|ubox|V-Funnel|v-funnel" onerror="window.jrErr(this)"></div>' +
+'</div></div>' +
+'<div class="math-card jr"><div class="math-title">آزمون V-Funnel</div>' +
+'<div class="jr-in">' +
+R('زمان تخلیه Tv (s)', I('vf', '')) +
+R('زمان تخلیه پس از ۵ دقیقه Tv5 (s)', I('vf5', '')) +
+'</div></div>' +
+'<div class="math-card jr"><div class="math-title">آزمون U-Box</div>' +
+'<div class="jr-in"><div class="jr-two">' +
+R('H1 (mm)', I('ub1', '')) +
+R('H2 (mm)', I('ub2', '')) +
+'</div></div></div>' +
+'<div class="o" id="oj2" style="direction:rtl;text-align:right;line-height:1.9"></div>'
 ];
 
 function buildPages(){
@@ -1067,8 +1093,100 @@ function jrCalc(){
   box.innerHTML = out;
 }
 
+function jr2Calc(){
+  var box = $('oj2');
+  if (!box) return;
+  var ms = v('sgm'), mp = v('sgp'), tv = v('vf'), t5 = v('vf5'), h1 = v('ub1'), h2 = v('ub2');
+  function B(t){ return '<bdi dir="ltr">' + t + '</bdi>'; }
+  function Sx(x){ return B(f(x,1) + ' s'); }
+  function M(x){ return B(f(x,0) + ' mm'); }
+  var RC = 'آیین‌نامه بتن ایران (نشریه ۱۲۰)';
+  var rSR = RC + '، جدول ' + B('۸-۱') + ' (' + B('SR1/SR2') + ')';
+  var rVF = RC + '، جدول ' + B('۸-۱') + ' (' + B('VF1/VF2') + ')';
+  var rV5 = B('EFNARC') + '؛ در آیین‌نامه عددی ندارد';
+  var rUB = B('EFNARC') + '؛ در آیین‌نامه عددی ندارد';
+  var L = [], rem = [], curRef = '';
+  var worst = 0, wPass = 0, wSeg = 0;
+  function add(lv, t, grp){
+    L.push('<div style="margin-bottom:8px">' + (lv === 0 ? '✔ ' : lv === 1 ? '⚠ ' : '✘ ') + t + (curRef ? '<br><small style="color:#888">مرجع: ' + curRef + '</small>' : '') + '</div>');
+    if (lv > worst) worst = lv;
+    if (grp === 'p' && lv > wPass) wPass = lv;
+    if (grp === 's' && lv > wSeg) wSeg = lv;
+  }
+  function note(t){ L.push('<div style="margin-bottom:8px">• ' + t + '</div>'); }
+  var haveS = ms > 0 && mp >= 0 && $('sgp') && String($('sgp').value).trim() !== '';
+  var haveV = tv > 0, haveV5 = tv > 0 && t5 > 0, haveU = h1 > 0 && h2 > 0;
+  if (!haveS && !haveV && !haveU) { box.innerHTML = 'مقادیر آزمون‌ها را وارد کنید تا تحلیل نمایش داده شود.'; return; }
+
+  if (haveS) {
+    curRef = rSR;
+    if (mp > ms) note('جرم عبوری از جرم نمونه بیشتر است؛ اندازه‌گیری را بررسی کنید.');
+    var sr = Math.min(100, mp / ms * 100);
+    var st = B(f(sr,1) + '%');
+    if (sr <= 15) add(0, 'درصد جداشدگی الکی ' + B('SR') + ' برابر ' + st + ' است (حداکثر ' + B('15%') + ': رده ' + B('SR2') + ' و رده ' + B('SR1') + ' برآورده می‌شود).', 's');
+    else if (sr <= 20) {
+      add(1, 'درصد جداشدگی الکی ' + B('SR') + ' برابر ' + st + ' است (بین ' + B('15%') + ' و ' + B('20%') + ': فقط رده ' + B('SR1') + ' برآورده می‌شود و رده ' + B('SR2') + ' پذیرفتنی نیست؛ برای قطعات نازک و بلند توصیه نمی‌شود).', 's');
+      rem.push('پایداری مرزی است: گرانروی را با ' + B('VMA') + ' یا پودر ریز اندکی بیشتر کنید.');
+    } else {
+      add(2, 'درصد جداشدگی الکی ' + B('SR') + ' برابر ' + st + ' است و از ' + B('20%') + ' بیشتر است؛ مخلوط ناپایدار و مردود است.', 's');
+      rem.push('جداشدگی زیاد: ' + B('VMA') + ' یا پودر ریز را بیشتر کنید و فوق‌روان‌کننده و آب آزاد را کم کنید.');
+    }
+  } else {
+    note('برای تحلیل پایداری، جرم نمونه و جرم عبوری از الک را وارد کنید.');
+  }
+
+  if (haveV) {
+    curRef = rVF;
+    if (tv <= 8) {
+      add(0, 'زمان تخلیه ' + B('V-Funnel') + ' برابر ' + Sx(tv) + ' است (تا ' + B('8 s') + ': رده ' + B('VF1') + ')؛ زمان کم یعنی جایدهی راحت‌تر، فقط پایداری را کنترل کنید.', 'p');
+    } else if (tv <= 25) {
+      add(0, 'زمان تخلیه ' + B('V-Funnel') + ' برابر ' + Sx(tv) + ' است (بین ' + B('8') + ' و ' + B('25 s') + ': رده ' + B('VF2') + ').', 'p');
+    } else {
+      add(2, 'زمان تخلیه ' + B('V-Funnel') + ' برابر ' + Sx(tv) + ' است و از ' + B('25 s') + ' بیشتر است؛ مخلوط خمیری است و خطر گیرکردن دارد.', 'p');
+      rem.push('زمان ' + B('V-Funnel') + ' زیاد است: مقدار ' + B('VMA') + ' یا پودر را کم کنید یا فوق‌روان‌کننده را اصلاح کنید.');
+    }
+  } else {
+    note('برای تحلیل ' + B('V-Funnel') + '، زمان تخلیه ' + B('Tv') + ' را وارد کنید.');
+  }
+
+  if (haveV5) {
+    curRef = rV5;
+    var dt = t5 - tv;
+    if (t5 < tv) note('زمان ' + B('Tv5') + ' از ' + B('Tv') + ' کمتر است؛ اندازه‌گیری را بررسی کنید.');
+    if (dt <= 3) add(0, 'اختلاف ' + B('Tv5 − Tv') + ' برابر ' + Sx(Math.max(0, dt)) + ' است (حداکثر ' + B('3 s') + ': نشانه‌ای از جداشدگی یا گیرش اولیه دیده نمی‌شود).', 's');
+    else {
+      add(1, 'اختلاف ' + B('Tv5 − Tv') + ' برابر ' + Sx(dt) + ' است و از ' + B('3 s') + ' بیشتر است؛ تمایل به جداشدگی یا افزایش گرانروی با زمان وجود دارد. آزمون را تکرار کنید.', 's');
+      rem.push('افزایش زمان پس از ۵ دقیقه: پایداری و نگهداری روانی مخلوط (نوع و مقدار فوق‌روان‌کننده) را بررسی کنید.');
+    }
+  } else if (haveV && !(t5 > 0)) {
+    note('برای ارزیابی پایداری با ' + B('V-Funnel') + '، زمان پس از ۵ دقیقه (' + B('Tv5') + ') را هم وارد کنید.');
+  }
+
+  if (haveU) {
+    curRef = rUB;
+    var du = Math.abs(h1 - h2);
+    if (du <= 30) add(0, 'اختلاف ارتفاع ' + B('U-Box') + ' (' + B('H1 − H2') + ') برابر ' + M(du) + ' است (حداکثر ' + M(30) + ': توانایی پرشدن و عبور از میلگرد مناسب است).', 'p');
+    else {
+      add(2, 'اختلاف ارتفاع ' + B('U-Box') + ' (' + B('H1 − H2') + ') برابر ' + M(du) + ' است و از ' + M(30) + ' بیشتر است؛ عبور از میلگرد کافی نیست.', 'p');
+      rem.push('عبور ضعیف در ' + B('U-Box') + ': حجم خمیر و روانی را بالا ببرید و بیشینه اندازه یا درصد سنگدانه درشت را کم کنید.');
+    }
+  } else {
+    note('برای تحلیل ' + B('U-Box') + '، دو مقدار ' + B('H1') + ' و ' + B('H2') + ' را وارد کنید.');
+  }
+
+  var vt = ['قابل قبول', 'مشروط (نیازمند اصلاح یا تکرار آزمون)', 'مردود'];
+  var out = L.join('');
+  out += '<hr>';
+  if (haveV || haveU) out += '<b>قابلیت پرشدن و عبور: ' + vt[wPass] + '</b><br>';
+  if (haveS || haveV5) out += '<b>مقاومت در برابر جداشدگی: ' + vt[wSeg] + '</b><br>';
+  out += '<b>نتیجه کلی: ' + vt[worst] + '</b>';
+  if (rem.length) out += '<hr>' + rem.filter(function(x,i,ar){ return ar.indexOf(x) === i; }).map(function(x){ return '<div style="margin-bottom:6px">• ' + x + '</div>'; }).join('');
+  box.innerHTML = out;
+}
+
 function calc(){
   try { jrCalc(); } catch(e){ console.error(e); }
+  try { jr2Calc(); } catch(e){ console.error(e); }
   if (!$('sm')) return;
 
   var ty = $('ty') ? $('ty').value : 'فقط پودری';
@@ -1523,7 +1641,7 @@ function goTo(i){
   $('btnPrev').disabled = (i===0);
   $('btnNext').disabled = (i===PG.length-1);
   window.scrollTo(0,0);
-  if (i === PG.length - 1) { try { jrCalc(); } catch(e){ console.error(e); } }
+  if (i >= PG.length - 2) { try { jrCalc(); } catch(e){ console.error(e); } try { jr2Calc(); } catch(e){ console.error(e); } }
   if (i === 4) { setTimeout(fitEq, 80); setTimeout(fitEq, 300); }
   if (i === 1) {
     setTimeout(function(){ try { calc(); } catch(e){ console.error(e); } }, 60);
@@ -1639,6 +1757,7 @@ function collectReport(name){
     res: res,
     mix: htmlLines($('o7') ? $('o7').innerHTML : ''),
     jr: htmlLines($('oj') ? $('oj').innerHTML : ''),
+    jr2: htmlLines($('oj2') ? $('oj2').innerHTML : ''),
     charts: [
       { title: 'منحنی دانه‌بندی مخلوط و منحنی‌های توان', el: $('cv') },
       { title: 'نمودار نسبت آب به سیمان و مقاومت', el: $('cw') }
@@ -1660,6 +1779,7 @@ function reportBody(R){
     R.grad.map(function(r){ return '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td><td>' + esc(r[2]) + '</td><td>' + esc(r[3]) + '</td></tr>'; }).join('') + '</table>' + lns(R.fm);
   h += '<h2>نتایج نهایی (مقدار سیمان و اجزای مخلوط)</h2>' + tbl(R.res) + lns(R.mix);
   if (R.jr && R.jr.length) h += '<h2>کنترل بتن تازه (اسلامپ فلو، T50، J-Ring و L-Box)</h2>' + tbl([['اسلامپ فلو (mm)', gv('sfv')], ['T50 (s)', gv('t50')], ['a (mm)', gv('ja')], ['b (mm)', gv('jb')], ['c (mm)', gv('jc')], ['H1 (mm)', gv('lh1')], ['H2 (mm)', gv('lh2')]]) + lns(R.jr);
+  if (R.jr2 && R.jr2.length) h += '<h2>پایداری، V-Funnel و U-Box</h2>' + tbl([['جرم نمونه روی الک (g)', gv('sgm')], ['جرم عبوری از الک ۵ mm (g)', gv('sgp')], ['زمان V-Funnel, Tv (s)', gv('vf')], ['زمان V-Funnel پس از ۵ دقیقه, Tv5 (s)', gv('vf5')], ['H1 (mm)', gv('ub1')], ['H2 (mm)', gv('ub2')]]) + lns(R.jr2);
   return h;
 }
 
@@ -1675,6 +1795,7 @@ function reportText(R){
   R.res.forEach(function(r){ L.push(r[0] + ': ' + r[1]); });
   L = L.concat(R.mix);
   if (R.jr && R.jr.length) { L.push('', '== کنترل بتن تازه =='); L = L.concat(R.jr); }
+  if (R.jr2 && R.jr2.length) { L.push('', '== پایداری، V-Funnel و U-Box =='); L = L.concat(R.jr2); }
   return L.join('\n');
 }
 
@@ -1771,6 +1892,7 @@ function reportToCanvas(R){
     y += 6;
     R.mix.forEach(para);
     if (R.jr && R.jr.length) { head('کنترل بتن تازه (اسلامپ فلو، T50 و J-Ring)'); R.jr.forEach(para); }
+    if (R.jr2 && R.jr2.length) { head('پایداری، V-Funnel و U-Box'); R.jr2.forEach(para); }
 
     return y + M;
   }
