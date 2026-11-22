@@ -856,16 +856,25 @@ R('H2 (mm)', I('lh2', '')) +
 
 /* ===== صفحه آخر: پایداری (جداشدگی)، V-Funnel و U-Box ===== */
 '<h3>۸) پایداری، V-Funnel و U-Box</h3>' +
-'<div class="math-card jr"><div class="math-title">آزمون پایداری (جداشدگی الکی)</div>' +
-'<div class="jr-in">' +
-R('جرم نمونه روی الک (g)', I('sgm', '')) +
-R('جرم عبوری از الک ۵ mm (g)', I('sgp', '')) +
-'</div></div>' +
 '<div class="math-card jr"><div class="math-title">تصاویر آزمون‌ها</div>' +
 '<div style="display:flex;gap:10px;justify-content:center;direction:ltr">' +
 '<div class="jr-img4"><img src="Stability.gif" alt="Stability" data-b="Stability|stability|Segregation|segregation|Sieve|sieve|Stable" onerror="window.jrErr(this)"></div>' +
 '<div class="jr-img4"><img src="V-Box.png" alt="V-Funnel / Box" data-b="V-Box|v-box|vbox|VBox|V_Box|Box-V|box-v|U-Box|u-box|ubox|V-Funnel|v-funnel" onerror="window.jrErr(this)"></div>' +
 '</div></div>' +
+'<div class="math-card jr"><div class="math-title">آزمون پایداری استاتیکی ستون بتن (ASTM C1610/C1610M)</div>' +
+'<div class="jr-in">' +
+R('جرم بتن نمونه از یک‌سوم بالایی ستون (g)', I('sgmt', '')) +
+R('جرم سنگدانه درشت مانده روی الک 4.75 mm از یک‌سوم بالایی (g)', I('sgat', '')) +
+R('جرم بتن نمونه از یک‌سوم پایینی ستون (g)', I('sgmb', '')) +
+R('جرم سنگدانه درشت مانده روی الک 4.75 mm از یک‌سوم پایینی (g)', I('sgab', '')) +
+'</div>' +
+'<div class="math-title" style="margin-top:10px">شاخص جداشدگی استاتیکی (SI)</div>' +
+'<div class="sm-eq-row" style="font-size:13px;justify-content:flex-start;padding:8px 2px">' +
+'<span>SI = </span><span>((C<sub>b</sub> − C<sub>t</sub>) / ((C<sub>b</sub> + C<sub>t</sub>) / 2)) × 100</span>' +
+'<span>&nbsp; = &nbsp;</span><b id="eq-si" style="color:#1f4e79">—</b><span>&nbsp;%</span>' +
+'</div>' +
+'<div class="caption" style="font-size:11px;color:#666;line-height:1.8">C<sub>t</sub> و C<sub>b</sub>: نسبت جرم سنگدانه درشت بازیابی‌شده به جرم بتن نمونه‌برداری‌شده، به‌ترتیب در بخش بالایی و پایینی ستون</div>' +
+'</div>' +
 '<div class="math-card jr"><div class="math-title">آزمون V-Funnel</div>' +
 '<div class="jr-in">' +
 R('زمان تخلیه Tv (s)', I('vf', '')) +
@@ -1096,7 +1105,7 @@ function jrCalc(){
 function jr2Calc(){
   var box = $('oj2');
   if (!box) return;
-  var ms = v('sgm'), mp = v('sgp'), tv = v('vf'), t5 = v('vf5'), h1 = v('ub1'), h2 = v('ub2');
+  var mt = v('sgmt'), at = v('sgat'), mb = v('sgmb'), ab = v('sgab'), tv = v('vf'), t5 = v('vf5'), h1 = v('ub1'), h2 = v('ub2');
   function B(t){ return '<bdi dir="ltr">' + t + '</bdi>'; }
   function Sx(x){ return B(f(x,1) + ' s'); }
   function M(x){ return B(f(x,0) + ' mm'); }
@@ -1114,25 +1123,31 @@ function jr2Calc(){
     if (grp === 's' && lv > wSeg) wSeg = lv;
   }
   function note(t){ L.push('<div style="margin-bottom:8px">• ' + t + '</div>'); }
-  var haveS = ms > 0 && mp >= 0 && $('sgp') && String($('sgp').value).trim() !== '';
+  var haveS = mt > 0 && at > 0 && mb > 0 && ab > 0 && ['sgmt','sgat','sgmb','sgab'].every(function(id){ return $(id) && String($(id).value).trim() !== ''; });
   var haveV = tv > 0, haveV5 = tv > 0 && t5 > 0, haveU = h1 > 0 && h2 > 0;
   if (!haveS && !haveV && !haveU) { box.innerHTML = 'مقادیر آزمون‌ها را وارد کنید تا تحلیل نمایش داده شود.'; return; }
 
   if (haveS) {
-    curRef = rSR;
-    if (mp > ms) note('جرم عبوری از جرم نمونه بیشتر است؛ اندازه‌گیری را بررسی کنید.');
-    var sr = Math.min(100, mp / ms * 100);
-    var st = B(f(sr,1) + '%');
-    if (sr <= 15) add(0, 'درصد جداشدگی الکی ' + B('SR') + ' برابر ' + st + ' است (حداکثر ' + B('15%') + ': رده ' + B('SR2') + ' و رده ' + B('SR1') + ' برآورده می‌شود).', 's');
-    else if (sr <= 20) {
-      add(1, 'درصد جداشدگی الکی ' + B('SR') + ' برابر ' + st + ' است (بین ' + B('15%') + ' و ' + B('20%') + ': فقط رده ' + B('SR1') + ' برآورده می‌شود و رده ' + B('SR2') + ' پذیرفتنی نیست؛ برای قطعات نازک و بلند توصیه نمی‌شود).', 's');
-      rem.push('پایداری مرزی است: گرانروی را با ' + B('VMA') + ' یا پودر ریز اندکی بیشتر کنید.');
+    curRef = B('ASTM C1610/C1610M');
+    if (at > mt || ab > mb) {
+      note('جرم سنگدانه بازیابی‌شده نمی‌تواند از جرم بتن نمونه همان بخش بیشتر باشد؛ مقادیر ورودی را بررسی کنید.');
     } else {
-      add(2, 'درصد جداشدگی الکی ' + B('SR') + ' برابر ' + st + ' است و از ' + B('20%') + ' بیشتر است؛ مخلوط ناپایدار و مردود است.', 's');
-      rem.push('جداشدگی زیاد: ' + B('VMA') + ' یا پودر ریز را بیشتر کنید و فوق‌روان‌کننده و آب آزاد را کم کنید.');
+      var ct = at / mt;
+      var cb = ab / mb;
+      var avgC = (cb + ct) / 2;
+      var si = avgC > 0 ? ((cb - ct) / avgC) * 100 : NaN;
+      if (isFinite(si)) {
+        if ($('eq-si')) $('eq-si').textContent = f(si, 1);
+        L.push('<div style="margin-bottom:8px"><b>شاخص جداشدگی استاتیکی (SI):</b> ' + B(f(si,1) + ' %') +
+          '<br><small style="color:#666">مقدار مثبت نشان‌دهنده تجمع بیشتر سنگدانه درشت در بخش پایینی ستون است.</small></div>');
+      } else {
+        if ($('eq-si')) $('eq-si').textContent = '—';
+        note('برای محاسبه شاخص جداشدگی، مجموع نسبت‌های سنگدانه درشت دو بخش باید بزرگ‌تر از صفر باشد.');
+      }
     }
   } else {
-    note('برای تحلیل پایداری، جرم نمونه و جرم عبوری از الک را وارد کنید.');
+    if ($('eq-si')) $('eq-si').textContent = '—';
+    note('برای محاسبه ASTM C1610، جرم بتن و جرم سنگدانه درشت بازیابی‌شده از هر دو بخش بالایی و پایینی ستون را وارد کنید.');
   }
 
   if (haveV) {
