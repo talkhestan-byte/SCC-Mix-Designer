@@ -522,6 +522,13 @@ h3{margin:6px 2px 6px}
 .math-card{padding:8px;margin-bottom:6px}
 .o{margin:4px 0;padding:8px}
 
+/* ===== شاخص پایداری چشمی (VSI) ===== */
+.jr-in .vsi-row{flex-wrap:nowrap;align-items:center;padding:3px 6px}
+.jr-in .vsi-row label{flex:0 0 auto;max-width:34%}
+.jr-in .vsi-row select{flex:none;width:58px;height:28px;box-sizing:border-box;padding:2px 2px;margin:0;text-align:center;text-align-last:center;direction:ltr}
+.vsi-txt{flex:1;min-width:0;font-size:11px;line-height:1.5;color:#1f4e79;text-align:right;direction:rtl}
+.vsi-txt small{display:block;color:#888;font-size:10px}
+
 </style>
 </head>
 <body>
@@ -698,6 +705,27 @@ function openTable(k){
   img.src = 'tables/' + file + '.' + TB_EXT[0];
 }
 
+/* ====== شاخص پایداری چشمی (VSI) ====== */
+var VSI_REF = 'جدول ۳-۳ نشریه ۱۲۰';
+var VSI_TXT = [
+  { t: 'بسیار پایدار', d: 'هیچ نشانه‌ای از جداشدگی یا آب‌انداختگی دیده نمی‌شود.' },
+  { t: 'پایدار', d: 'جداشدگی ندارد؛ آب‌انداختگی خفیف (براقی سطح) دیده می‌شود.' },
+  { t: 'ناپایدار', d: 'هالهٔ ملات کمتر از 10 mm و/یا توده سنگدانه در مرکز پخش‌شدگی.' },
+  { t: 'بسیار ناپایدار', d: 'هالهٔ ملات بیش از 10 mm و/یا توده بزرگ سنگدانه در مرکز؛ جداشدگی آشکار.' }
+];
+function vsiIdx(){
+  var el = $('vsi');
+  if (!el) return -1;
+  return el.selectedIndex - 1;
+}
+function vsiUpdate(){
+  var box = $('vsi-txt');
+  if (!box) return;
+  var i = vsiIdx();
+  if (i < 0) { box.innerHTML = ''; return; }
+  box.innerHTML = '<b>' + VSI_TXT[i].t + ':</b> ' + VSI_TXT[i].d + '<small>مرجع: ' + VSI_REF + '</small>';
+}
+
 var PG = [
 '<h3>۱) اطلاعات اولیه و مقاومت هدف</h3>' +
 '<div class="g2">' +
@@ -856,12 +884,13 @@ R('هوای ناخواسته (%)', I('va', '1.5'), 12) +
 '<div class="res-box"><div class="res-box-final"><span>چگالی نهایی (G)</span><span id="res-G" style="font-size:18px;">-</span></div></div></div>' +
 '<div class="o" id="o7"></div>',
 
-/* ===== صفحه ۷: آزمون‌های تازه (اسلامپ فلو، T50 و J-Ring) ===== */
+/* ===== صفحه ۷: آزمون‌های تازه (اسلامپ فلو، T50، VSI و J-Ring) ===== */
 '<h3>۷) کنترل بتن تازه: اسلامپ فلو، T50، J-Ring و L-Box</h3>' +
 '<div class="math-card jr"><div class="math-title">آزمون اسلامپ فلو</div>' +
 '<div class="jr-in">' +
 R('اسلامپ فلو (mm)', I('sfv', '')) +
 R('زمان T50 (s)', I('t50', '')) +
+'<div class="r vsi-row"><label>شاخص پایداری چشمی (VSI)</label>' + S('vsi', ['—', '0', '1', '2', '3'], 0) + '<div class="vsi-txt" id="vsi-txt"></div></div>' +
 '</div></div>' +
 '<div class="math-card jr"><div class="math-title">تصاویر آزمون‌ها</div>' +
 '<div style="display:flex;gap:10px;justify-content:center;direction:ltr">' +
@@ -1014,6 +1043,7 @@ window.jrErr = function(img){
 function jrCalc(){
   var box = $('oj');
   if (!box) return;
+  vsiUpdate();
   var S = v('sfv'), T = v('t50'), a = v('ja'), b = v('jb'), c = v('jc'), H1 = v('lh1'), H2 = v('lh2');
   var sfI = $('sf') ? $('sf').selectedIndex : 2;
   var rbI = $('rb') ? $('rb').selectedIndex : 2;
@@ -1030,6 +1060,7 @@ function jrCalc(){
   var rJ = RC + '، جدول ' + B('۸-۱') + ' (' + B('J1/J2') + ') و گام نهم طرح';
   var rH = B('ASTM C1621') + '؛ در آیین‌نامه عددی ندارد';
   var rL = RC + '، جدول ' + B('۸-۱') + ' (' + B('PL1/PL2') + ')';
+  var rV = 'نشریه ۱۲۰، ' + VSI_REF.replace('نشریه ۱۲۰', '').trim();
   var L = [], rem = [], curRef = '';
   var worst = 0, wPass = 0, wSeg = 0;
   function add(lv, t, grp){
@@ -1039,8 +1070,10 @@ function jrCalc(){
     if (grp === 's' && lv > wSeg) wSeg = lv;
   }
   function note(t){ L.push('<div style="margin-bottom:8px">• ' + t + '</div>'); }
+  var vi = vsiIdx();
+  var haveVSI = vi >= 0;
   var haveSF = S > 0 && T > 0, haveJ = a > 0 && b > 0 && c > 0, haveL = H1 > 0 && H2 > 0;
-  if (!haveSF && !haveJ && !haveL) { box.innerHTML = 'مقادیر آزمون‌ها را وارد کنید تا تحلیل نمایش داده شود.'; return; }
+  if (!haveSF && !haveJ && !haveL && !haveVSI) { box.innerHTML = 'مقادیر آزمون‌ها را وارد کنید تا تحلیل نمایش داده شود.'; return; }
 
   if (haveSF) {
     curRef = rT;
@@ -1084,6 +1117,14 @@ function jrCalc(){
     note('برای تحلیل اسلامپ فلو، دو مقدار اسلامپ فلو و ' + B('T50') + ' را وارد کنید.');
   }
 
+  if (haveVSI) {
+    curRef = rV;
+    var vlv = vi <= 1 ? 0 : vi === 2 ? 1 : 2;
+    add(vlv, 'شاخص پایداری چشمی ' + B('VSI') + ' برابر ' + B(vi) + ' است (' + VSI_TXT[vi].t + '): ' + VSI_TXT[vi].d, 's');
+    if (vi === 2) rem.push(B('VSI') + ' برابر ' + B('2') + ' است: گرانروی را با ' + B('VMA') + ' یا پودر ریز کمی افزایش دهید و آزمون را تکرار کنید.');
+    if (vi === 3) rem.push(B('VSI') + ' برابر ' + B('3') + ' است: آب آزاد یا فوق‌روان‌کننده را کم کنید و ' + B('VMA') + ' یا پودر ریز را زیاد کنید.');
+  }
+
   if (haveJ) {
     curRef = rJ;
     var base = S > 0 ? S : c;
@@ -1119,10 +1160,10 @@ function jrCalc(){
 
   var vt = ['قابل قبول', 'مشروط (نیازمند اصلاح یا تکرار آزمون)', 'مردود'];
   var out = L.join('');
-  if (haveSF || haveJ || haveL) {
+  if (haveSF || haveJ || haveL || haveVSI) {
     out += '<hr>';
     if (haveJ || haveL) out += '<b>قابلیت عبور از میلگرد: ' + vt[wPass] + '</b><br>';
-    if (haveSF) out += '<b>مقاومت در برابر جداشدگی: ' + vt[wSeg] + '</b><br>';
+    if (haveSF || haveVSI) out += '<b>مقاومت در برابر جداشدگی: ' + vt[wSeg] + '</b><br>';
     out += '<b>نتیجه کلی: ' + vt[worst] + '</b>';
     if (rem.length) out += '<hr>' + rem.filter(function(x,i,ar){ return ar.indexOf(x) === i; }).map(function(x){ return '<div style="margin-bottom:6px">• ' + x + '</div>'; }).join('');
   }
@@ -1836,7 +1877,8 @@ function reportBody(R){
   h += '<h2>جدول دانه‌بندی مخلوط</h2><table class="rp-tbl rp-g"><tr><th>الک</th><th>مخلوط (%)</th><th>حد پایین</th><th>حد بالا</th></tr>' +
     R.grad.map(function(r){ return '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td><td>' + esc(r[2]) + '</td><td>' + esc(r[3]) + '</td></tr>'; }).join('') + '</table>' + lns(R.fm);
   h += '<h2>نتایج نهایی (مقدار سیمان و اجزای مخلوط)</h2>' + tbl(R.res) + lns(R.mix);
-  if (R.jr && R.jr.length) h += '<h2>کنترل بتن تازه (اسلامپ فلو، T50، J-Ring و L-Box)</h2>' + tbl([['اسلامپ فلو (mm)', gv('sfv')], ['T50 (s)', gv('t50')], ['a (mm)', gv('ja')], ['b (mm)', gv('jb')], ['c (mm)', gv('jc')], ['H1 (mm)', gv('lh1')], ['H2 (mm)', gv('lh2')]]) + lns(R.jr);
+  var vsiI = vsiIdx();
+  if (R.jr && R.jr.length) h += '<h2>کنترل بتن تازه (اسلامپ فلو، T50، VSI، J-Ring و L-Box)</h2>' + tbl([['اسلامپ فلو (mm)', gv('sfv')], ['T50 (s)', gv('t50')], ['شاخص پایداری چشمی VSI', vsiI >= 0 ? (vsiI + ' - ' + VSI_TXT[vsiI].t) : ''], ['a (mm)', gv('ja')], ['b (mm)', gv('jb')], ['c (mm)', gv('jc')], ['H1 (mm)', gv('lh1')], ['H2 (mm)', gv('lh2')]]) + lns(R.jr);
   if (R.jr2 && R.jr2.length) h += '<h2>پایداری، V-Funnel و U-Box</h2>' + tbl([
     ['جرم بتن – بالا (g)', gv('sgmt')], ['جرم سنگدانه درشت – بالا (g)', gv('sgat')],
     ['جرم بتن – پایین (g)', gv('sgmb')], ['جرم سنگدانه درشت – پایین (g)', gv('sgab')],
@@ -1955,7 +1997,7 @@ function reportToCanvas(R){
     R.res.forEach(function(r, i){ row(r[0], r[1], i % 2 === 0); });
     y += 6;
     R.mix.forEach(para);
-    if (R.jr && R.jr.length) { head('کنترل بتن تازه (اسلامپ فلو، T50 و J-Ring)'); R.jr.forEach(para); }
+    if (R.jr && R.jr.length) { head('کنترل بتن تازه (اسلامپ فلو، T50، VSI و J-Ring)'); R.jr.forEach(para); }
     if (R.jr2 && R.jr2.length) { head('پایداری، V-Funnel و U-Box'); R.jr2.forEach(para); }
 
     return y + M;
