@@ -538,7 +538,6 @@ h3{margin:6px 2px 6px}
 #paywall p{line-height:2;color:#444;margin:8px 0 18px}
 #paywall button{display:block;width:100%;border:0;border-radius:9px;padding:12px 10px;margin-top:9px;font: bold 14px Tahoma,sans-serif}
 #buyPremium{background:#1f4e79;color:#fff}
-#restorePremium{background:#e8f1fb;color:#1f4e79}
 #closePaywall{background:#f1f2f4;color:#444}
 #menuBtn.locked{opacity:.65}
 
@@ -565,7 +564,6 @@ h3{margin:6px 2px 6px}
     <h2>نسخه کامل طرح اختلاط SCC</h2>
     <p>صفحات ۱ تا ۳ رایگان هستند. برای دسترسی به صفحه ۴ به بعد و امکانات ذخیره، بازیابی، چاپ و اشتراک‌گذاری، نسخه کامل را خریداری کنید.</p>
     <button type="button" id="buyPremium">خرید نسخه کامل</button>
-    <button type="button" id="restorePremium">بازیابی خرید قبلی</button>
     <button type="button" id="closePaywall">بازگشت</button>
   </div>
 </div>
@@ -1807,33 +1805,7 @@ async function buyPremium(){
     }
   } catch(e) {
     console.error('Bazaar purchase failed:', e);
-    alert('خرید انجام نشد یا قابل تأیید نبود. در صورت انجام پرداخت، گزینه «بازیابی خرید قبلی» را بزنید.');
-  } finally {
-    billingBusy = false;
-  }
-}
-async function restorePremium(){
-  if (billingBusy) return;
-  var plugin = billingPlugin();
-  if (!plugin) {
-    alert('بازیابی خرید فقط در نسخه اندروید نصب‌شده از کافه‌بازار امکان‌پذیر است.');
-    return;
-  }
-  billingBusy = true;
-  try {
-    var result = await plugin.restore();
-    if (result && result.owned === true) {
-      setPaidAccess(true);
-      toast('خرید قبلی با موفقیت بازیابی شد');
-    } else if (result && result.verified === true) {
-      setPaidAccess(false);
-      alert('خرید معتبری برای این حساب کافه‌بازار پیدا نشد.');
-    } else {
-      alert('اتصال به کافه‌بازار برقرار نشد. دسترسی قبلی تغییر نکرد.');
-    }
-  } catch(e) {
-    console.error('Bazaar restore failed:', e);
-    alert('بازیابی خرید ناموفق بود. اتصال اینترنت و نصب کافه‌بازار را بررسی کنید.');
+    alert('خرید انجام نشد یا قابل تأیید نبود. اگر مبلغی پرداخت شده است، پس از اتصال اینترنت دوباره وضعیت خرید را بررسی کنید.');
   } finally {
     billingBusy = false;
   }
@@ -1846,7 +1818,6 @@ function startBillingChecks(){
     if (!document.hidden) refreshPaidAccess(false);
   });
   if ($('buyPremium')) $('buyPremium').addEventListener('click', buyPremium);
-  if ($('restorePremium')) $('restorePremium').addEventListener('click', restorePremium);
   if ($('closePaywall')) $('closePaywall').addEventListener('click', hidePaywall);
 }
 
