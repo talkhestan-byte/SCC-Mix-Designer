@@ -21,6 +21,27 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Validate release keystore and passwords
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test -n "$KEYSTORE_BASE64" || { echo "::error::KEYSTORE_BASE64 is empty or unavailable"; exit 1; }
+          test -n "$KEYSTORE_PASSWORD" || { echo "::error::KEYSTORE_PASSWORD is empty or unavailable"; exit 1; }
+          test -n "$KEY_ALIAS" || { echo "::error::KEY_ALIAS is empty or unavailable"; exit 1; }
+          test -n "$KEY_PASSWORD" || { echo "::error::KEY_PASSWORD is empty or unavailable"; exit 1; }
+          STORE_FILE="$RUNNER_TEMP/release-keystore.jks"
+          CSR_FILE="$RUNNER_TEMP/keystore-check.csr"
+          trap 'rm -f "$STORE_FILE" "$CSR_FILE"' EXIT
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$STORE_FILE"
+          test -s "$STORE_FILE" || { echo "::error::Decoded keystore file is empty"; exit 1; }
+          keytool -list -keystore "$STORE_FILE" -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
+          keytool -certreq -keystore "$STORE_FILE" -storepass "$KEYSTORE_PASSWORD" -keypass "$KEY_PASSWORD" -alias "$KEY_ALIAS" -file "$CSR_FILE" >/dev/null
+          echo "Keystore file, store password, alias, and private-key password validated successfully."
+          
       - name: Install dependencies
         run: npm install
 
