@@ -295,6 +295,11 @@ jobs:
           cd android
           ./gradlew assembleRelease
 
+      - name: Verify Release APK signature
+        run: |
+          APK="android/app/build/outputs/apk/release/app-release.apk"
+          "$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -n 1)/apksigner" verify --verbose --print-certs "$APK"
+
       - uses: actions/upload-artifact@v4
         with:
           name: scc-apk-debug
