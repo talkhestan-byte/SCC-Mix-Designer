@@ -104,6 +104,124 @@ jobs:
           }
           JAVA
 
+
+      - name: Add Poolakey billing bridge
+        run: |
+          sed -i '1i buildscript {\n    repositories { google(); mavenCentral() }\n    dependencies { classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24" }\n}\n' android/build.gradle
+          cat >> android/build.gradle <<'GRADLE'
+
+          allprojects {
+              repositories { maven { url 'https://jitpack.io' } }
+          }
+          GRADLE
+          sed -i "/apply plugin: 'com.android.application'/a apply plugin: 'kotlin-android'" android/app/build.gradle
+          cat >> android/app/build.gradle <<'GRADLE'
+
+          dependencies {
+              implementation 'com.github.cafebazaar.Poolakey:poolakey:2.2.0'
+          }
+          android {
+              kotlinOptions { jvmTarget = '17' }
+          }
+          GRADLE
+          mkdir -p android/app/src/main/java/com/example/sccmix
+          cat > android/app/src/main/java/com/example/sccmix/BazaarBillingPlugin.kt <<'KOTLIN'
+          package com.example.sccmix
+          import com.getcapacitor.JSObject
+          import com.getcapacitor.Plugin
+          import com.getcapacitor.PluginCall
+          import com.getcapacitor.PluginMethod
+          import com.getcapacitor.annotation.CapacitorPlugin
+          import ir.cafebazaar.poolakey.Connection
+          import ir.cafebazaar.poolakey.ConnectionState
+          import ir.cafebazaar.poolakey.Payment
+          import ir.cafebazaar.poolakey.config.PaymentConfiguration
+          import ir.cafebazaar.poolakey.config.SecurityCheck
+          import ir.cafebazaar.poolakey.entity.PurchaseState
+          import ir.cafebazaar.poolakey.request.PurchaseRequest
+
+          @CapacitorPlugin(name = "BazaarBilling")
+          class BazaarBillingPlugin : Plugin() {
+              companion object {
+                  private const val RSA_PUBLIC_KEY = "YOUR_BAZAAR_RSA_PUBLIC_KEY"
+                  private const val PRODUCT_ID = "YOUR_BAZAAR_PRODUCT_ID"
+                  private const val PREFS = "scc_bazaar_entitlement"
+                  private const val KEY_OWNED = "owned"
+                  private const val KEY_CHECKED_AT = "checked_at"
+                  private const val CHECK_INTERVAL = 24L * 60L * 60L * 1000L
+              }
+              private var payment: Payment? = null
+              private var paymentConnection: Connection? = null
+              private fun prefs() = context.getSharedPreferences(PREFS, android.content.Context.MODE_PRIVATE)
+              private fun owned() = prefs().getBoolean(KEY_OWNED, false)
+              private fun checkedAt() = prefs().getLong(KEY_CHECKED_AT, 0L)
+              private fun configured() = !RSA_PUBLIC_KEY.startsWith("YOUR_") && !PRODUCT_ID.startsWith("YOUR_")
+              private fun result(value: Boolean, verified: Boolean) = JSObject().apply {
+                  put("owned", value); put("verified", verified); put("verifiedAt", checkedAt())
+              }
+              private fun save(value: Boolean) {
+                  prefs().edit().putBoolean(KEY_OWNED, value).putLong(KEY_CHECKED_AT, System.currentTimeMillis()).apply()
+              }
+              private fun connect(ready: () -> Unit, failed: (Throwable) -> Unit) {
+                  if (!configured()) { failed(IllegalStateException("شناسه محصول و کلید RSA هنوز تنظیم نشده‌اند")); return }
+                  if (payment != null && paymentConnection?.getState() == ConnectionState.Connected) { ready(); return }
+                  val p = payment ?: Payment(context, PaymentConfiguration(
+                      localSecurityCheck = SecurityCheck.Enable(rsaPublicKey = RSA_PUBLIC_KEY)
+                  )).also { payment = it }
+                  paymentConnection = p.connect {
+                      connectionSucceed { ready() }
+                      connectionFailed { failed(it) }
+                      disconnected { }
+                  }
+              }
+              private fun verify(call: PluginCall, force: Boolean) {
+                  if (!force && System.currentTimeMillis() - checkedAt() < CHECK_INTERVAL) {
+                      call.resolve(result(owned(), false)); return
+                  }
+                  connect(ready = {
+                      payment?.getPurchasedProducts {
+                          querySucceed { items ->
+                              val valid = items.any { it.productId == PRODUCT_ID && it.purchaseState == PurchaseState.PURCHASED }
+                              save(valid); call.resolve(result(valid, true))
+                          }
+                          queryFailed { call.resolve(result(owned(), false)) }
+                      }
+                  }, failed = { call.resolve(result(owned(), false)) })
+              }
+              @PluginMethod fun getStatus(call: PluginCall) = verify(call, false)
+              @PluginMethod fun restore(call: PluginCall) = verify(call, true)
+              @PluginMethod fun purchase(call: PluginCall) {
+                  connect(ready = {
+                      payment?.purchaseProduct(
+                          registry = activity.activityResultRegistry,
+                          request = PurchaseRequest(productId = PRODUCT_ID, payload = "scc-mix-lifetime")
+                      ) {
+                          purchaseSucceed { save(true); call.resolve(result(true, true)) }
+                          purchaseCanceled { call.reject("خرید توسط کاربر لغو شد") }
+                          purchaseFailed { call.reject(it.message ?: "خرید ناموفق بود") }
+                          failedToBeginFlow { call.reject(it.message ?: "شروع پرداخت ناموفق بود") }
+                      }
+                  }, failed = { call.reject(it.message ?: "اتصال به کافه‌بازار برقرار نشد", it) })
+              }
+              override fun handleOnDestroy() {
+                  paymentConnection?.disconnect(); paymentConnection = null
+                  super.handleOnDestroy()
+              }
+          }
+          KOTLIN
+          cat > android/app/src/main/java/com/example/sccmix/MainActivity.java <<'JAVA'
+          package com.example.sccmix;
+          import android.os.Bundle;
+          import com.getcapacitor.BridgeActivity;
+          public class MainActivity extends BridgeActivity {
+              @Override public void onCreate(Bundle savedInstanceState) {
+                  registerPlugin(SaveFilePlugin.class);
+                  registerPlugin(BazaarBillingPlugin.class);
+                  super.onCreate(savedInstanceState);
+              }
+          }
+          JAVA
+
       - name: Generate Android assets
         run: npx capacitor-assets generate --android
 
