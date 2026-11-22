@@ -495,6 +495,33 @@ nav button{min-height:42px;font-size:15px;padding:8px 18px}
 #p1 .g2 .r .t{grid-column:2;padding:5px 6px;font-size:11px}
 #p1 .g2 .r-n2{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;min-width:0}
 
+/* ===== فشرده‌سازی ورودی‌ها ===== */
+section{padding:6px}
+h3{margin:6px 2px 6px}
+.g2{gap:4px}
+.r{min-height:0;padding:4px 8px;gap:6px}
+.r label{font-size:13px;line-height:1.35}
+.r input,.r select{height:34px}
+
+#p0 .g2,#p1 .g2{gap:4px}
+#p0 .g2 .r,#p1 .g2 .r{padding:5px 6px;gap:3px 4px}
+#p0 .g2 .r label,#p1 .g2 .r label{line-height:1.3}
+#p0 .g2 .r input,#p0 .g2 .r select,
+#p1 .g2 .r input,#p1 .g2 .r select{height:32px}
+#p0 #g1,#p0 #g3,#p1 .g2 .r-n2{gap:4px}
+
+.r2row{gap:4px;margin:4px 0}
+.r2{padding:5px 8px;gap:3px}
+.r2 input{height:34px}
+
+.jr{padding:5px 6px;margin-bottom:4px}
+.jr .math-title{margin-bottom:4px}
+.jr-in{gap:3px}
+.jr-in .r{min-height:30px;padding:2px 6px}
+.jr-in .r input{height:28px}
+.math-card{padding:8px;margin-bottom:6px}
+.o{margin:4px 0;padding:8px}
+
 </style>
 </head>
 <body>
@@ -690,7 +717,7 @@ R('ردیف کاربرد (توان n)', S('rw', [1, 2, 3, 4, 5], 2), 5) +
 R('نوع SCC', S('ty', ['فقط پودری', 'فقط VMA', 'ترکیبی'])) +
 '<div id="extra-input"></div>' +
 '</div>' +
-'<h3 style="margin-top:20px">۲) محاسبه مقاومت هدف</h3>' +
+'<h3 style="margin-top:10px">۲) محاسبه مقاومت هدف</h3>' +
 '<div class="g2">' +
 '<div class="r r-wide"><label>روش</label>' + S('sm', ['دستی (جدول رتبه کارگاه)', 'محاسبه خودکار (دو فرمول)', 'کارگاه بدون اطلاعات']) + '</div>' +
 '<div id="g1">' + R('رتبه کارگاه', S('rk', ['الف', 'ب', 'ج']), 's2') + R('s از جدول ۳-۱ (MPa)', '<b id="sv"></b>', 's1') + '</div>' +
@@ -829,7 +856,7 @@ R('هوای ناخواسته (%)', I('va', '1.5'), 12) +
 '<div class="res-box"><div class="res-box-final"><span>چگالی نهایی (G)</span><span id="res-G" style="font-size:18px;">-</span></div></div></div>' +
 '<div class="o" id="o7"></div>',
 
-/* ===== صفحه آخر: آزمون‌های تازه (اسلامپ فلو، T50 و J-Ring) ===== */
+/* ===== صفحه ۷: آزمون‌های تازه (اسلامپ فلو، T50 و J-Ring) ===== */
 '<h3>۷) کنترل بتن تازه: اسلامپ فلو، T50، J-Ring و L-Box</h3>' +
 '<div class="math-card jr"><div class="math-title">آزمون اسلامپ فلو</div>' +
 '<div class="jr-in">' +
@@ -854,7 +881,7 @@ R('H2 (mm)', I('lh2', '')) +
 '</div></div></div>' +
 '<div class="o" id="oj" style="direction:rtl;text-align:right;line-height:1.9"></div>',
 
-/* ===== صفحه آخر: پایداری (جداشدگی)، V-Funnel و U-Box ===== */
+/* ===== صفحه ۸: پایداری (جداشدگی)، V-Funnel و U-Box ===== */
 '<h3>۸) پایداری، V-Funnel و U-Box</h3>' +
 '<div class="math-card jr"><div class="math-title">تصاویر آزمون‌ها</div>' +
 '<div style="display:flex;gap:10px;justify-content:center;direction:ltr">' +
@@ -863,10 +890,10 @@ R('H2 (mm)', I('lh2', '')) +
 '</div></div>' +
 '<div class="math-card jr"><div class="math-title">آزمون پایداری استاتیکی ستون بتن (ASTM C1610/C1610M)</div>' +
 '<div class="jr-in">' +
-R('جرم بتن نمونه از یک‌سوم بالایی ستون (g)', I('sgmt', '')) +
-R('جرم سنگدانه درشت مانده روی الک 4.75 mm از یک‌سوم بالایی (g)', I('sgat', '')) +
-R('جرم بتن نمونه از یک‌سوم پایینی ستون (g)', I('sgmb', '')) +
-R('جرم سنگدانه درشت مانده روی الک 4.75 mm از یک‌سوم پایینی (g)', I('sgab', '')) +
+R('جرم بتن نمونه – یک‌سوم بالا (g)', I('sgmt', '')) +
+R('جرم سنگدانه درشت (روی 4.75 mm) – بالا (g)', I('sgat', '')) +
+R('جرم بتن نمونه – یک‌سوم پایین (g)', I('sgmb', '')) +
+R('جرم سنگدانه درشت (روی 4.75 mm) – پایین (g)', I('sgab', '')) +
 '</div>' +
 '<div class="math-title" style="margin-top:10px">شاخص جداشدگی استاتیکی (SI)</div>' +
 '<div class="sm-eq-row" style="font-size:13px;justify-content:flex-start;padding:8px 2px">' +
@@ -1105,12 +1132,14 @@ function jrCalc(){
 function jr2Calc(){
   var box = $('oj2');
   if (!box) return;
-  var mt = v('sgmt'), at = v('sgat'), mb = v('sgmb'), ab = v('sgab'), tv = v('vf'), t5 = v('vf5'), h1 = v('ub1'), h2 = v('ub2');
+  function filled(id){ return $(id) && String($(id).value).trim() !== ''; }
+  var mt = v('sgmt'), at = v('sgat'), mb = v('sgmb'), ab = v('sgab'),
+      tv = v('vf'), t5 = v('vf5'), h1 = v('ub1'), h2 = v('ub2');
   function B(t){ return '<bdi dir="ltr">' + t + '</bdi>'; }
   function Sx(x){ return B(f(x,1) + ' s'); }
   function M(x){ return B(f(x,0) + ' mm'); }
   var RC = 'آیین‌نامه بتن ایران (نشریه ۱۲۰)';
-  var rSR = RC + '، جدول ' + B('۸-۱') + ' (' + B('SR1/SR2') + ')';
+  var rSI = B('ASTM C1610/C1610M') + '؛ حد پذیرش (۱۰٪ و ۱۵٪) از راهنمای رایج، در آیین‌نامه عددی ندارد';
   var rVF = RC + '، جدول ' + B('۸-۱') + ' (' + B('VF1/VF2') + ')';
   var rV5 = B('EFNARC') + '؛ در آیین‌نامه عددی ندارد';
   var rUB = B('EFNARC') + '؛ در آیین‌نامه عددی ندارد';
@@ -1123,33 +1152,43 @@ function jr2Calc(){
     if (grp === 's' && lv > wSeg) wSeg = lv;
   }
   function note(t){ L.push('<div style="margin-bottom:8px">• ' + t + '</div>'); }
-  var haveS = mt > 0 && at > 0 && mb > 0 && ab > 0 && ['sgmt','sgat','sgmb','sgab'].every(function(id){ return $(id) && String($(id).value).trim() !== ''; });
-  var haveV = tv > 0, haveV5 = tv > 0 && t5 > 0, haveU = h1 > 0 && h2 > 0;
-  if (!haveS && !haveV && !haveU) { box.innerHTML = 'مقادیر آزمون‌ها را وارد کنید تا تحلیل نمایش داده شود.'; return; }
 
+  var haveS = mt > 0 && mb > 0 && filled('sgat') && filled('sgab');
+  var haveV = tv > 0, haveV5 = tv > 0 && t5 > 0, haveU = h1 > 0 && h2 > 0;
+  if (!haveS && !haveV && !haveU) {
+    if ($('eq-si')) $('eq-si').textContent = '—';
+    box.innerHTML = 'مقادیر آزمون‌ها را وارد کنید تا تحلیل نمایش داده شود.';
+    return;
+  }
+
+  /* ---- پایداری استاتیکی ستون (ASTM C1610) ---- */
   if (haveS) {
-    curRef = B('ASTM C1610/C1610M');
+    curRef = rSI;
     if (at > mt || ab > mb) {
-      note('جرم سنگدانه بازیابی‌شده نمی‌تواند از جرم بتن نمونه همان بخش بیشتر باشد؛ مقادیر ورودی را بررسی کنید.');
+      if ($('eq-si')) $('eq-si').textContent = '—';
+      note('جرم سنگدانهٔ بازیابی‌شده نمی‌تواند از جرم بتن نمونهٔ همان بخش بیشتر باشد؛ مقادیر را بررسی کنید.');
     } else {
-      var ct = at / mt;
-      var cb = ab / mb;
-      var avgC = (cb + ct) / 2;
-      var si = avgC > 0 ? ((cb - ct) / avgC) * 100 : NaN;
-      if (isFinite(si)) {
-        if ($('eq-si')) $('eq-si').textContent = f(si, 1);
-        L.push('<div style="margin-bottom:8px"><b>شاخص جداشدگی استاتیکی (SI):</b> ' + B(f(si,1) + ' %') +
-          '<br><small style="color:#666">مقدار مثبت نشان‌دهنده تجمع بیشتر سنگدانه درشت در بخش پایینی ستون است.</small></div>');
+      var ct = at / mt, cb = ab / mb, si = 0;
+      if (cb > ct) si = ((cb - ct) / ((cb + ct) / 2)) * 100;
+      if ($('eq-si')) $('eq-si').textContent = f(si, 1);
+      var cs = B('Ct') + ' = ' + B(f(ct*100,1) + '%') + ' و ' + B('Cb') + ' = ' + B(f(cb*100,1) + '%');
+      if (cb < ct) note(B('Cb') + ' کمتر از ' + B('Ct') + ' است؛ طبق ' + B('ASTM C1610') + ' شاخص صفر گزارش می‌شود. اگر انتظار نداشتید، اندازه‌گیری را بررسی کنید.');
+      if (si <= 10) {
+        add(0, 'شاخص جداشدگی ' + B('SI') + ' برابر ' + B(f(si,1) + ' %') + ' است (' + cs + ')؛ حداکثر ' + B('10%') + ': مخلوط پایدار است.', 's');
+      } else if (si <= 15) {
+        add(1, 'شاخص جداشدگی ' + B('SI') + ' برابر ' + B(f(si,1) + ' %') + ' است (' + cs + ')؛ بین ' + B('10') + ' و ' + B('15%') + ': پایداری متوسط؛ آزمون را تکرار کنید.', 's');
+        rem.push('جداشدگی متوسط: گرانروی را با ' + B('VMA') + ' یا پودر ریز کمی افزایش دهید.');
       } else {
-        if ($('eq-si')) $('eq-si').textContent = '—';
-        note('برای محاسبه شاخص جداشدگی، مجموع نسبت‌های سنگدانه درشت دو بخش باید بزرگ‌تر از صفر باشد.');
+        add(2, 'شاخص جداشدگی ' + B('SI') + ' برابر ' + B(f(si,1) + ' %') + ' است (' + cs + ')؛ بیش از ' + B('15%') + ': مخلوط ناپایدار و مردود است.', 's');
+        rem.push('جداشدگی زیاد: ' + B('VMA') + ' یا پودر را زیاد کنید، آب آزاد یا فوق‌روان‌کننده را کم کنید و درصد سنگدانهٔ درشت را کاهش دهید.');
       }
     }
   } else {
     if ($('eq-si')) $('eq-si').textContent = '—';
-    note('برای محاسبه ASTM C1610، جرم بتن و جرم سنگدانه درشت بازیابی‌شده از هر دو بخش بالایی و پایینی ستون را وارد کنید.');
+    note('برای ' + B('ASTM C1610') + '، جرم بتن و جرم سنگدانهٔ درشت (روی الک ' + B('4.75 mm') + ') را از هر دو بخش بالا و پایین وارد کنید.');
   }
 
+  /* ---- V-Funnel ---- */
   if (haveV) {
     curRef = rVF;
     if (tv <= 8) {
@@ -1158,40 +1197,44 @@ function jr2Calc(){
       add(0, 'زمان تخلیه ' + B('V-Funnel') + ' برابر ' + Sx(tv) + ' است (بین ' + B('8') + ' و ' + B('25 s') + ': رده ' + B('VF2') + ').', 'p');
     } else {
       add(2, 'زمان تخلیه ' + B('V-Funnel') + ' برابر ' + Sx(tv) + ' است و از ' + B('25 s') + ' بیشتر است؛ مخلوط خمیری است و خطر گیرکردن دارد.', 'p');
-      rem.push('زمان ' + B('V-Funnel') + ' زیاد است: مقدار ' + B('VMA') + ' یا پودر را کم کنید یا فوق‌روان‌کننده را اصلاح کنید.');
+      rem.push('زمان ' + B('V-Funnel') + ' زیاد است: ' + B('VMA') + ' یا پودر را کم کنید یا فوق‌روان‌کننده را اصلاح کنید.');
     }
   } else {
     note('برای تحلیل ' + B('V-Funnel') + '، زمان تخلیه ' + B('Tv') + ' را وارد کنید.');
   }
 
+  /* ---- Tv5 ---- */
   if (haveV5) {
     curRef = rV5;
-    var dt = t5 - tv;
-    if (t5 < tv) note('زمان ' + B('Tv5') + ' از ' + B('Tv') + ' کمتر است؛ اندازه‌گیری را بررسی کنید.');
-    if (dt <= 3) add(0, 'اختلاف ' + B('Tv5 − Tv') + ' برابر ' + Sx(Math.max(0, dt)) + ' است (حداکثر ' + B('3 s') + ': نشانه‌ای از جداشدگی یا گیرش اولیه دیده نمی‌شود).', 's');
-    else {
-      add(1, 'اختلاف ' + B('Tv5 − Tv') + ' برابر ' + Sx(dt) + ' است و از ' + B('3 s') + ' بیشتر است؛ تمایل به جداشدگی یا افزایش گرانروی با زمان وجود دارد. آزمون را تکرار کنید.', 's');
-      rem.push('افزایش زمان پس از ۵ دقیقه: پایداری و نگهداری روانی مخلوط (نوع و مقدار فوق‌روان‌کننده) را بررسی کنید.');
+    if (t5 < tv) {
+      note('زمان ' + B('Tv5') + ' از ' + B('Tv') + ' کمتر است؛ اندازه‌گیری را بررسی کنید.');
+    } else {
+      var dt = t5 - tv;
+      if (dt <= 3) add(0, 'اختلاف ' + B('Tv5 − Tv') + ' برابر ' + Sx(dt) + ' است (حداکثر ' + B('3 s') + ': نشانه‌ای از جداشدگی یا گیرش اولیه دیده نمی‌شود).', 's');
+      else {
+        add(1, 'اختلاف ' + B('Tv5 − Tv') + ' برابر ' + Sx(dt) + ' است و از ' + B('3 s') + ' بیشتر است؛ تمایل به جداشدگی یا افزایش گرانروی با زمان وجود دارد. آزمون را تکرار کنید.', 's');
+        rem.push('افزایش زمان پس از ۵ دقیقه: پایداری و نگهداری روانی مخلوط (نوع و مقدار فوق‌روان‌کننده) را بررسی کنید.');
+      }
     }
-  } else if (haveV && !(t5 > 0)) {
+  } else if (haveV) {
     note('برای ارزیابی پایداری با ' + B('V-Funnel') + '، زمان پس از ۵ دقیقه (' + B('Tv5') + ') را هم وارد کنید.');
   }
 
+  /* ---- U-Box ---- */
   if (haveU) {
     curRef = rUB;
     var du = Math.abs(h1 - h2);
     if (du <= 30) add(0, 'اختلاف ارتفاع ' + B('U-Box') + ' (' + B('H1 − H2') + ') برابر ' + M(du) + ' است (حداکثر ' + M(30) + ': توانایی پرشدن و عبور از میلگرد مناسب است).', 'p');
     else {
       add(2, 'اختلاف ارتفاع ' + B('U-Box') + ' (' + B('H1 − H2') + ') برابر ' + M(du) + ' است و از ' + M(30) + ' بیشتر است؛ عبور از میلگرد کافی نیست.', 'p');
-      rem.push('عبور ضعیف در ' + B('U-Box') + ': حجم خمیر و روانی را بالا ببرید و بیشینه اندازه یا درصد سنگدانه درشت را کم کنید.');
+      rem.push('عبور ضعیف در ' + B('U-Box') + ': حجم خمیر و روانی را بالا ببرید و بیشینه اندازه یا درصد سنگدانهٔ درشت را کم کنید.');
     }
   } else {
     note('برای تحلیل ' + B('U-Box') + '، دو مقدار ' + B('H1') + ' و ' + B('H2') + ' را وارد کنید.');
   }
 
   var vt = ['قابل قبول', 'مشروط (نیازمند اصلاح یا تکرار آزمون)', 'مردود'];
-  var out = L.join('');
-  out += '<hr>';
+  var out = L.join('') + '<hr>';
   if (haveV || haveU) out += '<b>قابلیت پرشدن و عبور: ' + vt[wPass] + '</b><br>';
   if (haveS || haveV5) out += '<b>مقاومت در برابر جداشدگی: ' + vt[wSeg] + '</b><br>';
   out += '<b>نتیجه کلی: ' + vt[worst] + '</b>';
@@ -1794,7 +1837,13 @@ function reportBody(R){
     R.grad.map(function(r){ return '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td><td>' + esc(r[2]) + '</td><td>' + esc(r[3]) + '</td></tr>'; }).join('') + '</table>' + lns(R.fm);
   h += '<h2>نتایج نهایی (مقدار سیمان و اجزای مخلوط)</h2>' + tbl(R.res) + lns(R.mix);
   if (R.jr && R.jr.length) h += '<h2>کنترل بتن تازه (اسلامپ فلو، T50، J-Ring و L-Box)</h2>' + tbl([['اسلامپ فلو (mm)', gv('sfv')], ['T50 (s)', gv('t50')], ['a (mm)', gv('ja')], ['b (mm)', gv('jb')], ['c (mm)', gv('jc')], ['H1 (mm)', gv('lh1')], ['H2 (mm)', gv('lh2')]]) + lns(R.jr);
-  if (R.jr2 && R.jr2.length) h += '<h2>پایداری، V-Funnel و U-Box</h2>' + tbl([['جرم نمونه روی الک (g)', gv('sgm')], ['جرم عبوری از الک ۵ mm (g)', gv('sgp')], ['زمان V-Funnel, Tv (s)', gv('vf')], ['زمان V-Funnel پس از ۵ دقیقه, Tv5 (s)', gv('vf5')], ['H1 (mm)', gv('ub1')], ['H2 (mm)', gv('ub2')]]) + lns(R.jr2);
+  if (R.jr2 && R.jr2.length) h += '<h2>پایداری، V-Funnel و U-Box</h2>' + tbl([
+    ['جرم بتن – بالا (g)', gv('sgmt')], ['جرم سنگدانه درشت – بالا (g)', gv('sgat')],
+    ['جرم بتن – پایین (g)', gv('sgmb')], ['جرم سنگدانه درشت – پایین (g)', gv('sgab')],
+    ['شاخص جداشدگی SI (%)', tx('eq-si')],
+    ['Tv (s)', gv('vf')], ['Tv5 (s)', gv('vf5')],
+    ['H1 (mm)', gv('ub1')], ['H2 (mm)', gv('ub2')]
+  ]) + lns(R.jr2);
   return h;
 }
 
