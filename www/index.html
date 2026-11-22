@@ -529,6 +529,19 @@ h3{margin:6px 2px 6px}
 .vsi-txt{flex:1;min-width:0;font-size:11px;line-height:1.5;color:#1f4e79;text-align:right;direction:rtl}
 .vsi-txt small{display:block;color:#888;font-size:10px}
 
+
+/* ===== قفل نسخه کامل و پرداخت کافه‌بازار ===== */
+#paywall{position:fixed;inset:0;z-index:50;background:rgba(10,20,35,.72);display:flex;align-items:center;justify-content:center;padding:18px}
+#paywall[hidden]{display:none!important}
+#paywall .pay-card{width:100%;max-width:420px;background:#fff;border-radius:16px;padding:22px 18px;text-align:center;box-shadow:0 12px 40px #0005}
+#paywall h2{margin:0 0 12px;color:#1f4e79;font-size:19px}
+#paywall p{line-height:2;color:#444;margin:8px 0 18px}
+#paywall button{display:block;width:100%;border:0;border-radius:9px;padding:12px 10px;margin-top:9px;font: bold 14px Tahoma,sans-serif}
+#buyPremium{background:#1f4e79;color:#fff}
+#restorePremium{background:#e8f1fb;color:#1f4e79}
+#closePaywall{background:#f1f2f4;color:#444}
+#menuBtn.locked{opacity:.65}
+
 </style>
 </head>
 <body>
@@ -546,6 +559,16 @@ h3{margin:6px 2px 6px}
   <button id="btnPrev" type="button">‹ قبلی</button>
 </nav>
 <div id="md" hidden><div id="mb"></div></div>
+
+<div id="paywall" hidden>
+  <div class="pay-card">
+    <h2>نسخه کامل طرح اختلاط SCC</h2>
+    <p>صفحات ۱ تا ۳ رایگان هستند. برای دسترسی به صفحه ۴ به بعد و امکانات ذخیره، بازیابی، چاپ و اشتراک‌گذاری، نسخه کامل را خریداری کنید.</p>
+    <button type="button" id="buyPremium">خرید نسخه کامل</button>
+    <button type="button" id="restorePremium">بازیابی خرید قبلی</button>
+    <button type="button" id="closePaywall">بازگشت</button>
+  </div>
+</div>
 <div id="ts" hidden></div>
 <input id="restoreFileInput" type="file" accept=".json,application/json" hidden>
 
@@ -1723,9 +1746,114 @@ function fitEq(){
   while (r.scrollWidth > r.clientWidth + 1 && fs > 6) { fs -= 0.5; r.style.fontSize = fs + 'px'; }
 }
 
+
+/* ===== مدیریت خرید دائمی کافه‌بازار ===== */
+var paidAccess = false;
+var billingBusy = false;
+var BILLING_CHECK_INTERVAL = 24 * 60 * 60 * 1000;
+
+function billingPlugin(){
+  try {
+    return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.BazaarBilling
+      ? window.Capacitor.Plugins.BazaarBilling : null;
+  } catch(e){ return null; }
+}
+function setPaidAccess(value){
+  paidAccess = value === true;
+  var menuButton = $('menuBtn');
+  if (menuButton) menuButton.classList.toggle('locked', !paidAccess);
+  if (paidAccess) hidePaywall();
+}
+function showPaywall(){
+  if ($('menu')) $('menu').hidden = true;
+  if ($('paywall')) $('paywall').hidden = false;
+}
+function hidePaywall(){
+  if ($('paywall')) $('paywall').hidden = true;
+}
+function requirePaidAccess(){
+  if (paidAccess) return true;
+  showPaywall();
+  return false;
+}
+async function refreshPaidAccess(force){
+  var plugin = billingPlugin();
+  if (!plugin || billingBusy) return;
+  if (!force && !navigator.onLine) return;
+  billingBusy = true;
+  try {
+    var result = await plugin.getStatus();
+    if (result && result.owned === true) setPaidAccess(true);
+    else if (result && result.verified === true) setPaidAccess(false);
+  } catch(e) {
+    console.warn('Bazaar entitlement check failed; keeping last known access.', e);
+  } finally {
+    billingBusy = false;
+  }
+}
+async function buyPremium(){
+  if (billingBusy) return;
+  var plugin = billingPlugin();
+  if (!plugin) {
+    alert('سرویس پرداخت در نسخه اندروید در دسترس نیست. لطفاً برنامه را از کافه‌بازار نصب کنید.');
+    return;
+  }
+  billingBusy = true;
+  try {
+    var result = await plugin.purchase();
+    if (result && result.owned === true) {
+      setPaidAccess(true);
+      toast('خرید نسخه کامل با موفقیت تأیید شد');
+    }
+  } catch(e) {
+    console.error('Bazaar purchase failed:', e);
+    alert('خرید انجام نشد یا قابل تأیید نبود. در صورت انجام پرداخت، گزینه «بازیابی خرید قبلی» را بزنید.');
+  } finally {
+    billingBusy = false;
+  }
+}
+async function restorePremium(){
+  if (billingBusy) return;
+  var plugin = billingPlugin();
+  if (!plugin) {
+    alert('بازیابی خرید فقط در نسخه اندروید نصب‌شده از کافه‌بازار امکان‌پذیر است.');
+    return;
+  }
+  billingBusy = true;
+  try {
+    var result = await plugin.restore();
+    if (result && result.owned === true) {
+      setPaidAccess(true);
+      toast('خرید قبلی با موفقیت بازیابی شد');
+    } else if (result && result.verified === true) {
+      setPaidAccess(false);
+      alert('خرید معتبری برای این حساب کافه‌بازار پیدا نشد.');
+    } else {
+      alert('اتصال به کافه‌بازار برقرار نشد. دسترسی قبلی تغییر نکرد.');
+    }
+  } catch(e) {
+    console.error('Bazaar restore failed:', e);
+    alert('بازیابی خرید ناموفق بود. اتصال اینترنت و نصب کافه‌بازار را بررسی کنید.');
+  } finally {
+    billingBusy = false;
+  }
+}
+function startBillingChecks(){
+  refreshPaidAccess(false);
+  window.addEventListener('online', function(){ refreshPaidAccess(false); });
+  window.addEventListener('focus', function(){ refreshPaidAccess(false); });
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden) refreshPaidAccess(false);
+  });
+  if ($('buyPremium')) $('buyPremium').addEventListener('click', buyPremium);
+  if ($('restorePremium')) $('restorePremium').addEventListener('click', restorePremium);
+  if ($('closePaywall')) $('closePaywall').addEventListener('click', hidePaywall);
+}
+
 function goTo(i){
   if (typeof i !== 'number' || isNaN(i)) i = 0;
   if (i < 0 || i >= PG.length) return;
+  if (i >= 3 && !requirePaidAccess()) return;
   pg = i;
   for (var k=0; k<PG.length; k++) {
     var sec = $('p'+k);
@@ -2396,14 +2524,16 @@ function bindAll(){
   $('btnNext').addEventListener('click', function(){ goTo(pg + 1); });
   $('btnPrev').addEventListener('click', function(){ goTo(pg - 1); });
 
-  $('menuBtn').addEventListener('click', function(){ $('menu').hidden = !$('menu').hidden; });
-  $('mSave').addEventListener('click', saveProjectFile);
+  $('menuBtn').addEventListener('click', function(){ if (!requirePaidAccess()) return; $('menu').hidden = !$('menu').hidden; });
+  $('mSave').addEventListener('click', function(){ if (!requirePaidAccess()) return; $('menu').hidden = true; saveProjectFile(); });
   $('mLoad').addEventListener('click', function(){
+    if (!requirePaidAccess()) return;
     $('menu').hidden = true;
     $('restoreFileInput').value = '';
     $('restoreFileInput').click();
   });
   $('restoreFileInput').addEventListener('change', function(e){
+    if (!requirePaidAccess()) { e.target.value = ''; return; }
     var file = e.target.files && e.target.files[0];
     if (!file) return;
     var reader = new FileReader();
@@ -2421,10 +2551,12 @@ function bindAll(){
     reader.readAsText(file, 'UTF-8');
   });
   $('mPrint').addEventListener('click', function(){
+    if (!requirePaidAccess()) return;
     $('menu').hidden = true;
     openReport();
   });
   $('mShare').addEventListener('click', function(){
+    if (!requirePaidAccess()) return;
     $('menu').hidden = true;
     openReport();
   });
@@ -2454,6 +2586,7 @@ function init(){
       }
     }
 
+    startBillingChecks();
     goTo(0);
     setTimeout(function(){ drawAgg(); drawWC(); }, 200);
   } catch(err) {
