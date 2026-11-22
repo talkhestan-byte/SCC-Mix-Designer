@@ -201,7 +201,7 @@ jobs:
                           purchaseFailed { call.reject(it.message ?: "خرید ناموفق بود") }
                           failedToBeginFlow { call.reject(it.message ?: "شروع پرداخت ناموفق بود") }
                       }
-                  }, failed = { call.reject(it.message ?: "اتصال به کافه‌بازار برقرار نشد", it) })
+                  }, failed = { error -> call.reject(error.message ?: "اتصال به کافه‌بازار برقرار نشد", error as? Exception ?: Exception(error)) })
               }
               override fun handleOnDestroy() {
                   paymentConnection?.disconnect(); paymentConnection = null
