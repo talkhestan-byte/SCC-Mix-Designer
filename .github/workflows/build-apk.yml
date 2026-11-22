@@ -163,7 +163,7 @@ jobs:
           @CapacitorPlugin(name = "BazaarBilling")
           class BazaarBillingPlugin : Plugin() {
               companion object {
-                  private const val RSA_PUBLIC_KEY = "YOUR_BAZAAR_RSA_PUBLIC_KEY"
+                  private const val RSA_PUBLIC_KEY = "MIHNMA0GCSqGSIb3DQEBAQUAA4G7ADCBtwKBrwDctXc/YOqne9dFS6c7BTBX7/jPWBWo4OsqIco9WTtQ8qI8lb7csl7i6mmiT+7NXsGaYvFteAEC6pSfkwwxtOR1+NMMThO0rIiIyil+tvsRVhVwIzPhfI0rFe3SQXfBB9yhegkXgkdg4PesAXrBNfpkKryGWdOhFXmd5ev+/4RL/JHghDKjW54ghXg/0RpJMWg7IJmK2YSFgI5JLAVJBLcx43PlJgYWuIrbjVvO0G8CAwEAAQ=="
                   private const val PRODUCT_ID = "YOUR_BAZAAR_PRODUCT_ID"
                   private const val PREFS = "scc_bazaar_entitlement"
                   private const val KEY_OWNED = "owned"
