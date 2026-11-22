@@ -280,20 +280,30 @@ jobs:
           }
           GRADLE
 
-      - name: Build APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
-
-      - name: Build signed Release APK
+      - name: Build APKs with Maven Central retry
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
+          set -euo pipefail
           cd android
-          ./gradlew assembleRelease
+          chmod +x gradlew
+          # Limit concurrent dependency requests and retry transient Maven Central HTTP 429 errors.
+          for attempt in 1 2 3 4; do
+            echo "Gradle build attempt $attempt of 4"
+            if ./gradlew --no-daemon --max-workers=2 assembleDebug assembleRelease; then
+              echo "Debug and signed release APKs built successfully."
+              exit 0
+            fi
+            if [ "$attempt" -eq 4 ]; then
+              echo "::error::Gradle build failed after 4 attempts. If Maven Central still returns HTTP 429, wait and rerun the workflow."
+              exit 1
+            fi
+            delay=$((attempt * 45))
+            echo "Build failed; retrying in $delay seconds to allow Maven Central rate limits to clear."
+            sleep "$delay"
+          done
 
       - name: Verify Release APK signature
         run: |
